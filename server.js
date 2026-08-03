@@ -27,6 +27,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
+// Root Route (Health Check)
+app.get("/", (req, res) => {
+    res.send("✅ WhatsApp Clone Backend is Running 🚀");
+});
+
 // Create HTTP Server
 const server = http.createServer(app);
 
@@ -44,7 +49,7 @@ setIO(io);
 // Initialize Socket Events
 socketHandler(io);
 
-// Routes
+// API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
@@ -53,5 +58,5 @@ app.use("/api/message", messageRoutes);
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
-    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    console.log(`🚀 Server is running on port ${PORT}`);
 });
