@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Socket Test</title>
+</head>
+
+<body>
+
+    <h2>🚀 WhatsApp Socket Test</h2>
+
+    <button onclick="setupUser()">Setup User</button>
+
+    <br><br>
+
+    <input id="chatId" placeholder="Enter Chat ID" style="width:350px;">
+
+    <br><br>
+
+    <button onclick="joinChat()">Join Chat</button>
+    <button onclick="startTyping()">Start Typing</button>
+    <button onclick="stopTyping()">Stop Typing</button>
+
+    <hr>
+
+    <h3 id="status">Waiting...</h3>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+
+        const socket = io();
+
+        socket.on("connect", () => {
+
+            console.log("✅ Connected :", socket.id);
+
+        });
+
+        // ================= SETUP =================
+
+        function setupUser() {
+
+            socket.emit("setup", {
+
+                _id: "AYUSH123",
+                name: "Ayush"
+
+            });
+
+        }
+
+        socket.on("connected", () => {
+
+            document.getElementById("status").innerHTML = "✅ Connected";
+
+        });
+
+        // ================= JOIN CHAT =================
+
+        function joinChat() {
+
+            const chatId = document.getElementById("chatId").value;
+
+            socket.emit("join chat", chatId);
+
+            console.log("📥 Joined :", chatId);
+
+        }
+
+        // ================= TYPING =================
+
+        function startTyping() {
+
+            socket.emit("typing", document.getElementById("chatId").value);
+
+        }
+
+        function stopTyping() {
+
+            socket.emit("stop typing", document.getElementById("chatId").value);
+
+        }
+
+        // ================= MESSAGE RECEIVED =================
+
+        socket.on("message received", (message) => {
+
+            console.log("📩 Message Received");
+
+            console.log(message);
+
+            document.getElementById("status").innerHTML =
+                "📩 " + message.content;
+
+            // ================= AUTO DELIVERY ACK =================
+
+            socket.emit("message delivered", {
+
+                messageId: message._id
+
+            });
+
+            console.log("✅ Delivery ACK Sent");
+
+        });
+
+        // ================= MESSAGE DELIVERED =================
+
+        socket.on("message delivered", (message) => {
+
+            console.log("✅ Delivered");
+
+            console.log(message);
+
+            document.getElementById("status").innerHTML =
+                "✅ Delivered : " + message.content;
+
+        });
+
+        // ================= MESSAGE SEEN =================
+
+        socket.on("message seen", (message) => {
+
+            console.log("👀 Seen");
+
+            console.log(message);
+
+            document.getElementById("status").innerHTML =
+                "👀 Seen : " + message.content;
+
+        });
+
+        // ================= TYPING =================
+
+        socket.on("typing", () => {
+
+            document.getElementById("status").innerHTML =
+                "⌨️ User Typing...";
+
+        });
+
+        socket.on("stop typing", () => {
+
+            document.getElementById("status").innerHTML =
+                "✋ Typing Stopped";
+
+        });
+
+        // ================= ONLINE =================
+
+        socket.on("user online", (user) => {
+
+            console.log("🟢 Online :", user);
+
+        });
+
+        // ================= OFFLINE =================
+
+        socket.on("user offline", (user) => {
+
+            console.log("⚫ Offline :", user);
+
+        });
+
+    </script>
+
+</body>
+
+</html>
