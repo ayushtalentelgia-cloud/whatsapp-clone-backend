@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Clone</title>
+
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>WhatsApp Clone</h1>
+
+        <!-- Login Form -->
+        <div id="loginForm">
+
+            <h2>Login</h2>
+
+            <input
+                type="text"
+                id="loginIdentifier"
+                placeholder="Phone Number or Email"
+            >
+
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Password"
+            >
+
+            <button id="loginBtn">Login</button>
+
+            <p>
+                Don't have an account?
+                <span id="showSignup">Sign Up</span>
+            </p>
+
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signupForm" style="display:none;">
+
+            <h2>Create Account</h2>
+
+            <input
+                type="text"
+                id="signupName"
+                placeholder="Full Name"
+            >
+
+            <input
+                type="text"
+                id="signupPhone"
+                placeholder="Phone Number"
+            >
+
+            <input
+                type="email"
+                id="signupEmail"
+                placeholder="Email"
+            >
+
+            <input
+                type="password"
+                id="signupPassword"
+                placeholder="Password"
+            >
+
+            <button id="signupBtn">Register</button>
+
+            <p>
+                Already have an account?
+                <span id="showLogin">Login</span>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/auth.js"></script>
+
+</body>
+</html>
