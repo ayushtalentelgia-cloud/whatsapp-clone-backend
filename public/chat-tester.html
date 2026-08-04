@@ -622,11 +622,11 @@ document.getElementById("logoutBtn").onclick = () => {
 
 document.getElementById("createChatBtn").onclick = async () => {
 
-    const receiverId = document.getElementById("receiverId").value;
+    const phone = document.getElementById("receiverId").value.trim();
 
-    if (!receiverId) {
+    if (!phone) {
 
-        log("❌ Receiver User ID Required");
+        log("❌ Receiver Phone Number Required");
 
         return;
 
@@ -641,16 +641,15 @@ document.getElementById("createChatBtn").onclick = async () => {
             headers: {
 
                 "Content-Type": "application/json",
-
-                Authorization: "Bearer " + token
+                Authorization: "Bearer " + token,
 
             },
 
             body: JSON.stringify({
 
-                userId: receiverId
+                phone,
 
-            })
+            }),
 
         });
 
@@ -664,11 +663,14 @@ document.getElementById("createChatBtn").onclick = async () => {
 
         }
 
-        log("✅ Chat Created");
+        log("✅ Chat Created Successfully");
 
-        loadChats();
+        document.getElementById("receiverId").value = "";
+
+        await loadChats();
 
     }
+
     catch (err) {
 
         log("❌ " + err.message);
