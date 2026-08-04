@@ -528,7 +528,7 @@ document.getElementById("registerBtn").onclick = async () => {
 
 document.getElementById("loginBtn").onclick = async () => {
 
-    const email = document.getElementById("loginEmail").value;
+    const phone = document.getElementById("loginEmail").value;
 
     const password = document.getElementById("loginPassword").value;
 
@@ -539,13 +539,13 @@ document.getElementById("loginBtn").onclick = async () => {
             method: "POST",
 
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
 
             body: JSON.stringify({
-                email,
-                password
-            })
+                phone,
+                password,
+            }),
 
         });
 
@@ -566,27 +566,26 @@ document.getElementById("loginBtn").onclick = async () => {
 
         currentUser = data.user;
 
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(currentUser));
 
         log("✅ Login Successful");
 
         // Socket Connect
         connectSocket();
 
-socket.on("connect", async () => {
+        socket.on("connect", async () => {
 
-    socket.emit("setup", currentUser);
+            socket.emit("setup", currentUser);
 
-    document.getElementById("onlineStatus").innerHTML = "🟢 Online";
+            document.getElementById("onlineStatus").innerHTML = "🟢 Online";
 
-    log("🟢 User Connected");
+            log("🟢 User Connected");
 
-    await loadChats();
+            await loadChats();
 
-});
+        });
 
-    }
-    catch (err) {
+    } catch (err) {
 
         log("❌ " + err.message);
 
