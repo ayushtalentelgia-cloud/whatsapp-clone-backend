@@ -480,7 +480,7 @@ document.getElementById("registerBtn").onclick = async () => {
 
     const name = document.getElementById("registerName").value;
 
-    const email = document.getElementById("registerEmail").value;
+    const phone = document.getElementById("registerEmail").value;
 
     const password = document.getElementById("registerPassword").value;
 
@@ -496,7 +496,8 @@ document.getElementById("registerBtn").onclick = async () => {
 
             body: JSON.stringify({
                 name,
-                email,
+                phone,
+                email: phone + "@chat.com",
                 password,
             }),
 
