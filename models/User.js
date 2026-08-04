@@ -8,6 +8,14 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
+    // Mobile Number
+    phone: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+
     email: {
       type: String,
       required: true,
@@ -32,6 +40,4 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
-
-module.exports = User;
+module.exports = mongoose.model("User", userSchema);

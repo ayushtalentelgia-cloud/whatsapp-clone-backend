@@ -84,6 +84,73 @@ const allMessages = async (req, res) => {
     }
 };
 
+// ================= Mark Message As Delivered =================
+
+const markMessageAsDelivered = async (req, res) => {
+
+    try {
+
+        const { messageId } = req.params;
+
+        let message = await Message.findByIdAndUpdate(
+
+            messageId,
+
+            {
+                delivered: true,
+                deliveredAt: new Date(),
+            },
+
+            {
+                new: true,
+            }
+
+        )
+            .populate("sender", "-password")
+            .populate({
+                path: "chat",
+                populate: {
+                    path: "users",
+                    select: "-password",
+                },
+            });
+
+        if (!message) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Message not found",
+            });
+
+        }
+
+        const io = getIO();
+
+        // Sirf sender ko notify karo
+        io.to(message.sender._id.toString()).emit("message delivered", message);
+
+        console.log("✅ Message Delivered Event Sent");
+
+        res.status(200).json({
+
+            success: true,
+            message: "Message marked as delivered",
+            data: message,
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+            message: error.message,
+
+        });
+
+    }
+
+};
 // ================= MARK MESSAGE AS SEEN (REST fallback) =================
 // Used when opening a chat with older unseen messages.
 // Real-time "seen" during an active chat goes through the socket event instead.

@@ -5,21 +5,23 @@ const jwt = require("jsonwebtoken");
 // ================= Register User =================
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, phone, email, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (!name || !phone || !email || !password) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({
+      $or: [{ email }, { phone }],
+    });
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "Email already registered",
+        message: "Email or Phone already registered",
       });
     }
 
@@ -27,6 +29,7 @@ const registerUser = async (req, res) => {
 
     const user = await User.create({
       name,
+      phone,
       email,
       password: hashedPassword,
     });
@@ -49,19 +52,26 @@ const registerUser = async (req, res) => {
 // ================= Login User =================
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, phone, password } = req.body;
 
-    if (!email || !password) {
+    // Email ya Phone me se ek aur Password required
+    if ((!email && !phone) || !password) {
       return res.status(400).json({
         success: false,
-        message: "Email and Password are required",
+        message: "Email or Phone and Password are required",
       });
     }
 
-    const user = await User.findOne({ email });
+    let user;
+
+    if (email) {
+      user = await User.findOne({ email });
+    } else {
+      user = await User.findOne({ phone });
+    }
 
     if (!user) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: "User not found",
       });
