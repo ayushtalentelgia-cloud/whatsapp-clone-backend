@@ -131,6 +131,8 @@ data.users.forEach(user => {
 
 async function createOrOpenChat(user, event) {
 
+    console.log("Clicked User :", user);
+
     try {
 
         const res = await fetch(API_URL + "/chat", {
@@ -138,39 +140,35 @@ async function createOrOpenChat(user, event) {
             method: "POST",
 
             headers: {
-
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + token
-
             },
 
             body: JSON.stringify({
-
                 phone: user.phone
-
             })
 
         });
 
         const data = await res.json();
 
-        console.log("Create Chat Response :", data);
+        console.log("Response :", data);
 
         if (!data.success) {
-
             alert(data.message);
-
             return;
-
         }
 
-        // Remove previous active chat
+        // Highlight selected chat
         document.querySelectorAll(".chat-item").forEach(item => {
             item.classList.remove("active");
         });
 
-        // Highlight selected chat
-        event.currentTarget.classList.add("active");
+        if (event) {
+            event.currentTarget.classList.add("active");
+        }
+
+        console.log("Opening Chat...");
 
         openChat(data.chat);
 
@@ -178,7 +176,7 @@ async function createOrOpenChat(user, event) {
 
     catch (err) {
 
-        console.log("Create Chat Error :", err);
+        console.log(err);
 
     }
 
@@ -188,11 +186,21 @@ async function createOrOpenChat(user, event) {
 
 async function openChat(chat) {
 
+    console.log("OPEN CHAT =>", chat);
+
     selectedChat = chat;
 
     selectedUser = chat.users.find(
         user => user._id !== currentUser._id
     );
+
+    if (!selectedUser) {
+
+        console.log("Other User Not Found");
+
+        return;
+
+    }
 
     document.getElementById("chatName").innerHTML =
         selectedUser.name;
@@ -203,9 +211,13 @@ async function openChat(chat) {
     document.getElementById("onlineStatus").innerHTML =
         "Offline";
 
+    console.log("Joining Chat :", chat._id);
+
     socket.emit("join chat", chat._id);
 
-    loadMessages(chat._id);
+    await loadMessages(chat._id);
+
+    console.log("Chat Opened Successfully");
 
 }
 
