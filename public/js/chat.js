@@ -33,7 +33,7 @@ async function loadUsers() {
 
     try {
 
-        const res = await fetch(API_URL.replace("/chat", "/users"), {
+        const res = await fetch(API_URL + "/users", {
 
             headers: {
 
@@ -44,6 +44,14 @@ async function loadUsers() {
         });
 
         const data = await res.json();
+
+        if (!data.success) {
+
+            console.log(data);
+
+            return;
+
+        }
 
         const chatList = document.getElementById("chatList");
 
@@ -93,15 +101,15 @@ async function loadUsers() {
 
             div.onclick = (event) => {
 
-    document.querySelectorAll(".chat-item").forEach(item => {
-        item.classList.remove("active");
-    });
+                document.querySelectorAll(".chat-item").forEach(item => {
+                    item.classList.remove("active");
+                });
 
-    div.classList.add("active");
+                div.classList.add("active");
 
-    createOrOpenChat(user);
+                createOrOpenChat(user, event);
 
-};
+            };
 
             chatList.appendChild(div);
 
@@ -111,7 +119,7 @@ async function loadUsers() {
 
     catch (err) {
 
-        console.log(err);
+        console.log("Load Users Error :", err);
 
     }
 
