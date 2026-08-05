@@ -6,6 +6,7 @@ const { getIO } = require("../socket/socketManager");
 
 const sendMessage = async (req, res) => {
     try {
+
         const { content, chatId } = req.body;
 
         if (!content || !chatId) {
@@ -37,27 +38,32 @@ const sendMessage = async (req, res) => {
 
         const io = getIO();
 
-        // Emit only inside the chat room
+        // Send message to everyone in chat
         io.to(chatId).emit("message received", message);
 
-        console.log("📩 Real-Time Message Sent");
+        console.log("📩 Message Sent");
 
         return res.status(201).json({
             success: true,
             message,
         });
+
     } catch (error) {
+
         return res.status(500).json({
             success: false,
             message: error.message,
         });
+
     }
 };
 
 // ================= GET ALL MESSAGES =================
 
 const allMessages = async (req, res) => {
+
     try {
+
         const messages = await Message.find({
             chat: req.params.chatId,
         })
@@ -76,15 +82,19 @@ const allMessages = async (req, res) => {
             count: messages.length,
             messages,
         });
+
     } catch (error) {
+
         return res.status(500).json({
             success: false,
             message: error.message,
         });
+
     }
+
 };
 
-// ================= Mark Message As Delivered =================
+// ================= MARK MESSAGE DELIVERED =================
 
 const markMessageAsDelivered = async (req, res) => {
 
@@ -92,88 +102,24 @@ const markMessageAsDelivered = async (req, res) => {
 
         const { messageId } = req.params;
 
-        let message = await Message.findByIdAndUpdate(
-
-            messageId,
-
-            {
-                delivered: true,
-                deliveredAt: new Date(),
-            },
-
-            {
-                new: true,
-            }
-
-        )
-            .populate("sender", "-password")
-            .populate({
-                path: "chat",
-                populate: {
-                    path: "users",
-                    select: "-password",
-                },
-            });
-
-        if (!message) {
-
-            return res.status(404).json({
-                success: false,
-                message: "Message not found",
-            });
-
-        }
-
-        const io = getIO();
-
-        // Sirf sender ko notify karo
-        io.to(message.sender._id.toString()).emit("message delivered", message);
-
-        console.log("✅ Message Delivered Event Sent");
-
-        res.status(200).json({
-
-            success: true,
-            message: "Message marked as delivered",
-            data: message,
-
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-
-            success: false,
-            message: error.message,
-
-        });
-
-    }
-
-};
-// ================= MARK MESSAGE AS SEEN (REST fallback) =================
-// Used when opening a chat with older unseen messages.
-// Real-time "seen" during an active chat goes through the socket event instead.
-
-const markMessageAsSeen = async (req, res) => {
-    try {
-        const { messageId } = req.params;
-
         let message = await Message.findById(messageId);
 
         if (!message) {
+
             return res.status(404).json({
                 success: false,
                 message: "Message not found",
             });
+
         }
 
-        if (!message.seen) {
-            message.seen = true;
-            message.seenBy = req.user.id;
-            message.seenAt = new Date();
+        if (!message.delivered) {
+
+            message.delivered = true;
+            message.deliveredAt = new Date();
 
             await message.save();
+
         }
 
         message = await Message.findById(message._id)
@@ -188,24 +134,96 @@ const markMessageAsSeen = async (req, res) => {
 
         const io = getIO();
 
-        io.to(message.sender._id.toString()).emit("message seen", message);
+        io.to(message.sender._id.toString()).emit(
+            "message delivered",
+            message
+        );
 
-        console.log("👀 Message Seen (REST)");
+        console.log("✅ Message Delivered");
 
         return res.status(200).json({
             success: true,
             data: message,
         });
+
     } catch (error) {
+
         return res.status(500).json({
             success: false,
             message: error.message,
         });
+
     }
+
+};
+
+// ================= MARK MESSAGE SEEN =================
+
+const markMessageAsSeen = async (req, res) => {
+
+    try {
+
+        const { messageId } = req.params;
+
+        let message = await Message.findById(messageId);
+
+        if (!message) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Message not found",
+            });
+
+        }
+
+        if (!message.seen) {
+
+            message.seen = true;
+            message.seenBy = req.user.id;
+            message.seenAt = new Date();
+
+            await message.save();
+
+        }
+
+        message = await Message.findById(message._id)
+            .populate("sender", "-password")
+            .populate({
+                path: "chat",
+                populate: {
+                    path: "users",
+                    select: "-password",
+                },
+            });
+
+        const io = getIO();
+
+        io.to(message.sender._id.toString()).emit(
+            "message seen",
+            message
+        );
+
+        console.log("👀 Message Seen");
+
+        return res.status(200).json({
+            success: true,
+            data: message,
+        });
+
+    } catch (error) {
+
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+
+    }
+
 };
 
 module.exports = {
     sendMessage,
     allMessages,
+    markMessageAsDelivered,
     markMessageAsSeen,
 };
