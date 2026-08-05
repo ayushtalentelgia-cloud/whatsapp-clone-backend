@@ -57,15 +57,17 @@ async function loadUsers() {
 
         chatList.innerHTML = "";
 
-        data.users.forEach(user => {
+data.users.forEach(user => {
 
-            if (user._id === currentUser._id) return;
+    console.log("USER =>", user);
 
-            const avatar = user.name.charAt(0).toUpperCase();
+    if (user._id === currentUser._id) return;
 
-            const div = document.createElement("div");
+    const avatar = user.name.charAt(0).toUpperCase();
 
-            div.className = "chat-item";
+    const div = document.createElement("div");
+
+    div.className = "chat-item";
 
             div.innerHTML = `
 
@@ -144,13 +146,15 @@ async function createOrOpenChat(user, event) {
 
             body: JSON.stringify({
 
-                userId: user._id
+                phone: user.phone
 
             })
 
         });
 
         const data = await res.json();
+
+        console.log("Create Chat Response :", data);
 
         if (!data.success) {
 
@@ -160,7 +164,7 @@ async function createOrOpenChat(user, event) {
 
         }
 
-        // Remove old active chat
+        // Remove previous active chat
         document.querySelectorAll(".chat-item").forEach(item => {
             item.classList.remove("active");
         });
@@ -174,7 +178,7 @@ async function createOrOpenChat(user, event) {
 
     catch (err) {
 
-        console.log(err);
+        console.log("Create Chat Error :", err);
 
     }
 
