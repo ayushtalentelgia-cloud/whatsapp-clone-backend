@@ -1,109 +1,226 @@
+/* =========================================
+   WhatsApp Yellow Theme - Auth
+========================================= */
+
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family:'Segoe UI',sans-serif;
 }
 
 body{
-    background:#111b21;
+
+    background:#0d0d0d;
+
     display:flex;
+
     justify-content:center;
+
     align-items:center;
+
     height:100vh;
+
 }
 
 .container{
+
     width:100%;
+
     display:flex;
+
     justify-content:center;
+
     align-items:center;
+
 }
 
 .login-card{
-    width:400px;
-    background:#202c33;
-    padding:40px;
-    border-radius:15px;
-    box-shadow:0 10px 30px rgba(0,0,0,.4);
+
+    width:420px;
+
+    background:#151515;
+
+    padding:45px;
+
+    border-radius:20px;
+
+    border:1px solid #2a2a2a;
+
+    box-shadow:0 0 30px rgba(255,214,0,.08);
+
     text-align:center;
+
 }
 
 .logo{
-    width:80px;
-    height:80px;
-    background:#25D366;
+
+    width:90px;
+
+    height:90px;
+
+    background:#FFD600;
+
     border-radius:50%;
+
     display:flex;
+
     justify-content:center;
+
     align-items:center;
-    font-size:40px;
+
+    font-size:42px;
+
+    color:#111;
+
     margin:auto;
-    margin-bottom:20px;
+
+    margin-bottom:25px;
+
+    box-shadow:0 0 20px rgba(255,214,0,.25);
+
 }
 
 .login-card h1{
-    color:#fff;
+
+    color:#FFD600;
+
+    font-size:38px;
+
     margin-bottom:10px;
+
 }
 
 .subtitle{
-    color:#b1b3b5;
-    margin-bottom:30px;
+
+    color:#999;
+
+    margin-bottom:35px;
+
+    font-size:16px;
+
 }
 
 .login-card input{
+
     width:100%;
-    padding:15px;
+
+    padding:16px;
+
     margin-bottom:18px;
-    border:none;
-    border-radius:10px;
+
+    border:1px solid #333;
+
+    border-radius:12px;
+
     outline:none;
-    background:#2a3942;
+
+    background:#232323;
+
     color:#fff;
+
     font-size:16px;
+
+    transition:.3s;
+
 }
 
 .login-card input::placeholder{
-    color:#b1b3b5;
+
+    color:#777;
+
+}
+
+.login-card input:focus{
+
+    border-color:#FFD600;
+
+    box-shadow:0 0 10px rgba(255,214,0,.25);
+
 }
 
 .login-card button{
+
     width:100%;
-    padding:15px;
+
+    padding:16px;
+
     border:none;
-    border-radius:10px;
-    background:#25D366;
-    color:white;
+
+    border-radius:12px;
+
+    background:#FFD600;
+
+    color:#111;
+
     font-size:17px;
+
+    font-weight:700;
+
     cursor:pointer;
+
     transition:.3s;
+
 }
 
 .login-card button:hover{
-    background:#1ebe5d;
+
+    background:#ffe54d;
+
+    transform:translateY(-2px);
+
 }
 
 .bottom-text{
-    margin-top:25px;
-    color:#d1d7db;
+
+    margin-top:28px;
+
+    color:#999;
+
+    font-size:15px;
+
 }
 
 .bottom-text a{
-    color:#25D366;
+
+    color:#FFD600;
+
     text-decoration:none;
-    font-weight:bold;
+
+    font-weight:700;
+
 }
 
 .bottom-text a:hover{
-    text-decoration:underline;
+
+    color:#fff176;
+
 }
 
 @media(max-width:500px){
 
 .login-card{
-    width:90%;
-    padding:25px;
+
+    width:92%;
+
+    padding:30px;
+
+}
+
+.login-card h1{
+
+    font-size:30px;
+
+}
+
+.logo{
+
+    width:80px;
+
+    height:80px;
+
+    font-size:36px;
+
 }
 
 }
