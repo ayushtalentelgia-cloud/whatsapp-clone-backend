@@ -198,6 +198,9 @@ async function createOrOpenChat(user, event) {
 
 async function openChat(chat) {
 
+    console.log("OPEN CHAT CALLED");
+console.log(chat);
+
     console.log("OPEN CHAT =>", chat);
 
     if (!chat) {
