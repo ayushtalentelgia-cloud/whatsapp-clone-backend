@@ -46,6 +46,7 @@ if (signupForm) {
 
                 alert("✅ Account Created Successfully");
 
+                // Signup ke baad login page par bhejo
                 window.location.href = "/index.html";
 
             } else {
@@ -56,7 +57,7 @@ if (signupForm) {
 
         } catch (err) {
 
-            console.log(err);
+            console.error(err);
 
             alert("Server Error");
 
@@ -86,13 +87,9 @@ if (loginForm) {
         };
 
         if (loginValue.includes("@")) {
-
             body.email = loginValue;
-
         } else {
-
             body.phone = loginValue;
-
         }
 
         try {
@@ -118,7 +115,8 @@ if (loginForm) {
 
                 alert("✅ Login Successful");
 
-                window.location.href = "/chat-tester.html";
+                // Login ke baad direct WhatsApp UI
+                window.location.href = "/chat.html";
 
             } else {
 
@@ -128,7 +126,7 @@ if (loginForm) {
 
         } catch (err) {
 
-            console.log(err);
+            console.error(err);
 
             alert("Server Error");
 
