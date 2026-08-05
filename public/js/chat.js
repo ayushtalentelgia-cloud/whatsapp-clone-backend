@@ -27,16 +27,20 @@ document.getElementById("logoutBtn").onclick = () => {
     window.location.href = "/index.html";
 };
 
-// ================= Load Chats =================
+// ================= LOAD ALL USERS =================
 
-async function loadChats() {
+async function loadUsers() {
 
     try {
 
-        const res = await fetch(API_URL + "/chat", {
+        const res = await fetch(API_URL.replace("/chat", "/users"), {
+
             headers: {
+
                 Authorization: "Bearer " + token
+
             }
+
         });
 
         const data = await res.json();
@@ -45,54 +49,77 @@ async function loadChats() {
 
         chatList.innerHTML = "";
 
-        data.chats.forEach(chat => {
+        data.users.forEach(user => {
 
-            const otherUser = chat.users.find(
-                user => user._id !== currentUser._id
-            );
+            if (user._id === currentUser._id) return;
 
-            const lastMessage = chat.latestMessage
-                ? chat.latestMessage.content
-                : "Start Conversation";
-
-            const avatar = otherUser.name.charAt(0).toUpperCase();
+            const avatar = user.name.charAt(0).toUpperCase();
 
             const div = document.createElement("div");
 
             div.className = "chat-item";
 
             div.innerHTML = `
+
                 <div class="chat-avatar">
+
                     ${avatar}
+
                 </div>
 
                 <div class="chat-details">
-                    <h4>${otherUser.name}</h4>
-                    <p>${lastMessage}</p>
+
+                    <div class="chat-details-top">
+
+                        <h4>${user.name}</h4>
+
+                    </div>
+
+                    <div class="chat-message">
+
+                        ${user.phone}
+
+                    </div>
+
                 </div>
+
+                <div class="chat-right">
+
+                    <div class="online-dot"></div>
+
+                </div>
+
             `;
 
-            div.onclick = () => openChat(chat);
+            div.onclick = (event) => {
+
+    document.querySelectorAll(".chat-item").forEach(item => {
+        item.classList.remove("active");
+    });
+
+    div.classList.add("active");
+
+    createOrOpenChat(user);
+
+};
 
             chatList.appendChild(div);
 
         });
 
-    } catch (err) {
-        console.log(err);
     }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
+
 }
 
-// ================= Create Chat =================
+// ================= CREATE OR OPEN CHAT =================
 
-document.getElementById("createChatBtn").onclick = async () => {
-
-    const phone = document.getElementById("searchPhone").value.trim();
-
-    if (!phone) {
-        alert("Enter Phone Number");
-        return;
-    }
+async function createOrOpenChat(user, event) {
 
     try {
 
@@ -107,30 +134,43 @@ document.getElementById("createChatBtn").onclick = async () => {
 
             },
 
-            body: JSON.stringify({ phone })
+            body: JSON.stringify({
+
+                userId: user._id
+
+            })
 
         });
 
         const data = await res.json();
 
         if (!data.success) {
+
             alert(data.message);
+
             return;
+
         }
 
-        document.getElementById("searchPhone").value = "";
+        // Remove old active chat
+        document.querySelectorAll(".chat-item").forEach(item => {
+            item.classList.remove("active");
+        });
 
-        await loadChats();
+        // Highlight selected chat
+        event.currentTarget.classList.add("active");
 
         openChat(data.chat);
 
-    } catch (err) {
+    }
+
+    catch (err) {
 
         console.log(err);
 
     }
 
-};
+}
 
 // ================= Open Chat =================
 
@@ -193,9 +233,11 @@ async function loadMessages(chatId) {
 
 }
 
-// ================= Add Message =================
+// ================= ADD MESSAGE =================
 
 function addMessage(message) {
+
+    const messages = document.getElementById("messages");
 
     const div = document.createElement("div");
 
@@ -211,11 +253,35 @@ function addMessage(message) {
 
     }
 
-    div.innerHTML = `
-        <div>${message.content}</div>
-    `;
+    const time = new Date(
 
-    const messages = document.getElementById("messages");
+        message.createdAt || Date.now()
+
+    ).toLocaleTimeString([], {
+
+        hour: "2-digit",
+
+        minute: "2-digit"
+
+    });
+
+    div.innerHTML = `
+
+        <div class="message-text">
+
+            ${message.content}
+
+        </div>
+
+        <span class="message-time">
+
+            ${time}
+
+            ${message.sender._id === currentUser._id ? "✓✓" : ""}
+
+        </span>
+
+    `;
 
     messages.appendChild(div);
 
@@ -278,11 +344,13 @@ async function sendMessage() {
 
 document.getElementById("sendBtn").onclick = sendMessage;
 
-// ================= Enter Key =================
+// ================= ENTER KEY =================
 
-document.getElementById("messageInput").addEventListener("keypress", function (e) {
+document.getElementById("messageInput").addEventListener("keydown", (e) => {
 
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
+
+        e.preventDefault();
 
         sendMessage();
 
@@ -290,7 +358,7 @@ document.getElementById("messageInput").addEventListener("keypress", function (e
 
 });
 
-// ================= Typing =================
+// ================= TYPING =================
 
 document.getElementById("messageInput").addEventListener("input", () => {
 
@@ -390,7 +458,69 @@ socket.on("connected", () => {
     console.log("Socket Connected");
 
 });
+// ================= SEARCH USERS =================
+
+const searchInput = document.getElementById("searchUser");
+
+if (searchInput) {
+
+    searchInput.addEventListener("keyup", function () {
+
+        const value = this.value.toLowerCase();
+
+        const users = document.querySelectorAll(".chat-item");
+
+        users.forEach(item => {
+
+            const name = item.querySelector("h4").innerText.toLowerCase();
+
+            if (name.includes(value)) {
+
+                item.style.display = "flex";
+
+            } else {
+
+                item.style.display = "none";
+
+            }
+
+        });
+
+    });
+
+}
+// ================= SEARCH USERS =================
+
+const searchUser = document.getElementById("searchUser");
+
+if (searchUser) {
+
+    searchUser.addEventListener("keyup", function () {
+
+        const value = this.value.toLowerCase();
+
+        const chats = document.querySelectorAll(".chat-item");
+
+        chats.forEach(chat => {
+
+            const name = chat.querySelector("h4").innerText.toLowerCase();
+
+            if (name.includes(value)) {
+
+                chat.style.display = "flex";
+
+            } else {
+
+                chat.style.display = "none";
+
+            }
+
+        });
+
+    });
+
+}
 
 // ================= Start =================
 
-loadChats();
+loadUsers();

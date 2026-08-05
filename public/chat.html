@@ -11,61 +11,97 @@
 
     <link rel="stylesheet" href="/css/chat.css">
 
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
 </head>
 
 <body>
 
 <div class="app">
 
-    <!-- ================= LEFT SIDEBAR ================= -->
+    <!-- ================= SIDEBAR ================= -->
 
     <div class="sidebar">
 
+        <!-- Header -->
+
         <div class="sidebar-header">
 
-            <h2>WhatsApp</h2>
+            <h1>Chats</h1>
 
-            <button id="logoutBtn">
-                Logout
-            </button>
+            <div class="header-icons">
+
+                <button class="icon-btn">
+                    <i class="fas fa-ellipsis-h"></i>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="fas fa-camera"></i>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="fas fa-plus"></i>
+                </button>
+
+            </div>
 
         </div>
 
-        <!-- Search User -->
+        <!-- Search -->
 
-        <div class="search">
+        <div class="search-box">
+
+            <i class="fas fa-search"></i>
 
             <input
                 type="text"
                 id="searchUser"
-                placeholder="Search User..."
+                placeholder="Search users..."
             >
 
         </div>
 
-        <!-- User List -->
+        <!-- Filters -->
 
-        <div id="chatList">
+        <div class="filters">
+
+            <button class="active">All</button>
+
+            <button>Unread</button>
+
+            <button>Groups</button>
+
+        </div>
+
+        <!-- Users -->
+
+        <div
+            id="chatList"
+            class="chat-list"
+        >
 
         </div>
 
     </div>
 
-    <!-- ================= RIGHT SIDE ================= -->
+    <!-- ================= CHAT AREA ================= -->
 
-    <div class="chat-area">
+    <div class="chat-section">
 
         <!-- Header -->
 
         <div class="chat-header">
 
-            <div class="user-info">
+            <div class="chat-user">
 
                 <div
                     class="avatar"
                     id="userAvatar"
                 >
+
                     👤
+
                 </div>
 
                 <div>
@@ -76,13 +112,29 @@
 
                     </h3>
 
-                    <small id="onlineStatus">
+                    <span id="onlineStatus">
 
                         Offline
 
-                    </small>
+                    </span>
 
                 </div>
+
+            </div>
+
+            <div class="chat-actions">
+
+                <button>
+                    <i class="fas fa-phone"></i>
+                </button>
+
+                <button>
+                    <i class="fas fa-video"></i>
+                </button>
+
+                <button>
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
 
             </div>
 
@@ -97,23 +149,31 @@
 
         </div>
 
-        <!-- Message Box -->
+        <!-- Message Input -->
 
-        <div class="message-box">
+        <div class="message-input">
+
+            <button type="button">
+                <i class="far fa-face-smile"></i>
+            </button>
+
+            <button type="button">
+                <i class="fas fa-paperclip"></i>
+            </button>
 
             <input
-
                 type="text"
-
                 id="messageInput"
-
                 placeholder="Type a message..."
-
             >
 
-            <button id="sendBtn">
+            <button
+                id="sendBtn"
+                class="send-btn"
+                type="button"
+            >
 
-                Send
+                <i class="fas fa-paper-plane"></i>
 
             </button>
 
@@ -122,6 +182,15 @@
     </div>
 
 </div>
+
+<button
+    id="logoutBtn"
+    class="logout-btn"
+>
+
+    <i class="fas fa-right-from-bracket"></i>
+
+</button>
 
 <script src="/socket.io/socket.io.js"></script>
 
