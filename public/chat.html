@@ -15,116 +15,117 @@
 
 <body>
 
-    <div class="app">
+<div class="app">
 
-        <!-- ================= LEFT SIDEBAR ================= -->
+    <!-- ================= LEFT SIDEBAR ================= -->
 
-        <div class="sidebar">
+    <div class="sidebar">
 
-            <div class="sidebar-header">
+        <div class="sidebar-header">
 
-                <h2>WhatsApp</h2>
+            <h2>WhatsApp</h2>
 
-                <button id="logoutBtn">
-                    Logout
-                </button>
-
-            </div>
-
-            <!-- Search User -->
-
-            <div class="search">
-
-                <input
-                    type="text"
-                    id="searchPhone"
-                    placeholder="Enter Phone Number"
-                >
-
-                <button id="createChatBtn">
-                    Start Chat
-                </button>
-
-            </div>
-
-            <!-- Chat List -->
-
-            <div id="chatList">
-
-            </div>
+            <button id="logoutBtn">
+                Logout
+            </button>
 
         </div>
 
-        <!-- ================= RIGHT SIDE ================= -->
+        <!-- Search User -->
 
-        <div class="chat-area">
+        <div class="search">
 
-            <!-- Header -->
-
-            <div class="chat-header">
-
-                <div class="user-info">
-
-                    <div class="avatar" id="userAvatar">
-
-                        👤
-
-                    </div>
-
-                    <div>
-
-                        <h3 id="chatName">
-
-                            Select Chat
-
-                        </h3>
-
-                        <small id="onlineStatus">
-
-                            Offline
-
-                        </small>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Messages -->
-
-            <div
-                class="messages"
-                id="messages"
+            <input
+                type="text"
+                id="searchUser"
+                placeholder="Search User..."
             >
 
-            </div>
+        </div>
 
-            <!-- Message Box -->
+        <!-- User List -->
 
-            <div class="message-box">
-
-                <input
-                    type="text"
-                    id="messageInput"
-                    placeholder="Type a message..."
-                >
-
-                <button id="sendBtn">
-
-                    Send
-
-                </button>
-
-            </div>
+        <div id="chatList">
 
         </div>
 
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <!-- ================= RIGHT SIDE ================= -->
 
-    <script src="/js/chat.js"></script>
+    <div class="chat-area">
+
+        <!-- Header -->
+
+        <div class="chat-header">
+
+            <div class="user-info">
+
+                <div
+                    class="avatar"
+                    id="userAvatar"
+                >
+                    👤
+                </div>
+
+                <div>
+
+                    <h3 id="chatName">
+
+                        Select User
+
+                    </h3>
+
+                    <small id="onlineStatus">
+
+                        Offline
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Messages -->
+
+        <div
+            class="messages"
+            id="messages"
+        >
+
+        </div>
+
+        <!-- Message Box -->
+
+        <div class="message-box">
+
+            <input
+
+                type="text"
+
+                id="messageInput"
+
+                placeholder="Type a message..."
+
+            >
+
+            <button id="sendBtn">
+
+                Send
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script src="/js/chat.js"></script>
 
 </body>
 

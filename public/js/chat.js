@@ -280,9 +280,9 @@ document.getElementById("sendBtn").onclick = sendMessage;
 
 // ================= Enter Key =================
 
-document.getElementById("messageInput").addEventListener("keypress", function(e){
+document.getElementById("messageInput").addEventListener("keypress", function (e) {
 
-    if(e.key==="Enter"){
+    if (e.key === "Enter") {
 
         sendMessage();
 
