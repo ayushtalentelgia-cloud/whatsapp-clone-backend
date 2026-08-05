@@ -131,7 +131,15 @@ data.users.forEach(user => {
 
 async function createOrOpenChat(user, event) {
 
-    console.log("Clicked User :", user);
+    console.log("Clicked User =>", user);
+
+    if (!user || !user.phone) {
+
+        alert("Phone Number Not Found");
+
+        return;
+
+    }
 
     try {
 
@@ -140,26 +148,32 @@ async function createOrOpenChat(user, event) {
             method: "POST",
 
             headers: {
+
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + token
+
             },
 
             body: JSON.stringify({
+
                 phone: user.phone
+
             })
 
         });
 
         const data = await res.json();
 
-        console.log("Response :", data);
+        console.log("Create Chat Response =>", data);
 
         if (!data.success) {
+
             alert(data.message);
+
             return;
+
         }
 
-        // Highlight selected chat
         document.querySelectorAll(".chat-item").forEach(item => {
             item.classList.remove("active");
         });
@@ -168,15 +182,13 @@ async function createOrOpenChat(user, event) {
             event.currentTarget.classList.add("active");
         }
 
-        console.log("Opening Chat...");
-
         openChat(data.chat);
 
     }
 
     catch (err) {
 
-        console.log(err);
+        console.log("Create Chat Error =>", err);
 
     }
 
@@ -187,6 +199,22 @@ async function createOrOpenChat(user, event) {
 async function openChat(chat) {
 
     console.log("OPEN CHAT =>", chat);
+
+    if (!chat) {
+
+        console.log("Chat Not Found");
+
+        return;
+
+    }
+
+    if (!chat.users) {
+
+        console.log("Users Missing In Chat");
+
+        return;
+
+    }
 
     selectedChat = chat;
 
@@ -211,7 +239,7 @@ async function openChat(chat) {
     document.getElementById("onlineStatus").innerHTML =
         "Offline";
 
-    console.log("Joining Chat :", chat._id);
+    console.log("Joining Chat =>", chat._id);
 
     socket.emit("join chat", chat._id);
 
@@ -224,6 +252,8 @@ async function openChat(chat) {
 // ================= Load Messages =================
 
 async function loadMessages(chatId) {
+
+    console.log("Loading Messages For =>", chatId);
 
     try {
 
@@ -239,9 +269,36 @@ async function loadMessages(chatId) {
 
         const data = await res.json();
 
+        console.log("Messages Response =>", data);
+
         const messages = document.getElementById("messages");
 
         messages.innerHTML = "";
+
+        if (!data.success) {
+
+            console.log("Failed To Load Messages");
+
+            return;
+
+        }
+
+        if (data.messages.length === 0) {
+
+            messages.innerHTML = `
+                <div style="
+                    color:#888;
+                    text-align:center;
+                    margin-top:40px;
+                    font-size:18px;
+                ">
+                    No Messages Yet
+                </div>
+            `;
+
+            return;
+
+        }
 
         data.messages.forEach(message => {
 
@@ -249,9 +306,11 @@ async function loadMessages(chatId) {
 
         });
 
-    } catch (err) {
+    }
 
-        console.log(err);
+    catch (err) {
+
+        console.log("Load Messages Error =>", err);
 
     }
 
