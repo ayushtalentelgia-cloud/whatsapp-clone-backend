@@ -769,7 +769,35 @@ socket.on("message received", (message) => {
     }
 
 });
+// ================= MESSAGE EDITED =================
 
+socket.on("message edited", (message) => {
+
+    if (
+        selectedChat &&
+        selectedChat._id === message.chat._id
+    ) {
+
+        loadMessages(selectedChat._id);
+
+    }
+
+});
+
+// ================= MESSAGE DELETED =================
+
+socket.on("message deleted", (message) => {
+
+    if (
+        selectedChat &&
+        selectedChat._id === message.chat._id
+    ) {
+
+        loadMessages(selectedChat._id);
+
+    }
+
+});
 // ================= Online =================
 
 socket.on("user online", user => {
