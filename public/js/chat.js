@@ -101,17 +101,17 @@ data.users.forEach(user => {
 
             `;
 
-            div.onclick = (event) => {
+           div.onclick = () => {
 
-                document.querySelectorAll(".chat-item").forEach(item => {
-                    item.classList.remove("active");
-                });
+    document.querySelectorAll(".chat-item").forEach(item => {
+        item.classList.remove("active");
+    });
 
-                div.classList.add("active");
+    div.classList.add("active");
 
-                createOrOpenChat(user, event);
+    createOrOpenChat(user);
 
-            };
+};
 
             chatList.appendChild(div);
 
@@ -129,7 +129,7 @@ data.users.forEach(user => {
 
 // ================= CREATE OR OPEN CHAT =================
 
-async function createOrOpenChat(user, event) {
+async function createOrOpenChat(user) {
 
     console.log("Clicked User =>", user);
 
@@ -166,8 +166,6 @@ async function createOrOpenChat(user, event) {
 
         console.log("Create Chat Response =>", data);
 
-        alert(JSON.stringify(data));
-
         if (!data.success) {
 
             alert(data.message);
@@ -176,14 +174,7 @@ async function createOrOpenChat(user, event) {
 
         }
 
-        document.querySelectorAll(".chat-item").forEach(item => {
-            item.classList.remove("active");
-        });
-
-        if (event) {
-            event.currentTarget.classList.add("active");
-        }
-
+        // Open Chat
         openChat(data.chat);
 
     }
