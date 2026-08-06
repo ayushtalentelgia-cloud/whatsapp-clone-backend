@@ -166,6 +166,8 @@ async function createOrOpenChat(user, event) {
 
         console.log("Create Chat Response =>", data);
 
+        alert(JSON.stringify(data));
+
         if (!data.success) {
 
             alert(data.message);
