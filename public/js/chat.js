@@ -437,9 +437,10 @@ function addMessage(message) {
 
     // Can Edit/Delete only within 5 Minutes
     const canEdit =
-        isMine &&
-        (Date.now() - new Date(message.createdAt).getTime()) <
-            5 * 60 * 1000;
+    isMine &&
+    !message.deleted &&
+    (Date.now() - new Date(message.createdAt).getTime()) <
+    5 * 60 * 1000;
 
             console.log("isMine =", isMine);
 console.log("createdAt =", message.createdAt);
@@ -482,7 +483,10 @@ console.log("canEdit =", canEdit);
 
         <div class="message-text">
 
-            ${message.content}
+            ${message.deleted
+    ? "<i>This message was deleted</i>"
+    : message.content
+}
 
         </div>
 
