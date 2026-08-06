@@ -244,19 +244,29 @@ async function loadChats() {
 
     try {
 
-        const res = await fetch(API_URL + "/chat", {
+        const [chatRes, contactRes] = await Promise.all([
 
-            headers: {
-                Authorization: "Bearer " + token
-            }
+            fetch(API_URL + "/chat", {
+                headers: {
+                    Authorization: "Bearer " + token
+                }
+            }),
 
-        });
+            fetch(API_URL + "/users/contacts", {
+                headers: {
+                    Authorization: "Bearer " + token
+                }
+            })
 
-        const data = await res.json();
+        ]);
 
-        if (!data.success) {
+        const chatData = await chatRes.json();
 
-            console.log(data.message);
+        const contactData = await contactRes.json();
+
+        if (!chatData.success) {
+
+            console.log(chatData.message);
 
             return;
 
@@ -266,13 +276,19 @@ async function loadChats() {
 
         chatList.innerHTML = "";
 
-        data.chats.forEach(chat => {
+        const openedUsers = [];
+
+        // ================= RECENT CHATS =================
+
+        chatData.chats.forEach(chat => {
 
             const otherUser = chat.users.find(
                 user => user._id !== currentUser._id
             );
 
             if (!otherUser) return;
+
+            openedUsers.push(otherUser._id);
 
             const avatar = otherUser.name.charAt(0).toUpperCase();
 
@@ -292,8 +308,11 @@ async function loadChats() {
             div.className = "chat-item";
 
             div.innerHTML = `
+
                 <div class="chat-avatar">
+
                     ${avatar}
+
                 </div>
 
                 <div class="chat-details">
@@ -302,34 +321,114 @@ async function loadChats() {
 
                         <h4>${otherUser.name}</h4>
 
-                        <span>${time}</span>
+                        <span class="chat-time">${time}</span>
 
                     </div>
 
                     <div class="chat-message">
+
                         ${lastMessage}
+
                     </div>
 
                 </div>
+
             `;
 
-            div.addEventListener("click", async () => {
+            div.onclick = async () => {
 
                 document.querySelectorAll(".chat-item").forEach(item => {
+
                     item.classList.remove("active");
+
                 });
 
                 div.classList.add("active");
 
                 await openChat(chat);
 
-            });
+            };
 
             chatList.appendChild(div);
 
         });
 
-    } catch (err) {
+        // ================= SAVED CONTACTS =================
+
+        if (contactData.success) {
+
+            contactData.contacts.forEach(contact => {
+
+                if (
+                    contact.user &&
+                    !openedUsers.includes(contact.user._id)
+                ) {
+
+                    const avatar = contact.name.charAt(0).toUpperCase();
+
+                    const div = document.createElement("div");
+
+                    div.className = "chat-item";
+
+                    div.innerHTML = `
+
+                        <div class="chat-avatar">
+
+                            ${avatar}
+
+                        </div>
+
+                        <div class="chat-details">
+
+                            <div class="chat-details-top">
+
+                                <h4>${contact.name}</h4>
+
+                            </div>
+
+                            <div class="chat-message">
+
+                                Start Conversation
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                    div.onclick = async () => {
+
+                        document.querySelectorAll(".chat-item").forEach(item => {
+
+                            item.classList.remove("active");
+
+                        });
+
+                        div.classList.add("active");
+
+                        await createOrOpenChat({
+
+                            _id: contact.user._id,
+
+                            name: contact.name,
+
+                            phone: contact.phone
+
+                        });
+
+                    };
+
+                    chatList.appendChild(div);
+
+                }
+
+            });
+
+        }
+
+    }
+
+    catch (err) {
 
         console.log("Load Chats Error :", err);
 
@@ -431,7 +530,7 @@ async function openChat(chat) {
         selectedUser.name.charAt(0).toUpperCase();
 
     document.getElementById("onlineStatus").innerHTML =
-        "Offline";
+    "🟡 Checking...";
 
     // ===== Clear Old Messages =====
 
@@ -1003,41 +1102,25 @@ if (searchUser) {
 
     searchUser.addEventListener("input", function () {
 
-        const value = this.value.toLowerCase();
-
-        document.querySelectorAll(".chat-item").forEach(chat => {
-
-            const name = chat.querySelector("h4").innerText.toLowerCase();
-
-            const phone = chat.querySelector(".chat-message").innerText.toLowerCase();
-
-            chat.style.display =
-                name.includes(value) || phone.includes(value)
-                    ? "flex"
-                    : "none";
-
-        });
-
-    });
-
-}
-// ================= SEARCH USERS =================
-
-const searchUser = document.getElementById("searchUser");
-
-if (searchUser) {
-
-    searchUser.addEventListener("keyup", function () {
-
-        const value = this.value.toLowerCase();
+        const value = this.value.trim().toLowerCase();
 
         const chats = document.querySelectorAll(".chat-item");
 
         chats.forEach(chat => {
 
-            const name = chat.querySelector("h4").innerText.toLowerCase();
+            const name = chat.querySelector("h4")
+                ? chat.querySelector("h4").innerText.toLowerCase()
+                : "";
 
-            if (name.includes(value)) {
+            const phone = chat.querySelector(".chat-message")
+                ? chat.querySelector(".chat-message").innerText.toLowerCase()
+                : "";
+
+            if (
+                value === "" ||
+                name.includes(value) ||
+                phone.includes(value)
+            ) {
 
                 chat.style.display = "flex";
 
