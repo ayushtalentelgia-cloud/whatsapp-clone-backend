@@ -412,11 +412,9 @@ function addMessage(message) {
 
     const messages = document.getElementById("messages");
 
-    // Remove "No Messages Yet" text if present
+    // Remove "No Messages Yet"
     const empty = document.getElementById("emptyMessages");
-    if (empty) {
-        empty.remove();
-    }
+    if (empty) empty.remove();
 
     // Prevent duplicate messages
     if (document.getElementById("msg-" + message._id)) {
@@ -424,40 +422,212 @@ function addMessage(message) {
     }
 
     const div = document.createElement("div");
+
     div.id = "msg-" + message._id;
+
     div.className = "message";
 
-    if (message.sender._id === currentUser._id) {
+    const isMine = message.sender._id === currentUser._id;
+
+    if (isMine) {
         div.classList.add("sent");
     } else {
         div.classList.add("received");
     }
 
+    // Can Edit/Delete only within 5 Minutes
+    const canEdit =
+        isMine &&
+        (Date.now() - new Date(message.createdAt).getTime()) <
+            5 * 60 * 1000;
+
     const time = new Date(
         message.createdAt || Date.now()
     ).toLocaleTimeString([], {
+
         hour: "2-digit",
         minute: "2-digit"
+
     });
 
     div.innerHTML = `
+
+        ${
+            canEdit
+                ? `
+        <div class="message-options">
+
+            ⋮
+
+            <div class="message-menu">
+
+                <button onclick="editMessage('${message._id}')">
+                    ✏ Edit
+                </button>
+
+                <button onclick="deleteMessage('${message._id}')">
+                    🗑 Delete
+                </button>
+
+            </div>
+
+        </div>
+        `
+                : ""
+        }
+
         <div class="message-text">
+
             ${message.content}
+
         </div>
 
         <span class="message-time">
+
             ${time}
-            ${message.sender._id === currentUser._id ? " ✓✓" : ""}
+
+            ${
+                message.edited
+                    ? '<span class="edited-label">(edited)</span>'
+                    : ""
+            }
+
+            ${isMine ? " ✓✓" : ""}
+
         </span>
+
     `;
+
+    // Toggle Menu
+    const option = div.querySelector(".message-options");
+
+    if (option) {
+
+        option.onclick = function (e) {
+
+            e.stopPropagation();
+
+            const menu = option.querySelector(".message-menu");
+
+            if (menu.style.display === "block") {
+
+                menu.style.display = "none";
+
+            } else {
+
+                menu.style.display = "block";
+
+            }
+
+        };
+
+    }
 
     messages.appendChild(div);
 
-    // Smooth Scroll
     messages.scrollTo({
+
         top: messages.scrollHeight,
+
         behavior: "smooth"
+
     });
+
+}
+
+// ================= EDIT MESSAGE =================
+
+async function editMessage(messageId) {
+
+    const newMessage = prompt("Edit your message");
+
+    if (!newMessage) return;
+
+    try {
+
+        const res = await fetch(API_URL + "/message/" + messageId, {
+
+            method: "PUT",
+
+            headers: {
+
+                "Content-Type": "application/json",
+
+                Authorization: "Bearer " + token
+
+            },
+
+            body: JSON.stringify({
+
+                content: newMessage
+
+            })
+
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+
+            alert(data.message);
+
+            return;
+
+        }
+
+        loadMessages(selectedChat._id);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
+
+}
+
+// ================= DELETE MESSAGE =================
+
+async function deleteMessage(messageId) {
+
+    const ok = confirm("Delete this message?");
+
+    if (!ok) return;
+
+    try {
+
+        const res = await fetch(API_URL + "/message/" + messageId, {
+
+            method: "DELETE",
+
+            headers: {
+
+                Authorization: "Bearer " + token
+
+            }
+
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+
+            alert(data.message);
+
+            return;
+
+        }
+
+        loadMessages(selectedChat._id);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
 
 }
 
