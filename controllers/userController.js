@@ -147,9 +147,126 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+// ================= ADD CONTACT =================
+
+const addContact = async (req, res) => {
+
+  try {
+
+    const { name, phone } = req.body;
+
+    if (!name || !phone) {
+
+      return res.status(400).json({
+        success: false,
+        message: "Name and Phone are required",
+      });
+
+    }
+
+    const contactUser = await User.findOne({ phone });
+
+    if (!contactUser) {
+
+      return res.status(404).json({
+        success: false,
+        message: "This phone number is not registered",
+      });
+
+    }
+
+    const user = await User.findById(req.user.id);
+
+    const alreadyExists = user.contacts.find(
+      contact => contact.phone === phone
+    );
+
+    if (alreadyExists) {
+
+      return res.status(400).json({
+        success: false,
+        message: "Contact already exists",
+      });
+
+    }
+
+    user.contacts.push({
+
+      name,
+      phone,
+      user: contactUser._id,
+
+    });
+
+    await user.save();
+
+    return res.status(201).json({
+
+      success: true,
+
+      message: "Contact Added Successfully",
+
+      contacts: user.contacts,
+
+    });
+
+  }
+
+  catch (error) {
+
+    return res.status(500).json({
+
+      success: false,
+
+      message: error.message,
+
+    });
+
+  }
+
+};
+
+
+// ================= GET CONTACTS =================
+
+const getContacts = async (req, res) => {
+
+  try {
+
+    const user = await User.findById(req.user.id)
+      .populate("contacts.user", "-password");
+
+    return res.status(200).json({
+
+      success: true,
+
+      count: user.contacts.length,
+
+      contacts: user.contacts,
+
+    });
+
+  }
+
+  catch (error) {
+
+    return res.status(500).json({
+
+      success: false,
+
+      message: error.message,
+
+    });
+
+  }
+
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getProfile,
   getAllUsers,
+  addContact,
+  getContacts,
 };

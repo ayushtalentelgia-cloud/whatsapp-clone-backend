@@ -27,6 +27,108 @@ document.getElementById("logoutBtn").onclick = () => {
     window.location.href = "/index.html";
 };
 
+// ================= CONTACT MODAL =================
+
+const addContactBtn = document.getElementById("addContactBtn");
+
+const contactModal = document.getElementById("contactModal");
+
+const closeContactBtn = document.getElementById("closeContactBtn");
+
+const saveContactBtn = document.getElementById("saveContactBtn");
+
+// Open Popup
+
+addContactBtn.onclick = () => {
+
+    contactModal.style.display = "flex";
+
+};
+
+// Close Popup
+
+closeContactBtn.onclick = () => {
+
+    contactModal.style.display = "none";
+
+};
+
+// Close on Background Click
+
+contactModal.onclick = (e) => {
+
+    if (e.target === contactModal) {
+
+        contactModal.style.display = "none";
+
+    }
+
+};
+
+// Save Contact
+
+saveContactBtn.onclick = async () => {
+
+    const name = document.getElementById("contactName").value.trim();
+
+    const phone = document.getElementById("contactPhone").value.trim();
+
+    if (!name || !phone) {
+
+        alert("Please enter Name and Phone");
+
+        return;
+
+    }
+
+    try {
+
+        const res = await fetch(API_URL + "/users/contact", {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type": "application/json",
+
+                Authorization: "Bearer " + token
+
+            },
+
+            body: JSON.stringify({
+
+                name,
+
+                phone
+
+            })
+
+        });
+
+        const data = await res.json();
+
+        alert(data.message);
+
+        if (data.success) {
+
+            contactModal.style.display = "none";
+
+            document.getElementById("contactName").value = "";
+
+            document.getElementById("contactPhone").value = "";
+
+        }
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
+
+};
+
 // ================= LOAD ALL USERS =================
 
 async function loadUsers() {
