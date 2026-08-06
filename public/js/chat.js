@@ -441,6 +441,10 @@ function addMessage(message) {
         (Date.now() - new Date(message.createdAt).getTime()) <
             5 * 60 * 1000;
 
+            console.log("isMine =", isMine);
+console.log("createdAt =", message.createdAt);
+console.log("canEdit =", canEdit);
+
     const time = new Date(
         message.createdAt || Date.now()
     ).toLocaleTimeString([], {
