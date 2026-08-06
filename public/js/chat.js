@@ -200,6 +200,26 @@ async function createOrOpenChat(user, event) {
 
 async function openChat(chat) {
 
+    async function openChat(chat) {
+
+    console.log("===== OPEN CHAT =====");
+    console.log(chat);
+
+    console.log("Current User");
+    console.log(currentUser);
+
+    console.log("Users");
+    console.log(chat.users);
+
+    selectedChat = chat;
+
+    selectedUser = chat.users.find(
+        u => u._id !== currentUser._id
+    );
+
+    console.log("Selected User");
+    console.log(selectedUser);
+
     console.log("OPEN CHAT CALLED");
 console.log(chat);
 
