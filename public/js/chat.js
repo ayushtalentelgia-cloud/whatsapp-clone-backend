@@ -111,13 +111,16 @@ saveContactBtn.onclick = async () => {
 
         if (data.success) {
 
-            contactModal.style.display = "none";
+    contactModal.style.display = "none";
 
-            document.getElementById("contactName").value = "";
+    document.getElementById("contactName").value = "";
 
-            document.getElementById("contactPhone").value = "";
+    document.getElementById("contactPhone").value = "";
 
-        }
+    // Refresh Contact List
+    await loadUsers();
+
+}
 
     }
 
@@ -129,80 +132,107 @@ saveContactBtn.onclick = async () => {
 
 };
 
-// ================= LOAD ALL USERS =================
+// ================= LOAD MY CONTACTS =================
 
 async function loadUsers() {
 
     try {
 
-        const res = await fetch(API_URL + "/users", {
+        const res = await fetch(API_URL + "/users/contacts", {
+
             headers: {
+
                 Authorization: "Bearer " + token
+
             }
+
         });
 
         const data = await res.json();
 
         if (!data.success) {
+
             console.log(data);
+
             return;
+
         }
 
         const chatList = document.getElementById("chatList");
+
         chatList.innerHTML = "";
 
-        data.users.forEach(user => {
+        data.contacts.forEach(contact => {
 
-            if (user._id === currentUser._id) return;
-
-            const avatar = user.name.charAt(0).toUpperCase();
+            const avatar = contact.name.charAt(0).toUpperCase();
 
             const div = document.createElement("div");
+
             div.className = "chat-item";
-            div.dataset.userid = user._id;
 
             div.innerHTML = `
+
                 <div class="chat-avatar">
+
                     ${avatar}
+
                 </div>
 
                 <div class="chat-details">
+
                     <div class="chat-details-top">
-                        <h4>${user.name}</h4>
+
+                        <h4>${contact.name}</h4>
+
                     </div>
 
                     <div class="chat-message">
-                        ${user.phone || "No Phone"}
+
+                        ${contact.phone}
+
                     </div>
+
                 </div>
 
                 <div class="chat-right">
+
                     <div class="online-dot"></div>
+
                 </div>
+
             `;
 
-            div.addEventListener("click", async () => {
+            div.onclick = async () => {
 
                 document.querySelectorAll(".chat-item").forEach(item => {
+
                     item.classList.remove("active");
+
                 });
 
                 div.classList.add("active");
 
-                // Move selected chat to top
-                chatList.prepend(div);
+                await createOrOpenChat({
 
-                await createOrOpenChat(user);
+                    _id: contact.user._id,
 
-            });
+                    name: contact.name,
+
+                    phone: contact.phone
+
+                });
+
+            };
 
             chatList.appendChild(div);
 
         });
 
-    } catch (err) {
+    }
 
-        console.log("Load Users Error :", err);
+    catch (err) {
+
+        console.log("Load Contacts Error :", err);
 
     }
 
