@@ -995,29 +995,26 @@ socket.on("connected", () => {
 });
 // ================= SEARCH USERS =================
 
-const searchInput = document.getElementById("searchUser");
+// ================= SEARCH CONTACTS =================
 
-if (searchInput) {
+const searchUser = document.getElementById("searchUser");
 
-    searchInput.addEventListener("keyup", function () {
+if (searchUser) {
+
+    searchUser.addEventListener("input", function () {
 
         const value = this.value.toLowerCase();
 
-        const users = document.querySelectorAll(".chat-item");
+        document.querySelectorAll(".chat-item").forEach(chat => {
 
-        users.forEach(item => {
+            const name = chat.querySelector("h4").innerText.toLowerCase();
 
-            const name = item.querySelector("h4").innerText.toLowerCase();
+            const phone = chat.querySelector(".chat-message").innerText.toLowerCase();
 
-            if (name.includes(value)) {
-
-                item.style.display = "flex";
-
-            } else {
-
-                item.style.display = "none";
-
-            }
+            chat.style.display =
+                name.includes(value) || phone.includes(value)
+                    ? "flex"
+                    : "none";
 
         });
 
