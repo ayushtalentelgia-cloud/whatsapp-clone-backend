@@ -390,8 +390,11 @@ function addMessage(message) {
 async function sendMessage() {
 
     if (!selectedChat) {
+
         alert("Please Select Chat");
+
         return;
+
     }
 
     const input = document.getElementById("messageInput");
@@ -426,19 +429,34 @@ async function sendMessage() {
 
         const data = await res.json();
 
-        addMessage(data.message);
+        if (!data.success) {
 
+            console.log(data.message);
+
+            return;
+
+        }
+
+        // Clear Input Only
         input.value = "";
 
-    } catch (err) {
+        input.focus();
 
-        console.log(err);
+        // DON'T call addMessage() here.
+        // Message will be added through Socket.IO.
+
+    }
+
+    catch (err) {
+
+        console.log("Send Message Error =>", err);
 
     }
 
 }
 
 document.getElementById("sendBtn").onclick = sendMessage;
+
 
 // ================= ENTER KEY =================
 
@@ -453,6 +471,7 @@ document.getElementById("messageInput").addEventListener("keydown", (e) => {
     }
 
 });
+
 
 // ================= TYPING =================
 
@@ -480,9 +499,15 @@ document.getElementById("messageInput").addEventListener("input", () => {
 
 });
 
-// ================= Socket =================
 
-socket.on("message received", message => {
+// ================= SOCKET MESSAGE =================
+
+// Remove old listener (avoids duplicate listeners)
+socket.off("message received");
+
+socket.on("message received", (message) => {
+
+    console.log("Socket Message =>", message);
 
     if (
         selectedChat &&
