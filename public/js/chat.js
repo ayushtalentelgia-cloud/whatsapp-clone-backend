@@ -20,6 +20,105 @@ let selectedUser = null;
 let typing = false;
 let typingTimeout;
 
+// ================= PROFILE PICTURE =================
+
+const myProfilePic = document.getElementById("myProfilePic");
+
+const profilePreview = document.getElementById("profilePreview");
+
+const profilePicInput = document.getElementById("profilePicInput");
+
+// Show Saved Profile Picture
+
+if (currentUser.profilePic) {
+
+    if (myProfilePic) {
+
+        myProfilePic.src = currentUser.profilePic;
+
+    }
+
+    if (profilePreview) {
+
+        profilePreview.src = currentUser.profilePic;
+
+    }
+
+}
+
+// Upload Profile Picture
+
+if (profilePicInput) {
+
+    profilePicInput.onchange = async function () {
+
+        const file = this.files[0];
+
+        if (!file) return;
+
+        const formData = new FormData();
+
+        formData.append("profilePic", file);
+
+        try {
+
+            const res = await fetch(API_URL + "/users/profile-picture", {
+
+                method: "PUT",
+
+                headers: {
+
+                    Authorization: "Bearer " + token
+
+                },
+
+                body: formData
+
+            });
+
+            const data = await res.json();
+
+            if (!data.success) {
+
+                alert(data.message);
+
+                return;
+
+            }
+
+            currentUser.profilePic = data.user.profilePic;
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(currentUser)
+            );
+
+            if (myProfilePic) {
+
+                myProfilePic.src = data.user.profilePic;
+
+            }
+
+            if (profilePreview) {
+
+                profilePreview.src = data.user.profilePic;
+
+            }
+
+            alert("Profile Picture Updated Successfully");
+
+        }
+
+        catch (err) {
+
+            console.log(err);
+
+        }
+
+    };
+
+}
+
 // ================= Logout =================
 
 document.getElementById("logoutBtn").onclick = () => {

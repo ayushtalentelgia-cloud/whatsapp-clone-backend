@@ -4,6 +4,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const http = require("http");
 const { Server } = require("socket.io");
+const cloudinary = require("cloudinary").v2;
 
 // Routes
 const userRoutes = require("./routes/userRoutes");
@@ -17,46 +18,80 @@ const { setIO } = require("./socket/socketManager");
 // Load Environment Variables
 dotenv.config();
 
-// Connect Database
+// ================= CONNECT DATABASE =================
+
 connectDB();
+
+// ================= CLOUDINARY =================
+
+cloudinary.config({
+
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+
+    api_key: process.env.CLOUDINARY_API_KEY,
+
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+
+});
+
+// ================= EXPRESS =================
 
 const app = express();
 
 // Middleware
+
 app.use(cors());
+
 app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
+
 app.use(express.static("public"));
 
-// Root Route (Health Check)
+// ================= ROOT =================
+
 app.get("/", (req, res) => {
+
     res.send("✅ WhatsApp Clone Backend is Running 🚀");
+
 });
 
-// Create HTTP Server
+// ================= HTTP SERVER =================
+
 const server = http.createServer(app);
 
-// Create Socket.IO Server
+// ================= SOCKET =================
+
 const io = new Server(server, {
+
     cors: {
+
         origin: "*",
+
         methods: ["GET", "POST"],
+
     },
+
 });
 
-// Save io globally
 setIO(io);
 
-// Initialize Socket Events
 socketHandler(io);
 
-// API Routes
+// ================= ROUTES =================
+
 app.use("/api/users", userRoutes);
+
 app.use("/api/chat", chatRoutes);
+
 app.use("/api/message", messageRoutes);
 
-// Start Server
+// ================= START SERVER =================
+
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
+
+    console.log(`🚀 Server running on port ${PORT}`);
+
 });

@@ -1,272 +1,459 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("cloudinary").v2;
+const streamifier = require("streamifier");
 
 // ================= Register User =================
+
 const registerUser = async (req, res) => {
-  try {
-    const { name, phone, email, password } = req.body;
 
-    if (!name || !phone || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
+    try {
+
+        const { name, phone, email, password } = req.body;
+
+        if (!name || !phone || !email || !password) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "All fields are required",
+
+            });
+
+        }
+
+        const existingUser = await User.findOne({
+
+            $or: [{ email }, { phone }],
+
+        });
+
+        if (existingUser) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "Email or Phone already registered",
+
+            });
+
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = await User.create({
+
+            name,
+            phone,
+            email,
+            password: hashedPassword,
+
+        });
+
+        const userData = await User.findById(user._id).select("-password");
+
+        return res.status(201).json({
+
+            success: true,
+            message: "User Registered Successfully",
+            user: userData,
+
+        });
+
     }
 
-    const existingUser = await User.findOne({
-      $or: [{ email }, { phone }],
-    });
+    catch (error) {
 
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: "Email or Phone already registered",
-      });
+        return res.status(500).json({
+
+            success: false,
+            message: error.message,
+
+        });
+
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-      name,
-      phone,
-      email,
-      password: hashedPassword,
-    });
-
-    const userData = await User.findById(user._id).select("-password");
-
-    res.status(201).json({
-      success: true,
-      message: "User Registered Successfully",
-      user: userData,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
 };
 
 // ================= Login User =================
+
 const loginUser = async (req, res) => {
-  try {
-    const { email, phone, password } = req.body;
 
-    // Email ya Phone me se ek aur Password required
-    if ((!email && !phone) || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email or Phone and Password are required",
-      });
+    try {
+
+        const { email, phone, password } = req.body;
+
+        if ((!email && !phone) || !password) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "Email or Phone and Password are required",
+
+            });
+
+        }
+
+        let user;
+
+        if (email) {
+
+            user = await User.findOne({ email });
+
+        }
+
+        else {
+
+            user = await User.findOne({ phone });
+
+        }
+
+        if (!user) {
+
+            return res.status(404).json({
+
+                success: false,
+                message: "User not found",
+
+            });
+
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "Invalid Password",
+
+            });
+
+        }
+
+        const token = jwt.sign(
+
+            {
+
+                id: user._id,
+
+            },
+
+            process.env.JWT_SECRET,
+
+            {
+
+                expiresIn: "7d",
+
+            }
+
+        );
+
+        const userData = await User.findById(user._id).select("-password");
+
+        return res.status(200).json({
+
+            success: true,
+            message: "Login Successful",
+            token,
+            user: userData,
+
+        });
+
     }
 
-    let user;
+    catch (error) {
 
-    if (email) {
-      user = await User.findOne({ email });
-    } else {
-      user = await User.findOne({ phone });
+        return res.status(500).json({
+
+            success: false,
+            message: error.message,
+
+        });
+
     }
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Password",
-      });
-    }
-
-    const token = jwt.sign(
-      {
-        id: user._id,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
-
-    const userData = await User.findById(user._id).select("-password");
-
-    res.status(200).json({
-      success: true,
-      message: "Login Successful",
-      token,
-      user: userData,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
 };
 
 // ================= Get Profile =================
-const getProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("-password");
 
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+const getProfile = async (req, res) => {
+
+    try {
+
+        const user = await User.findById(req.user.id).select("-password");
+
+        return res.status(200).json({
+
+            success: true,
+            user,
+
+        });
+
+    }
+
+    catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+            message: error.message,
+
+        });
+
+    }
+
 };
 
 // ================= Get All Users =================
-const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find().select("-password");
 
-    res.status(200).json({
-      success: true,
-      count: users.length,
-      users,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+const getAllUsers = async (req, res) => {
+
+    try {
+
+        const users = await User.find().select("-password");
+
+        return res.status(200).json({
+
+            success: true,
+            count: users.length,
+            users,
+
+        });
+
+    }
+
+    catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+            message: error.message,
+
+        });
+
+    }
+
+};
+
+// ================= UPLOAD PROFILE PICTURE =================
+
+const uploadProfilePicture = async (req, res) => {
+
+    try {
+
+        if (!req.file) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "Please select an image."
+
+            });
+
+        }
+
+        const uploadStream = cloudinary.uploader.upload_stream(
+
+            {
+
+                folder: "whatsapp-clone/profile-pictures",
+
+            },
+
+            async (error, result) => {
+
+                if (error) {
+
+                    return res.status(500).json({
+
+                        success: false,
+                        message: error.message,
+
+                    });
+
+                }
+
+                const user = await User.findByIdAndUpdate(
+
+                    req.user.id,
+
+                    {
+
+                        profilePic: result.secure_url,
+
+                    },
+
+                    {
+
+                        new: true,
+
+                    }
+
+                ).select("-password");
+
+                return res.status(200).json({
+
+                    success: true,
+
+                    message: "Profile picture updated successfully.",
+
+                    user,
+
+                });
+
+            }
+
+        );
+
+        streamifier
+
+            .createReadStream(req.file.buffer)
+
+            .pipe(uploadStream);
+
+    }
+
+    catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
 };
 
 // ================= ADD CONTACT =================
 
 const addContact = async (req, res) => {
 
-  try {
+    try {
 
-    const { name, phone } = req.body;
+        const { name, phone } = req.body;
 
-    if (!name || !phone) {
+        if (!name || !phone) {
 
-      return res.status(400).json({
-        success: false,
-        message: "Name and Phone are required",
-      });
+            return res.status(400).json({
+                success: false,
+                message: "Name and Phone are required",
+            });
+
+        }
+
+        const contactUser = await User.findOne({ phone });
+
+        if (!contactUser) {
+
+            return res.status(404).json({
+                success: false,
+                message: "This phone number is not registered",
+            });
+
+        }
+
+        const user = await User.findById(req.user.id);
+
+        const alreadyExists = user.contacts.find(
+            contact => contact.phone === phone
+        );
+
+        if (alreadyExists) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Contact already exists",
+            });
+
+        }
+
+        user.contacts.push({
+
+            name,
+            phone,
+            user: contactUser._id,
+
+        });
+
+        await user.save();
+
+        return res.status(201).json({
+
+            success: true,
+            message: "Contact Added Successfully",
+            contacts: user.contacts,
+
+        });
 
     }
 
-    const contactUser = await User.findOne({ phone });
+    catch (error) {
 
-    if (!contactUser) {
+        return res.status(500).json({
 
-      return res.status(404).json({
-        success: false,
-        message: "This phone number is not registered",
-      });
+            success: false,
+            message: error.message,
 
-    }
-
-    const user = await User.findById(req.user.id);
-
-    const alreadyExists = user.contacts.find(
-      contact => contact.phone === phone
-    );
-
-    if (alreadyExists) {
-
-      return res.status(400).json({
-        success: false,
-        message: "Contact already exists",
-      });
+        });
 
     }
-
-    user.contacts.push({
-
-      name,
-      phone,
-      user: contactUser._id,
-
-    });
-
-    await user.save();
-
-    return res.status(201).json({
-
-      success: true,
-
-      message: "Contact Added Successfully",
-
-      contacts: user.contacts,
-
-    });
-
-  }
-
-  catch (error) {
-
-    return res.status(500).json({
-
-      success: false,
-
-      message: error.message,
-
-    });
-
-  }
 
 };
-
 
 // ================= GET CONTACTS =================
 
 const getContacts = async (req, res) => {
 
-  try {
+    try {
 
-    const user = await User.findById(req.user.id)
-      .populate("contacts.user", "-password");
+        const user = await User.findById(req.user.id)
+            .populate("contacts.user", "-password");
 
-    return res.status(200).json({
+        return res.status(200).json({
 
-      success: true,
+            success: true,
+            count: user.contacts.length,
+            contacts: user.contacts,
 
-      count: user.contacts.length,
+        });
 
-      contacts: user.contacts,
+    }
 
-    });
+    catch (error) {
 
-  }
+        return res.status(500).json({
 
-  catch (error) {
+            success: false,
+            message: error.message,
 
-    return res.status(500).json({
+        });
 
-      success: false,
-
-      message: error.message,
-
-    });
-
-  }
+    }
 
 };
 
+// ================= MODULE EXPORTS =================
+
 module.exports = {
-  registerUser,
-  loginUser,
-  getProfile,
-  getAllUsers,
-  addContact,
-  getContacts,
+
+    registerUser,
+
+    loginUser,
+
+    getProfile,
+
+    getAllUsers,
+
+    uploadProfilePicture,
+
+    addContact,
+
+    getContacts,
+
 };

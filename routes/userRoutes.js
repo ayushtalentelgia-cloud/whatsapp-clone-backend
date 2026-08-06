@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
 
 const protect = require("../middleware/authMiddleware");
 
@@ -10,7 +11,16 @@ const {
     getAllUsers,
     addContact,
     getContacts,
+    uploadProfilePicture,
 } = require("../controllers/userController");
+
+// ================= MULTER =================
+
+const storage = multer.memoryStorage();
+
+const upload = multer({
+    storage,
+});
 
 // ================= AUTH =================
 
@@ -24,6 +34,14 @@ router.post("/login", loginUser);
 
 // Get Logged In User Profile
 router.get("/profile", protect, getProfile);
+
+// Upload Profile Picture
+router.put(
+    "/profile-picture",
+    protect,
+    upload.single("profilePic"),
+    uploadProfilePicture
+);
 
 // ================= USERS =================
 
