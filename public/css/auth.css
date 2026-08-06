@@ -1,5 +1,5 @@
 /* =========================================
-   WhatsApp Yellow Theme - Auth
+   WhatsApp Clone - Sky Blue Theme
 ========================================= */
 
 *{
@@ -11,7 +11,7 @@
 
 body{
 
-    background:#0d0d0d;
+    min-height:100vh;
 
     display:flex;
 
@@ -19,7 +19,9 @@ body{
 
     align-items:center;
 
-    height:100vh;
+    background:linear-gradient(135deg,#38BDF8,#0EA5E9,#7DD3FC);
+
+    overflow:hidden;
 
 }
 
@@ -33,33 +35,41 @@ body{
 
     align-items:center;
 
+    padding:20px;
+
 }
 
 .login-card{
 
-    width:420px;
+    width:430px;
 
-    background:#151515;
+    background:rgba(255,255,255,.96);
+
+    backdrop-filter:blur(15px);
+
+    border-radius:25px;
 
     padding:45px;
 
-    border-radius:20px;
-
-    border:1px solid #2a2a2a;
-
-    box-shadow:0 0 30px rgba(255,214,0,.08);
-
     text-align:center;
+
+    box-shadow:0 20px 45px rgba(0,0,0,.18);
+
+    animation:fadeIn .5s ease;
 
 }
 
+/* ================= LOGO ================= */
+
 .logo{
 
-    width:90px;
+    width:95px;
 
-    height:90px;
+    height:95px;
 
-    background:#FFD600;
+    margin:auto;
+
+    margin-bottom:25px;
 
     border-radius:50%;
 
@@ -71,21 +81,21 @@ body{
 
     font-size:42px;
 
-    color:#111;
+    background:#38BDF8;
 
-    margin:auto;
+    color:white;
 
-    margin-bottom:25px;
-
-    box-shadow:0 0 20px rgba(255,214,0,.25);
+    box-shadow:0 10px 25px rgba(56,189,248,.35);
 
 }
 
+/* ================= TITLE ================= */
+
 .login-card h1{
 
-    color:#FFD600;
+    color:#0F172A;
 
-    font-size:38px;
+    font-size:34px;
 
     margin-bottom:10px;
 
@@ -93,31 +103,33 @@ body{
 
 .subtitle{
 
-    color:#999;
-
-    margin-bottom:35px;
+    color:#64748B;
 
     font-size:16px;
 
+    margin-bottom:35px;
+
 }
+
+/* ================= INPUT ================= */
 
 .login-card input{
 
     width:100%;
 
-    padding:16px;
+    padding:16px 18px;
 
     margin-bottom:18px;
 
-    border:1px solid #333;
+    border:2px solid #E2E8F0;
 
     border-radius:12px;
 
+    background:#F8FAFC;
+
+    color:#0F172A;
+
     outline:none;
-
-    background:#232323;
-
-    color:#fff;
 
     font-size:16px;
 
@@ -127,17 +139,21 @@ body{
 
 .login-card input::placeholder{
 
-    color:#777;
+    color:#94A3B8;
 
 }
 
 .login-card input:focus{
 
-    border-color:#FFD600;
+    border-color:#38BDF8;
 
-    box-shadow:0 0 10px rgba(255,214,0,.25);
+    background:white;
+
+    box-shadow:0 0 0 4px rgba(56,189,248,.18);
 
 }
+
+/* ================= BUTTON ================= */
 
 .login-card button{
 
@@ -149,9 +165,9 @@ body{
 
     border-radius:12px;
 
-    background:#FFD600;
+    background:#38BDF8;
 
-    color:#111;
+    color:white;
 
     font-size:17px;
 
@@ -165,17 +181,21 @@ body{
 
 .login-card button:hover{
 
-    background:#ffe54d;
+    background:#0EA5E9;
 
-    transform:translateY(-2px);
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 25px rgba(56,189,248,.35);
 
 }
+
+/* ================= BOTTOM ================= */
 
 .bottom-text{
 
     margin-top:28px;
 
-    color:#999;
+    color:#64748B;
 
     font-size:15px;
 
@@ -183,7 +203,7 @@ body{
 
 .bottom-text a{
 
-    color:#FFD600;
+    color:#0EA5E9;
 
     text-decoration:none;
 
@@ -193,15 +213,41 @@ body{
 
 .bottom-text a:hover{
 
-    color:#fff176;
+    color:#0284C7;
+
+    text-decoration:underline;
 
 }
+
+/* ================= ANIMATION ================= */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ================= RESPONSIVE ================= */
 
 @media(max-width:500px){
 
 .login-card{
 
-    width:92%;
+    width:100%;
 
     padding:30px;
 
@@ -209,7 +255,7 @@ body{
 
 .login-card h1{
 
-    font-size:30px;
+    font-size:28px;
 
 }
 
@@ -219,7 +265,7 @@ body{
 
     height:80px;
 
-    font-size:36px;
+    font-size:34px;
 
 }
 
