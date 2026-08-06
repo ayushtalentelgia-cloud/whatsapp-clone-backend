@@ -106,6 +106,105 @@ async function loadUsers() {
 
 }
 
+// ================= LOAD CHATS =================
+
+async function loadChats() {
+
+    try {
+
+        const res = await fetch(API_URL + "/chat", {
+
+            headers: {
+                Authorization: "Bearer " + token
+            }
+
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+
+            console.log(data.message);
+
+            return;
+
+        }
+
+        const chatList = document.getElementById("chatList");
+
+        chatList.innerHTML = "";
+
+        data.chats.forEach(chat => {
+
+            const otherUser = chat.users.find(
+                user => user._id !== currentUser._id
+            );
+
+            if (!otherUser) return;
+
+            const avatar = otherUser.name.charAt(0).toUpperCase();
+
+            const lastMessage = chat.latestMessage
+                ? chat.latestMessage.content
+                : "Start Conversation";
+
+            const time = chat.updatedAt
+                ? new Date(chat.updatedAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })
+                : "";
+
+            const div = document.createElement("div");
+
+            div.className = "chat-item";
+
+            div.innerHTML = `
+                <div class="chat-avatar">
+                    ${avatar}
+                </div>
+
+                <div class="chat-details">
+
+                    <div class="chat-details-top">
+
+                        <h4>${otherUser.name}</h4>
+
+                        <span>${time}</span>
+
+                    </div>
+
+                    <div class="chat-message">
+                        ${lastMessage}
+                    </div>
+
+                </div>
+            `;
+
+            div.addEventListener("click", async () => {
+
+                document.querySelectorAll(".chat-item").forEach(item => {
+                    item.classList.remove("active");
+                });
+
+                div.classList.add("active");
+
+                await openChat(chat);
+
+            });
+
+            chatList.appendChild(div);
+
+        });
+
+    } catch (err) {
+
+        console.log("Load Chats Error :", err);
+
+    }
+
+}
+
 // ================= CREATE OR OPEN CHAT =================
 
 async function createOrOpenChat(user) {
@@ -621,4 +720,4 @@ if (searchUser) {
 
 // ================= Start =================
 
-loadUsers();
+loadChats();

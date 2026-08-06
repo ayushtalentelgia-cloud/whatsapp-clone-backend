@@ -220,10 +220,147 @@ const markMessageAsSeen = async (req, res) => {
     }
 
 };
+// ================= EDIT MESSAGE =================
+
+const editMessage = async (req, res) => {
+
+    try {
+
+        const { messageId } = req.params;
+        const { content } = req.body;
+
+        let message = await Message.findById(messageId);
+
+        if (!message) {
+            return res.status(404).json({
+                success: false,
+                message: "Message not found"
+            });
+        }
+
+        if (message.sender.toString() !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: "Not allowed"
+            });
+        }
+
+        const diff = Date.now() - new Date(message.createdAt).getTime();
+
+        if (diff > 5 * 60 * 1000) {
+            return res.status(400).json({
+                success: false,
+                message: "Edit time expired"
+            });
+        }
+
+        message.content = content;
+        message.edited = true;
+        message.editedAt = new Date();
+
+        await message.save();
+
+        message = await Message.findById(message._id)
+            .populate("sender", "-password")
+            .populate({
+                path: "chat",
+                populate: {
+                    path: "users",
+                    select: "-password",
+                },
+            });
+
+        getIO().to(message.chat._id.toString()).emit("message edited", message);
+
+        return res.json({
+            success: true,
+            message
+        });
+
+    } catch (err) {
+
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
+    }
+
+};
+
+
+// ================= DELETE MESSAGE =================
+
+const deleteMessage = async (req, res) => {
+
+    try {
+
+        const { messageId } = req.params;
+
+        let message = await Message.findById(messageId);
+
+        if (!message) {
+            return res.status(404).json({
+                success: false,
+                message: "Message not found"
+            });
+        }
+
+        if (message.sender.toString() !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: "Not allowed"
+            });
+        }
+
+        const diff = Date.now() - new Date(message.createdAt).getTime();
+
+        if (diff > 5 * 60 * 1000) {
+            return res.status(400).json({
+                success: false,
+                message: "Delete time expired"
+            });
+        }
+
+        message.deleted = true;
+        message.deletedAt = new Date();
+        message.content = "This message was deleted";
+
+        await message.save();
+
+        message = await Message.findById(message._id)
+            .populate("sender", "-password")
+            .populate({
+                path: "chat",
+                populate: {
+                    path: "users",
+                    select: "-password",
+                },
+            });
+
+        getIO().to(message.chat._id.toString()).emit("message deleted", message);
+
+        return res.json({
+            success: true,
+            message
+        });
+
+    } catch (err) {
+
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
+    }
+
+};
 
 module.exports = {
     sendMessage,
     allMessages,
     markMessageAsDelivered,
     markMessageAsSeen,
+    editMessage,
+    deleteMessage,
 };
