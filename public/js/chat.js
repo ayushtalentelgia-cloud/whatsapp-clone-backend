@@ -34,92 +34,71 @@ async function loadUsers() {
     try {
 
         const res = await fetch(API_URL + "/users", {
-
             headers: {
-
                 Authorization: "Bearer " + token
-
             }
-
         });
 
         const data = await res.json();
 
         if (!data.success) {
-
             console.log(data);
-
             return;
-
         }
 
         const chatList = document.getElementById("chatList");
-
         chatList.innerHTML = "";
 
-data.users.forEach(user => {
+        data.users.forEach(user => {
 
-    console.log("USER =>", user);
+            if (user._id === currentUser._id) return;
 
-    if (user._id === currentUser._id) return;
+            const avatar = user.name.charAt(0).toUpperCase();
 
-    const avatar = user.name.charAt(0).toUpperCase();
-
-    const div = document.createElement("div");
-
-    div.className = "chat-item";
+            const div = document.createElement("div");
+            div.className = "chat-item";
+            div.dataset.userid = user._id;
 
             div.innerHTML = `
-
                 <div class="chat-avatar">
-
                     ${avatar}
-
                 </div>
 
                 <div class="chat-details">
-
                     <div class="chat-details-top">
-
                         <h4>${user.name}</h4>
-
                     </div>
 
                     <div class="chat-message">
-
-                        ${user.phone}
-
+                        ${user.phone || "No Phone"}
                     </div>
-
                 </div>
 
                 <div class="chat-right">
-
                     <div class="online-dot"></div>
-
                 </div>
-
             `;
 
-           div.onclick = () => {
+            div.addEventListener("click", async () => {
 
-    document.querySelectorAll(".chat-item").forEach(item => {
-        item.classList.remove("active");
-    });
+                document.querySelectorAll(".chat-item").forEach(item => {
+                    item.classList.remove("active");
+                });
 
-    div.classList.add("active");
+                div.classList.add("active");
 
-    createOrOpenChat(user);
+                // Move selected chat to top
+                chatList.prepend(div);
 
-};
+                await createOrOpenChat(user);
+
+            });
 
             chatList.appendChild(div);
 
         });
 
-    }
-
-    catch (err) {
+    } catch (err) {
 
         console.log("Load Users Error :", err);
 
@@ -187,47 +166,18 @@ async function createOrOpenChat(user) {
 
 }
 
-// ================= Open Chat =================
+// ================= OPEN CHAT =================
 
 async function openChat(chat) {
 
-    console.log("===== OPEN CHAT =====");
-    console.log(chat);
-
-    console.log("Current User");
-    console.log(currentUser);
-
-    console.log("Users");
-    console.log(chat.users);
-
-    selectedChat = chat;
-
-    selectedUser = chat.users.find(
-        u => u._id !== currentUser._id
-    );
-
-    console.log("Selected User");
-    console.log(selectedUser);
-
-    console.log("OPEN CHAT CALLED");
-console.log(chat);
-
-    console.log("OPEN CHAT =>", chat);
-
     if (!chat) {
-
         console.log("Chat Not Found");
-
         return;
-
     }
 
-    if (!chat.users) {
-
+    if (!chat.users || chat.users.length === 0) {
         console.log("Users Missing In Chat");
-
         return;
-
     }
 
     selectedChat = chat;
@@ -237,12 +187,11 @@ console.log(chat);
     );
 
     if (!selectedUser) {
-
         console.log("Other User Not Found");
-
         return;
-
     }
+
+    // ===== Header =====
 
     document.getElementById("chatName").innerHTML =
         selectedUser.name;
@@ -253,11 +202,38 @@ console.log(chat);
     document.getElementById("onlineStatus").innerHTML =
         "Offline";
 
-    console.log("Joining Chat =>", chat._id);
+    // ===== Clear Old Messages =====
+
+    const messages = document.getElementById("messages");
+    messages.innerHTML = `
+        <div id="emptyMessages" class="empty-chat">
+            Loading Messages...
+        </div>
+    `;
+
+    // ===== Join Socket Room =====
 
     socket.emit("join chat", chat._id);
 
+    // ===== Load Messages =====
+
     await loadMessages(chat._id);
+
+    // ===== Focus Input (Mobile Friendly) =====
+
+    setTimeout(() => {
+        document.getElementById("messageInput").focus();
+    }, 200);
+
+    // ===== Move Recent Chat To Top =====
+
+    const chatList = document.getElementById("chatList");
+
+    const active = document.querySelector(".chat-item.active");
+
+    if (active) {
+        chatList.prepend(active);
+    }
 
     console.log("Chat Opened Successfully");
 
@@ -333,55 +309,56 @@ async function loadMessages(chatId) {
 
 function addMessage(message) {
 
+    if (!message) return;
+
     const messages = document.getElementById("messages");
 
-    const div = document.createElement("div");
+    // Remove "No Messages Yet" text if present
+    const empty = document.getElementById("emptyMessages");
+    if (empty) {
+        empty.remove();
+    }
 
+    // Prevent duplicate messages
+    if (document.getElementById("msg-" + message._id)) {
+        return;
+    }
+
+    const div = document.createElement("div");
+    div.id = "msg-" + message._id;
     div.className = "message";
 
     if (message.sender._id === currentUser._id) {
-
         div.classList.add("sent");
-
     } else {
-
         div.classList.add("received");
-
     }
 
     const time = new Date(
-
         message.createdAt || Date.now()
-
     ).toLocaleTimeString([], {
-
         hour: "2-digit",
-
         minute: "2-digit"
-
     });
 
     div.innerHTML = `
-
         <div class="message-text">
-
             ${message.content}
-
         </div>
 
         <span class="message-time">
-
             ${time}
-
-            ${message.sender._id === currentUser._id ? "✓✓" : ""}
-
+            ${message.sender._id === currentUser._id ? " ✓✓" : ""}
         </span>
-
     `;
 
     messages.appendChild(div);
 
-    messages.scrollTop = messages.scrollHeight;
+    // Smooth Scroll
+    messages.scrollTo({
+        top: messages.scrollHeight,
+        behavior: "smooth"
+    });
 
 }
 
