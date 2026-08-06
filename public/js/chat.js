@@ -273,7 +273,7 @@ console.log(chat);
     console.log("Chat Opened Successfully");
 
 }
-
+}
 // ================= Load Messages =================
 
 async function loadMessages(chatId) {
@@ -632,4 +632,3 @@ if (searchUser) {
 // ================= Start =================
 
 loadUsers();
-}
