@@ -191,8 +191,6 @@ async function createOrOpenChat(user) {
 
 async function openChat(chat) {
 
-    async function openChat(chat) {
-
     console.log("===== OPEN CHAT =====");
     console.log(chat);
 
@@ -263,7 +261,6 @@ console.log(chat);
 
     console.log("Chat Opened Successfully");
 
-}
 }
 // ================= Load Messages =================
 
