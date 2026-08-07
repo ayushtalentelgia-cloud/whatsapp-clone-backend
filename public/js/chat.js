@@ -1259,38 +1259,34 @@ if (searchUser) {
     });
 
 }
-// ================= CHAT MENU =================
+// ================= SIDEBAR MENU =================
 
-const chatMenuBtn = document.getElementById("chatMenuBtn");
-const chatMenu = document.getElementById("chatMenu");
-const openProfile = document.getElementById("openProfile");
+const sidebarMenuBtn = document.getElementById("sidebarMenuBtn");
+const sidebarMenu = document.getElementById("sidebarMenu");
+const sidebarProfileBtn = document.getElementById("sidebarProfileBtn");
+const sidebarLogoutBtn = document.getElementById("sidebarLogoutBtn");
+
 const profilePage = document.getElementById("profilePage");
 const closeProfile = document.getElementById("closeProfile");
-const logoutMenu = document.getElementById("logoutMenu");
 
-// Toggle Menu
+// Toggle Sidebar Menu
 
-chatMenuBtn.addEventListener("click", (e) => {
+sidebarMenuBtn.addEventListener("click", (e) => {
 
     e.stopPropagation();
 
-    if (chatMenu.style.display === "block") {
-
-        chatMenu.style.display = "none";
-
-    } else {
-
-        chatMenu.style.display = "block";
-
-    }
+    sidebarMenu.style.display =
+        sidebarMenu.style.display === "block"
+            ? "none"
+            : "block";
 
 });
 
 // Open Profile
 
-openProfile.addEventListener("click", () => {
+sidebarProfileBtn.addEventListener("click", () => {
 
-    chatMenu.style.display = "none";
+    sidebarMenu.style.display = "none";
 
     profilePage.style.display = "flex";
 
@@ -1328,9 +1324,13 @@ closeProfile.addEventListener("click", () => {
 
 // Logout
 
-logoutMenu.addEventListener("click", () => {
+sidebarLogoutBtn.addEventListener("click", () => {
 
-    document.getElementById("logoutBtn").click();
+    localStorage.removeItem("token");
+
+    localStorage.removeItem("user");
+
+    window.location.href = "/";
 
 });
 
@@ -1338,10 +1338,12 @@ logoutMenu.addEventListener("click", () => {
 
 document.addEventListener("click", (e) => {
 
-    if (!chatMenu.contains(e.target) &&
-        !chatMenuBtn.contains(e.target)) {
+    if (
+        !sidebarMenu.contains(e.target) &&
+        !sidebarMenuBtn.contains(e.target)
+    ) {
 
-        chatMenu.style.display = "none";
+        sidebarMenu.style.display = "none";
 
     }
 
@@ -1465,6 +1467,34 @@ function enableEdit(id) {
     input.selectionStart = input.value.length;
 
 }
+// ================= SIDEBAR MENU =================
+
+const sidebarMenuBtn = document.getElementById("sidebarMenuBtn");
+const sidebarMenu = document.getElementById("sidebarMenu");
+
+sidebarMenuBtn.onclick = (e) => {
+
+    e.stopPropagation();
+
+    sidebarMenu.style.display =
+        sidebarMenu.style.display === "block"
+            ? "none"
+            : "block";
+
+};
+
+document.addEventListener("click", (e) => {
+
+    if (
+        !sidebarMenu.contains(e.target) &&
+        !sidebarMenuBtn.contains(e.target)
+    ) {
+
+        sidebarMenu.style.display = "none";
+
+    }
+
+});
 
 // ================= Start =================
 

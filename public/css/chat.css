@@ -1633,3 +1633,62 @@ input{
     object-fit:cover;
 
 }
+/* ================= SIDEBAR MENU ================= */
+
+.sidebar-menu-wrapper{
+
+    position:relative;
+
+}
+
+.sidebar-menu{
+
+    position:absolute;
+
+    top:45px;
+
+    right:0;
+
+    width:180px;
+
+    background:#1F2937;
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    display:none;
+
+    z-index:99999;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.35);
+
+}
+
+.sidebar-menu button{
+
+    width:100%;
+
+    border:none;
+
+    background:transparent;
+
+    color:#fff;
+
+    padding:14px 16px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    cursor:pointer;
+
+}
+
+.sidebar-menu button:hover{
+
+    background:#374151;
+
+}
