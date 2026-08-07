@@ -1,87 +1,273 @@
-const mongoose = require("mongoose");
+// =========================================
+// PROFILE MODAL
+// =========================================
 
-const contactSchema = new mongoose.Schema({
+profileBtn.onclick = () => {
 
-    name: {
-        type: String,
-        required: true,
-        trim: true,
-    },
+    profileModal.classList.add("active");
 
-    phone: {
-        type: String,
-        required: true,
-        trim: true,
-    },
+};
 
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default: null,
+closeProfileBtn.onclick = () => {
+
+    profileModal.classList.remove("active");
+
+};
+
+changePhotoBtn.onclick = () => {
+
+    profilePicInput.click();
+
+};
+
+// =========================================
+// CONTACT MODAL
+// =========================================
+
+addContactBtn.onclick = () => {
+
+    contactModal.classList.add("active");
+
+};
+
+closeContactBtn.onclick = () => {
+
+    contactModal.classList.remove("active");
+
+};
+
+// =========================================
+// SAVE CONTACT
+// =========================================
+
+saveContactBtn.onclick = async () => {
+
+    const name = contactName.value.trim();
+
+    const phone = contactPhone.value.trim();
+
+    if (!name || !phone) {
+
+        alert("Please enter Name & Phone");
+
+        return;
+
     }
 
-}, { _id: true });
+    try {
 
-const userSchema = new mongoose.Schema(
-{
-    name: {
-        type: String,
-        required: true,
-        trim: true,
-    },
+        const res = await fetch(
 
-    // Mobile Number
-    phone: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-    },
+            API_URL + "/users/contact",
 
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        trim: true,
-    },
+            {
 
-    password: {
-        type: String,
-        required: true,
-        minlength: 6,
-    },
+                method: "POST",
 
-    profilePic: {
-        type: String,
-        default: "",
-    },
+                headers: {
 
-    // ================= PROFILE =================
+                    "Content-Type": "application/json",
 
-username: {
-    type: String,
-    default: "",
-    trim: true,
-},
+                    Authorization: "Bearer " + token
 
-about: {
-    type: String,
-    default: "Hey there! I am using WhatsApp Clone.",
-    trim: true,
-},
+                },
 
-    // ================= CONTACTS =================
+                body: JSON.stringify({
 
-    contacts: {
-        type: [contactSchema],
-        default: [],
+                    name,
+
+                    phone
+
+                })
+
+            }
+
+        );
+
+        const data = await res.json();
+
+        alert(data.message);
+
+        if (data.success) {
+
+            contactModal.classList.remove("active");
+
+            contactName.value = "";
+
+            contactPhone.value = "";
+
+            loadChats();
+
+        }
+
     }
 
-},
-{
-    timestamps: true,
-}
-);
+    catch (err) {
 
-module.exports = mongoose.model("User", userSchema);
+        console.log(err);
+
+    }
+
+};
+
+// =========================================
+// MENU
+// =========================================
+
+menuBtn.onclick = () => {
+
+    menuDropdown.classList.toggle("active");
+
+};
+
+window.addEventListener("click", (e) => {
+
+    if (
+
+        !menuBtn.contains(e.target) &&
+
+        !menuDropdown.contains(e.target)
+
+    ) {
+
+        menuDropdown.classList.remove("active");
+
+    }
+
+});
+
+// =========================================
+// LOGOUT
+// =========================================
+
+logoutBtn.onclick = () => {
+
+    if (!confirm("Logout?")) return;
+
+    localStorage.removeItem("token");
+
+    localStorage.removeItem("user");
+
+    location.href = "/index.html";
+
+};
+
+// =========================================
+// MESSAGE STATUS
+// =========================================
+
+socket.on("message delivered", () => {
+
+    if (selectedChat) {
+
+        loadMessages(selectedChat._id);
+
+    }
+
+});
+
+socket.on("message seen", () => {
+
+    if (selectedChat) {
+
+        loadMessages(selectedChat._id);
+
+    }
+
+});
+
+// =========================================
+// PROFILE UPLOAD
+// =========================================
+
+profilePicInput.onchange = async function () {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+
+    formData.append("profilePic", file);
+
+    try {
+
+        const res = await fetch(
+
+            API_URL + "/users/profile-picture",
+
+            {
+
+                method: "PUT",
+
+                headers: {
+
+                    Authorization: "Bearer " + token
+
+                },
+
+                body: formData
+
+            }
+
+        );
+
+        const data = await res.json();
+
+        if (!data.success) {
+
+            alert(data.message);
+
+            return;
+
+        }
+
+        currentUser.profilePic = data.user.profilePic;
+
+        localStorage.setItem(
+
+            "user",
+
+            JSON.stringify(currentUser)
+
+        );
+
+        myProfilePic.src = data.user.profilePic;
+
+        profilePreview.src = data.user.profilePic;
+
+        loadChats();
+
+        alert("Profile Updated");
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
+
+};
+
+// =========================================
+// INITIAL LOAD
+// =========================================
+
+window.onload = () => {
+
+    loadCurrentUser();
+
+    loadChats();
+
+};
+
+// =========================================
+// SOCKET CONNECT
+// =========================================
+
+socket.on("connected", () => {
+
+    console.log("Socket Connected");
+
+});

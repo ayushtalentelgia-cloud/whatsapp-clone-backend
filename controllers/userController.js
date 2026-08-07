@@ -1,23 +1,67 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const cloudinary = require("cloudinary").v2;
-const streamifier = require("streamifier");
+const cloudinary = require("../config/cloudinary");
 
-// ================= Register User =================
+// =========================================
+// GENERATE TOKEN
+// =========================================
+
+const generateToken = (id) => {
+
+    return jwt.sign(
+
+        { id },
+
+        process.env.JWT_SECRET,
+
+        {
+
+            expiresIn: "7d",
+
+        }
+
+    );
+
+};
+
+// =========================================
+// REGISTER USER
+// =========================================
 
 const registerUser = async (req, res) => {
 
     try {
 
-        const { name, phone, email, password } = req.body;
+        const {
 
-        if (!name || !phone || !email || !password) {
+            name,
+
+            phone,
+
+            email,
+
+            password,
+
+        } = req.body;
+
+        if (
+
+            !name ||
+
+            !phone ||
+
+            !email ||
+
+            !password
+
+        ) {
 
             return res.status(400).json({
 
                 success: false,
-                message: "All fields are required",
+
+                message: "All fields are required."
 
             });
 
@@ -25,7 +69,13 @@ const registerUser = async (req, res) => {
 
         const existingUser = await User.findOne({
 
-            $or: [{ email }, { phone }],
+            $or: [
+
+                { email },
+
+                { phone }
+
+            ]
 
         });
 
@@ -34,29 +84,45 @@ const registerUser = async (req, res) => {
             return res.status(400).json({
 
                 success: false,
-                message: "Email or Phone already registered",
+
+                message: "Email or Phone already exists."
 
             });
 
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(
+
+            password,
+
+            10
+
+        );
 
         const user = await User.create({
 
             name,
+
             phone,
+
             email,
+
             password: hashedPassword,
 
         });
 
-        const userData = await User.findById(user._id).select("-password");
+        const userData = await User.findById(user._id)
+
+            .select("-password");
 
         return res.status(201).json({
 
             success: true,
-            message: "User Registered Successfully",
+
+            message: "Account Created Successfully.",
+
+            token: generateToken(user._id),
+
             user: userData,
 
         });
@@ -68,6 +134,7 @@ const registerUser = async (req, res) => {
         return res.status(500).json({
 
             success: false,
+
             message: error.message,
 
         });
@@ -76,20 +143,39 @@ const registerUser = async (req, res) => {
 
 };
 
-// ================= Login User =================
+// =========================================
+// LOGIN USER
+// =========================================
 
 const loginUser = async (req, res) => {
 
     try {
 
-        const { email, phone, password } = req.body;
+        const {
 
-        if ((!email && !phone) || !password) {
+            email,
+
+            phone,
+
+            password,
+
+        } = req.body;
+
+        if (
+
+            (!email && !phone)
+
+            ||
+
+            !password
+
+        ) {
 
             return res.status(400).json({
 
                 success: false,
-                message: "Email or Phone and Password are required",
+
+                message: "Email/Phone and Password are required."
 
             });
 
@@ -99,13 +185,21 @@ const loginUser = async (req, res) => {
 
         if (email) {
 
-            user = await User.findOne({ email });
+            user = await User.findOne({
+
+                email
+
+            });
 
         }
 
         else {
 
-            user = await User.findOne({ phone });
+            user = await User.findOne({
+
+                phone
+
+            });
 
         }
 
@@ -114,50 +208,51 @@ const loginUser = async (req, res) => {
             return res.status(404).json({
 
                 success: false,
-                message: "User not found",
+
+                message: "User not found."
 
             });
 
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const match = await bcrypt.compare(
 
-        if (!isMatch) {
+            password,
 
-            return res.status(400).json({
-
-                success: false,
-                message: "Invalid Password",
-
-            });
-
-        }
-
-        const token = jwt.sign(
-
-            {
-
-                id: user._id,
-
-            },
-
-            process.env.JWT_SECRET,
-
-            {
-
-                expiresIn: "7d",
-
-            }
+            user.password
 
         );
 
-        const userData = await User.findById(user._id).select("-password");
+        if (!match) {
+
+            return res.status(401).json({
+
+                success: false,
+
+                message: "Invalid Password."
+
+            });
+
+        }
+
+        user.isOnline = true;
+
+        user.lastSeen = new Date();
+
+        await user.save();
+
+        const userData = await User.findById(user._id)
+
+            .select("-password");
 
         return res.status(200).json({
 
             success: true,
-            message: "Login Successful",
-            token,
+
+            message: "Login Successful.",
+
+            token: generateToken(user._id),
+
             user: userData,
 
         });
@@ -169,6 +264,7 @@ const loginUser = async (req, res) => {
         return res.status(500).json({
 
             success: false,
+
             message: error.message,
 
         });
@@ -176,18 +272,34 @@ const loginUser = async (req, res) => {
     }
 
 };
-
-// ================= Get Profile =================
+// =========================================
+// GET PROFILE
+// =========================================
 
 const getProfile = async (req, res) => {
 
     try {
 
-        const user = await User.findById(req.user.id).select("-password");
+        const user = await User.findById(req.user._id)
+
+            .select("-password");
+
+        if (!user) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "User not found."
+
+            });
+
+        }
 
         return res.status(200).json({
 
             success: true,
+
             user,
 
         });
@@ -199,128 +311,6 @@ const getProfile = async (req, res) => {
         return res.status(500).json({
 
             success: false,
-            message: error.message,
-
-        });
-
-    }
-
-};
-
-// ================= Get All Users =================
-
-const getAllUsers = async (req, res) => {
-
-    try {
-
-        const users = await User.find().select("-password");
-
-        return res.status(200).json({
-
-            success: true,
-            count: users.length,
-            users,
-
-        });
-
-    }
-
-    catch (error) {
-
-        return res.status(500).json({
-
-            success: false,
-            message: error.message,
-
-        });
-
-    }
-
-};
-
-// ================= UPLOAD PROFILE PICTURE =================
-
-const uploadProfilePicture = async (req, res) => {
-
-    try {
-
-        if (!req.file) {
-
-            return res.status(400).json({
-
-                success: false,
-                message: "Please select an image."
-
-            });
-
-        }
-
-        const uploadStream = cloudinary.uploader.upload_stream(
-
-            {
-
-                folder: "whatsapp-clone/profile-pictures",
-
-            },
-
-            async (error, result) => {
-
-                if (error) {
-
-                    return res.status(500).json({
-
-                        success: false,
-                        message: error.message,
-
-                    });
-
-                }
-
-                const user = await User.findByIdAndUpdate(
-
-                    req.user.id,
-
-                    {
-
-                        profilePic: result.secure_url,
-
-                    },
-
-                    {
-
-                        new: true,
-
-                    }
-
-                ).select("-password");
-
-                return res.status(200).json({
-
-                    success: true,
-
-                    message: "Profile picture updated successfully.",
-
-                    user,
-
-                });
-
-            }
-
-        );
-
-        streamifier
-
-            .createReadStream(req.file.buffer)
-
-            .pipe(uploadStream);
-
-    }
-
-    catch (error) {
-
-        return res.status(500).json({
-
-            success: false,
 
             message: error.message,
 
@@ -329,7 +319,10 @@ const uploadProfilePicture = async (req, res) => {
     }
 
 };
-// ================= UPDATE PROFILE =================
+
+// =========================================
+// UPDATE PROFILE
+// =========================================
 
 const updateProfile = async (req, res) => {
 
@@ -338,12 +331,12 @@ const updateProfile = async (req, res) => {
         const {
 
             name,
-            username,
-            about
+
+            about,
 
         } = req.body;
 
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user._id);
 
         if (!user) {
 
@@ -351,7 +344,7 @@ const updateProfile = async (req, res) => {
 
                 success: false,
 
-                message: "User not found"
+                message: "User not found."
 
             });
 
@@ -360,12 +353,6 @@ const updateProfile = async (req, res) => {
         if (name) {
 
             user.name = name;
-
-        }
-
-        if (username) {
-
-            user.username = username;
 
         }
 
@@ -378,15 +365,16 @@ const updateProfile = async (req, res) => {
         await user.save();
 
         const updatedUser = await User.findById(user._id)
+
             .select("-password");
 
         return res.status(200).json({
 
             success: true,
 
-            message: "Profile Updated Successfully",
+            message: "Profile Updated Successfully.",
 
-            user: updatedUser
+            user: updatedUser,
 
         });
 
@@ -398,7 +386,7 @@ const updateProfile = async (req, res) => {
 
             success: false,
 
-            message: error.message
+            message: error.message,
 
         });
 
@@ -406,7 +394,77 @@ const updateProfile = async (req, res) => {
 
 };
 
-// ================= ADD CONTACT =================
+// =========================================
+// UPLOAD PROFILE PICTURE
+// =========================================
+
+const uploadProfilePicture = async (req, res) => {
+
+    try {
+
+        if (!req.file) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Please select an image."
+
+            });
+
+        }
+
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "User not found."
+
+            });
+
+        }
+
+        // Cloudinary URL
+        user.profilePic = req.file.path;
+
+        await user.save();
+
+        const updatedUser = await User.findById(user._id)
+
+            .select("-password");
+
+        return res.status(200).json({
+
+            success: true,
+
+            message: "Profile Picture Updated.",
+
+            user: updatedUser,
+
+        });
+
+    }
+
+    catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// =========================================
+// ADD CONTACT
+// =========================================
 
 const addContact = async (req, res) => {
 
@@ -417,34 +475,61 @@ const addContact = async (req, res) => {
         if (!name || !phone) {
 
             return res.status(400).json({
+
                 success: false,
-                message: "Name and Phone are required",
+
+                message: "Name and Phone are required."
+
             });
 
         }
 
-        const contactUser = await User.findOne({ phone });
+        const contactUser = await User.findOne({
+
+            phone
+
+        });
 
         if (!contactUser) {
 
             return res.status(404).json({
+
                 success: false,
-                message: "This phone number is not registered",
+
+                message: "User not found."
+
             });
 
         }
 
-        const user = await User.findById(req.user.id);
+        if (contactUser._id.toString() === req.user._id.toString()) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "You cannot add yourself."
+
+            });
+
+        }
+
+        const user = await User.findById(req.user._id);
 
         const alreadyExists = user.contacts.find(
+
             contact => contact.phone === phone
+
         );
 
         if (alreadyExists) {
 
             return res.status(400).json({
+
                 success: false,
-                message: "Contact already exists",
+
+                message: "Contact already exists."
+
             });
 
         }
@@ -452,7 +537,9 @@ const addContact = async (req, res) => {
         user.contacts.push({
 
             name,
+
             phone,
+
             user: contactUser._id,
 
         });
@@ -462,7 +549,9 @@ const addContact = async (req, res) => {
         return res.status(201).json({
 
             success: true,
-            message: "Contact Added Successfully",
+
+            message: "Contact Added Successfully.",
+
             contacts: user.contacts,
 
         });
@@ -474,6 +563,7 @@ const addContact = async (req, res) => {
         return res.status(500).json({
 
             success: false,
+
             message: error.message,
 
         });
@@ -482,21 +572,23 @@ const addContact = async (req, res) => {
 
 };
 
-// ================= GET CONTACTS =================
+// =========================================
+// GET CONTACTS
+// =========================================
 
 const getContacts = async (req, res) => {
 
     try {
 
-        const user = await User.findById(req.user.id)
+        const user = await User.findById(req.user._id)
 
-            .populate({
+            .populate(
 
-                path: "contacts.user",
+                "contacts.user",
 
-                select: "name phone email profilePic username about"
+                "-password"
 
-            });
+            );
 
         return res.status(200).json({
 
@@ -524,7 +616,206 @@ const getContacts = async (req, res) => {
 
 };
 
-// ================= MODULE EXPORTS =================
+// =========================================
+// SEARCH USERS
+// =========================================
+
+const searchUsers = async (req, res) => {
+
+    try {
+
+        const keyword = req.query.search;
+
+        if (!keyword) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Search keyword is required."
+
+            });
+
+        }
+
+        const users = await User.find({
+
+            $and: [
+
+                {
+
+                    _id: {
+
+                        $ne: req.user._id
+
+                    }
+
+                },
+
+                {
+
+                    $or: [
+
+                        {
+
+                            name: {
+
+                                $regex: keyword,
+
+                                $options: "i"
+
+                            }
+
+                        },
+
+                        {
+
+                            phone: {
+
+                                $regex: keyword,
+
+                                $options: "i"
+
+                            }
+
+                        },
+
+                        {
+
+                            email: {
+
+                                $regex: keyword,
+
+                                $options: "i"
+
+                            }
+
+                        }
+
+                    ]
+
+                }
+
+            ]
+
+        }).select("-password");
+
+        return res.status(200).json({
+
+            success: true,
+
+            count: users.length,
+
+            users,
+
+        });
+
+    }
+
+    catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+// =========================================
+// GET ALL USERS
+// =========================================
+
+const getAllUsers = async (req, res) => {
+
+    try {
+
+        const users = await User.find({
+
+            _id: {
+
+                $ne: req.user._id
+
+            }
+
+        }).select("-password");
+
+        return res.status(200).json({
+
+            success: true,
+
+            count: users.length,
+
+            users,
+
+        });
+
+    }
+
+    catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+
+// =========================================
+// LOGOUT USER
+// =========================================
+
+const logoutUser = async (req, res) => {
+
+    try {
+
+        const user = await User.findById(req.user._id);
+
+        if (user) {
+
+            user.isOnline = false;
+
+            user.lastSeen = new Date();
+
+            await user.save();
+
+        }
+
+        return res.status(200).json({
+
+            success: true,
+
+            message: "Logout Successful."
+
+        });
+
+    }
+
+    catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
+};
+
+// =========================================
+// EXPORTS
+// =========================================
 
 module.exports = {
 
@@ -536,12 +827,16 @@ module.exports = {
 
     updateProfile,
 
-    getAllUsers,
-
     uploadProfilePicture,
 
     addContact,
 
     getContacts,
+
+    searchUsers,
+
+    getAllUsers,
+
+    logoutUser,
 
 };

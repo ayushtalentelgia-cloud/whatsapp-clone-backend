@@ -1,45 +1,132 @@
 const mongoose = require("mongoose");
 
+// =========================================
+// CHAT SCHEMA
+// =========================================
+
 const chatSchema = new mongoose.Schema(
-{
-    chatName: {
-        type: String,
-        default: "sender",
-    },
 
-    isGroupChat: {
-        type: Boolean,
-        default: false,
-    },
+    {
 
-    users: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+        // Chat Name
+        chatName: {
+
+            type: String,
+
+            trim: true,
+
+            default: "Private Chat",
+
         },
-    ],
 
-    latestMessage: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Message",
-        default: null,
+        // Group or Private
+        isGroupChat: {
+
+            type: Boolean,
+
+            default: false,
+
+        },
+
+        // Users
+        users: [
+
+            {
+
+                type: mongoose.Schema.Types.ObjectId,
+
+                ref: "User",
+
+            },
+
+        ],
+
+        // Latest Message
+        latestMessage: {
+
+            type: mongoose.Schema.Types.ObjectId,
+
+            ref: "Message",
+
+        },
+
+        // Group Admin
+        groupAdmin: {
+
+            type: mongoose.Schema.Types.ObjectId,
+
+            ref: "User",
+
+            default: null,
+
+        },
+
+        // Group Icon
+        groupIcon: {
+
+            type: String,
+
+            default: "",
+
+        },
+
+        // Group Description
+        description: {
+
+            type: String,
+
+            default: "",
+
+        },
+
+        // Unread Count
+        unreadCount: {
+
+            type: Number,
+
+            default: 0,
+
+        },
+
+        // Mute Chat
+        isMuted: {
+
+            type: Boolean,
+
+            default: false,
+
+        },
+
+        // Archive Chat
+        isArchived: {
+
+            type: Boolean,
+
+            default: false,
+
+        },
+
+        // Pin Chat
+        isPinned: {
+
+            type: Boolean,
+
+            default: false,
+
+        }
+
     },
 
-    groupAdmin: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-    },
+    {
 
-    // Latest activity time
-    lastActivity: {
-        type: Date,
-        default: Date.now,
+        timestamps: true,
+
     }
 
-},
-{
-    timestamps: true,
-}
 );
+
+// =========================================
+// EXPORT
+// =========================================
 
 module.exports = mongoose.model("Chat", chatSchema);

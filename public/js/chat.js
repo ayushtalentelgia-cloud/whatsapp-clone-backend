@@ -1,11 +1,11 @@
 // =========================================
-// API URL
+// API
 // =========================================
 
 const API_URL = "https://whatsapp-clone-backend-b5o7.onrender.com/api";
 
 // =========================================
-// LOGIN CHECK
+// AUTH
 // =========================================
 
 const token = localStorage.getItem("token");
@@ -31,22 +31,47 @@ const socket = io(
 socket.emit("setup", currentUser);
 
 // =========================================
-// GLOBAL VARIABLES
+// VARIABLES
 // =========================================
 
 let selectedChat = null;
+
 let selectedUser = null;
 
 let typing = false;
+
 let typingTimeout;
 
 // =========================================
-// ELEMENTS
+// DOM ELEMENTS
 // =========================================
+
+// Sidebar
+
+const myProfilePic = document.getElementById("myProfilePic");
+
+const myName = document.getElementById("myName");
 
 const chatList = document.getElementById("chatList");
 
+const searchUser = document.getElementById("searchUser");
+
+// Chat Header
+
+const userAvatar = document.getElementById("userAvatar");
+
+const chatName = document.getElementById("chatName");
+
+const onlineStatus = document.getElementById("onlineStatus");
+
+// Messages
+
 const messages = document.getElementById("messages");
+
+const typingIndicator =
+    document.getElementById("typingIndicator");
+
+// Input
 
 const messageInput =
     document.getElementById("messageInput");
@@ -54,109 +79,107 @@ const messageInput =
 const sendBtn =
     document.getElementById("sendBtn");
 
-const searchUser =
-    document.getElementById("searchUser");
+// Buttons
 
-const logoutBtn =
-    document.getElementById("logoutBtn");
+const profileBtn =
+    document.getElementById("profileBtn");
 
-const chatName =
-    document.getElementById("chatName");
+const addContactBtn =
+    document.getElementById("addContactBtn");
 
-const onlineStatus =
-    document.getElementById("onlineStatus");
+const menuBtn =
+    document.getElementById("menuBtn");
 
-const userAvatar =
-    document.getElementById("userAvatar");
+const backBtn =
+    document.getElementById("backBtn");
 
-// =========================================
-// PROFILE
-// =========================================
+// Contact Modal
 
-const myProfilePic =
-    document.getElementById("myProfilePic");
+const contactModal =
+    document.getElementById("contactModal");
 
-const profilePicInput =
-    document.getElementById("profilePicInput");
+const contactName =
+    document.getElementById("contactName");
+
+const contactPhone =
+    document.getElementById("contactPhone");
+
+const saveContactBtn =
+    document.getElementById("saveContactBtn");
+
+const closeContactBtn =
+    document.getElementById("closeContactBtn");
+
+// Profile Modal
+
+const profileModal =
+    document.getElementById("profileModal");
 
 const profilePreview =
     document.getElementById("profilePreview");
 
-const myName =
-    document.getElementById("myName");
+const profilePicInput =
+    document.getElementById("profilePicInput");
+
+const changePhotoBtn =
+    document.getElementById("changePhotoBtn");
+
+const profileName =
+    document.getElementById("profileName");
+
+const profilePhone =
+    document.getElementById("profilePhone");
+
+const profileEmail =
+    document.getElementById("profileEmail");
+
+const closeProfileBtn =
+    document.getElementById("closeProfileBtn");
+
+// Menu
+
+const menuDropdown =
+    document.getElementById("menuDropdown");
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+// Message Menu
+
+const messageContextMenu =
+    document.getElementById("messageContextMenu");
+
+const editMessageBtn =
+    document.getElementById("editMessageBtn");
+
+const deleteMessageBtn =
+    document.getElementById("deleteMessageBtn");
 
 // =========================================
-// SHOW USER INFO
+// LOAD USER
 // =========================================
 
-myName.innerText = currentUser.name;
+function loadCurrentUser() {
 
-if (currentUser.profilePic) {
+    myName.innerText = currentUser.name;
 
-    myProfilePic.src = currentUser.profilePic;
+    profileName.innerText = currentUser.name;
 
-    if (profilePreview) {
+    profilePhone.innerText = currentUser.phone;
 
-        profilePreview.src =
-            currentUser.profilePic;
+    profileEmail.innerText = currentUser.email;
+
+    if (currentUser.profilePic) {
+
+        myProfilePic.src = currentUser.profilePic;
+
+        profilePreview.src = currentUser.profilePic;
 
     }
 
 }
-else{
 
-    myProfilePic.src =
-`https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=38BDF8&color=fff`;
-
-}
-
-// =========================================
-// SOCKET CONNECTED
-// =========================================
-
-socket.on("connected", () => {
-
-    console.log("Socket Connected");
-
-});
-
-// =========================================
-// ONLINE USER
-// =========================================
-
-socket.on("user online", (user) => {
-
-    if (
-        selectedUser &&
-        selectedUser._id === user._id
-    ) {
-
-        onlineStatus.innerText = "Online";
-
-        onlineStatus.className = "online";
-
-    }
-
-});
-
-// =========================================
-// OFFLINE USER
-// =========================================
-
-socket.on("user offline", (user) => {
-
-    if (
-        selectedUser &&
-        selectedUser._id === user._id
-    ) {
-
-        onlineStatus.innerText = "Offline";
-
-        onlineStatus.className = "offline";
-
-    }
-
-});
+loadCurrentUser();
 // =========================================
 // LOAD CHATS
 // =========================================
@@ -185,7 +208,86 @@ async function loadChats() {
 
         }
 
-        renderChats(data.chats);
+        chatList.innerHTML = "";
+
+        data.chats.forEach(chat => {
+
+            const otherUser = chat.users.find(
+
+                user => user._id !== currentUser._id
+
+            );
+
+            if (!otherUser) return;
+
+            const div = document.createElement("div");
+
+            div.className = "chat-item";
+
+            div.innerHTML = `
+
+                <div class="chat-avatar">
+
+                    ${otherUser.profilePic
+
+                        ? `<img src="${otherUser.profilePic}">`
+
+                        : otherUser.name.charAt(0).toUpperCase()
+                    }
+
+                </div>
+
+                <div class="chat-details">
+
+                    <div class="chat-details-top">
+
+                        <h4>${otherUser.name}</h4>
+
+                        <span>
+
+                            ${chat.updatedAt
+                                ? new Date(chat.updatedAt).toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit"
+                                  })
+                                : ""
+                            }
+
+                        </span>
+
+                    </div>
+
+                    <div class="chat-message">
+
+                        ${chat.latestMessage
+
+                            ? chat.latestMessage.content
+
+                            : "Start Conversation"
+
+                        }
+
+                    </div>
+
+                </div>
+
+            `;
+
+            div.onclick = () => {
+
+                document
+                    .querySelectorAll(".chat-item")
+                    .forEach(item => item.classList.remove("active"));
+
+                div.classList.add("active");
+
+                openChat(chat);
+
+            };
+
+            chatList.appendChild(div);
+
+        });
 
     }
 
@@ -198,198 +300,36 @@ async function loadChats() {
 }
 
 // =========================================
-// RENDER CHATS
+// SEARCH
 // =========================================
 
-function renderChats(chats) {
+searchUser.addEventListener("input", function () {
 
-    chatList.innerHTML = "";
+    const value = this.value.trim().toLowerCase();
 
-    chats.forEach(chat => {
+    document.querySelectorAll(".chat-item").forEach(chat => {
 
-        const otherUser = chat.users.find(
-
-            u => u._id !== currentUser._id
-
-        );
-
-        if (!otherUser) return;
-
-        const lastMessage =
-
-            chat.latestMessage?.content ||
-
-            "Start Conversation";
-
-        const time =
-
-            chat.updatedAt ?
-
-            new Date(chat.updatedAt)
-
-            .toLocaleTimeString([],{
-
-                hour:"2-digit",
-
-                minute:"2-digit"
-
-            })
-
-            : "";
-
-        const profile = otherUser.profilePic ?
-
-        `<img
-            src="${otherUser.profilePic}"
-            class="avatar-img"
-        >`
-
-        :
-
-        otherUser.name.charAt(0).toUpperCase();
-
-        const div = document.createElement("div");
-
-        div.className = "chat-item";
-
-        div.innerHTML = `
-
-            <div class="chat-avatar">
-
-                ${profile}
-
-            </div>
-
-            <div class="chat-details">
-
-                <div class="chat-details-top">
-
-                    <h4>${otherUser.name}</h4>
-
-                    <span>${time}</span>
-
-                </div>
-
-                <div class="chat-message">
-
-                    ${lastMessage}
-
-                </div>
-
-            </div>
-
-        `;
-
-        div.onclick = () => {
-
-            document
-            .querySelectorAll(".chat-item")
-            .forEach(c=>c.classList.remove("active"));
-
-            div.classList.add("active");
-
-            openChat(chat);
-
-        };
-
-        chatList.appendChild(div);
-
-    });
-
-}
-
-// =========================================
-// SEARCH CONTACT
-// =========================================
-
-searchUser.addEventListener("keyup", function(){
-
-    const value = this.value.toLowerCase();
-
-    document
-
-    .querySelectorAll(".chat-item")
-
-    .forEach(chat=>{
-
-        const name = chat
-
-        .querySelector("h4")
-
-        .innerText
-
-        .toLowerCase();
+        const name = chat.querySelector("h4")
+            .innerText
+            .toLowerCase();
 
         chat.style.display =
 
-        name.includes(value)
+            name.includes(value)
 
-        ?
+            ? "flex"
 
-        "flex"
-
-        :
-
-        "none";
+            : "none";
 
     });
 
 });
 
 // =========================================
-// MOBILE
-// =========================================
-
-function openMobileChat(){
-
-    if(window.innerWidth<=900){
-
-        document
-
-        .querySelector(".sidebar")
-
-        .classList.add("hide");
-
-        document
-
-        .querySelector(".chat-section")
-
-        .classList.add("active");
-
-    }
-
-}
-
-function closeMobileChat(){
-
-    if(window.innerWidth<=900){
-
-        document
-
-        .querySelector(".sidebar")
-
-        .classList.remove("hide");
-
-        document
-
-        .querySelector(".chat-section")
-
-        .classList.remove("active");
-
-    }
-
-}
-
-// =========================================
-// START
-// =========================================
-
-loadChats();
-// =========================================
 // OPEN CHAT
 // =========================================
 
-async function openChat(chat){
+async function openChat(chat) {
 
     selectedChat = chat;
 
@@ -403,23 +343,15 @@ async function openChat(chat){
 
     chatName.innerText = selectedUser.name;
 
-    if(selectedUser.profilePic){
+    if (selectedUser.profilePic) {
 
-        userAvatar.innerHTML = `
+        userAvatar.innerHTML =
 
-            <img
-
-                src="${selectedUser.profilePic}"
-
-                class="chat-profile-pic"
-
-            >
-
-        `;
+            `<img src="${selectedUser.profilePic}">`;
 
     }
 
-    else{
+    else {
 
         userAvatar.innerHTML =
 
@@ -431,12 +363,81 @@ async function openChat(chat){
 
     onlineStatus.className = "offline";
 
-    openMobileChat();
+    if (window.innerWidth < 900) {
+
+        document
+            .querySelector(".sidebar")
+            .classList.add("hide");
+
+        document
+            .querySelector(".chat-section")
+            .classList.add("active");
+
+    }
 
     await loadMessages(chat._id);
 
 }
 
+// =========================================
+// MOBILE BACK
+// =========================================
+
+backBtn.onclick = () => {
+
+    document
+        .querySelector(".sidebar")
+        .classList.remove("hide");
+
+    document
+        .querySelector(".chat-section")
+        .classList.remove("active");
+
+};
+
+// =========================================
+// SOCKET ONLINE
+// =========================================
+
+socket.on("user online", user => {
+
+    if (
+
+        selectedUser &&
+
+        selectedUser._id === user._id
+
+    ) {
+
+        onlineStatus.innerText = "Online";
+
+        onlineStatus.className = "online";
+
+    }
+
+});
+
+// =========================================
+// SOCKET OFFLINE
+// =========================================
+
+socket.on("user offline", user => {
+
+    if (
+
+        selectedUser &&
+
+        selectedUser._id === user._id
+
+    ) {
+
+        onlineStatus.innerText = "Offline";
+
+        onlineStatus.className = "offline";
+
+    }
+
+});
 // =========================================
 // LOAD MESSAGES
 // =========================================
@@ -453,9 +454,7 @@ async function loadMessages(chatId){
 
                 headers:{
 
-                    Authorization:
-
-                    "Bearer " + token
+                    Authorization:"Bearer " + token
 
                 }
 
@@ -467,7 +466,7 @@ async function loadMessages(chatId){
 
         if(!data.success){
 
-            console.log(data);
+            console.log(data.message);
 
             return;
 
@@ -475,15 +474,33 @@ async function loadMessages(chatId){
 
         messages.innerHTML = "";
 
+        if(data.messages.length===0){
+
+            messages.innerHTML=`
+
+            <div class="empty-chat">
+
+                <i class="fas fa-comments"></i>
+
+                <h2>No Messages Yet</h2>
+
+                <p>Start your conversation.</p>
+
+            </div>
+
+            `;
+
+            return;
+
+        }
+
         data.messages.forEach(message=>{
 
             addMessage(message);
 
         });
 
-        messages.scrollTop =
-
-        messages.scrollHeight;
+        messages.scrollTop=messages.scrollHeight;
 
     }
 
@@ -501,43 +518,37 @@ async function loadMessages(chatId){
 
 function addMessage(message){
 
-    if(
+    const already=document.getElementById(
 
-        document.getElementById(
+        "msg-"+message._id
 
-            "msg-"+message._id
+    );
 
-        )
+    if(already) return;
 
-    ){
+    const div=document.createElement("div");
 
-        return;
+    div.id="msg-"+message._id;
 
-    }
+    div.className=
 
-    const div = document.createElement("div");
+        "message "+
 
-    div.id = "msg-"+message._id;
+        (
 
-    div.className = "message";
+            message.sender._id===currentUser._id
 
-    if(
+            ?
 
-        message.sender._id===currentUser._id
+            "sent"
 
-    ){
+            :
 
-        div.classList.add("sent");
+            "received"
 
-    }
+        );
 
-    else{
-
-        div.classList.add("received");
-
-    }
-
-    const time = new Date(
+    const time=new Date(
 
         message.createdAt
 
@@ -549,7 +560,7 @@ function addMessage(message){
 
     });
 
-    div.innerHTML = `
+    div.innerHTML=`
 
         <div class="message-text">
 
@@ -567,112 +578,25 @@ function addMessage(message){
 
     messages.appendChild(div);
 
-    messages.scrollTop =
-
-    messages.scrollHeight;
+    messages.scrollTop=messages.scrollHeight;
 
 }
 
-// =========================================
-// SOCKET RECEIVE
-// =========================================
-
-socket.off("message received");
-
-socket.on(
-
-    "message received",
-
-    message=>{
-
-        if(
-
-            selectedChat &&
-
-            selectedChat._id===
-
-            message.chat._id
-
-        ){
-
-            addMessage(message);
-
-        }
-
-        loadChats();
-
-    }
-
-);
-
-// =========================================
-// SOCKET EDIT
-// =========================================
-
-socket.off("message edited");
-
-socket.on(
-
-    "message edited",
-
-    ()=>{
-
-        if(selectedChat){
-
-            loadMessages(
-
-                selectedChat._id
-
-            );
-
-        }
-
-    }
-
-);
-
-// =========================================
-// SOCKET DELETE
-// =========================================
-
-socket.off("message deleted");
-
-socket.on(
-
-    "message deleted",
-
-    ()=>{
-
-        if(selectedChat){
-
-            loadMessages(
-
-                selectedChat._id
-
-            );
-
-        }
-
-    }
-
-);
 // =========================================
 // SEND MESSAGE
 // =========================================
 
 async function sendMessage(){
 
-    const text = messageInput.value.trim();
+    const content=messageInput.value.trim();
 
-    if(!text || !selectedChat) return;
-
-    socket.emit("stop typing", selectedChat._id);
+    if(!content || !selectedChat) return;
 
     try{
 
-        const res = await fetch(
+        const res=await fetch(
 
-            API_URL + "/message",
+            API_URL+"/message",
 
             {
 
@@ -688,7 +612,7 @@ async function sendMessage(){
 
                 body:JSON.stringify({
 
-                    content:text,
+                    content,
 
                     chatId:selectedChat._id
 
@@ -698,7 +622,7 @@ async function sendMessage(){
 
         );
 
-        const data = await res.json();
+        const data=await res.json();
 
         if(!data.success){
 
@@ -709,6 +633,14 @@ async function sendMessage(){
         }
 
         messageInput.value="";
+
+        socket.emit(
+
+            "stop typing",
+
+            selectedChat._id
+
+        );
 
         addMessage(data.message);
 
@@ -731,20 +663,50 @@ async function sendMessage(){
 sendBtn.onclick=sendMessage;
 
 // =========================================
-// ENTER TO SEND
+// ENTER KEY
 // =========================================
 
 messageInput.addEventListener(
 
     "keypress",
 
-    function(e){
+    e=>{
 
         if(e.key==="Enter"){
 
             sendMessage();
 
         }
+
+    }
+
+);
+
+// =========================================
+// SOCKET RECEIVE
+// =========================================
+
+socket.off("message received");
+
+socket.on(
+
+    "message received",
+
+    message=>{
+
+        if(
+
+            selectedChat &&
+
+            selectedChat._id===message.chat._id
+
+        ){
+
+            addMessage(message);
+
+        }
+
+        loadChats();
 
     }
 
@@ -806,17 +768,11 @@ socket.on(
 
     ()=>{
 
-        onlineStatus.innerHTML=
-
-        "Typing...";
+        typingIndicator.style.display="block";
 
     }
 
 );
-
-// =========================================
-// STOP TYPING
-// =========================================
 
 socket.on(
 
@@ -824,362 +780,46 @@ socket.on(
 
     ()=>{
 
-        onlineStatus.innerHTML=
-
-        "Online";
-
-    }
-
-);
-
-// =========================================
-// MESSAGE DELIVERED
-// =========================================
-
-socket.on(
-
-    "message delivered",
-
-    ()=>{
-
-        if(selectedChat){
-
-            loadMessages(selectedChat._id);
-
-        }
-
-    }
-
-);
-
-// =========================================
-// MESSAGE SEEN
-// =========================================
-
-socket.on(
-
-    "message seen",
-
-    ()=>{
-
-        if(selectedChat){
-
-            loadMessages(selectedChat._id);
-
-        }
+        typingIndicator.style.display="none";
 
     }
 
 );
 // =========================================
-// MESSAGE MENU
+// PROFILE MODAL
 // =========================================
 
-document.addEventListener("click", function(e){
+profileBtn.onclick = () => {
 
-    document.querySelectorAll(".message-menu").forEach(menu=>{
+    profileModal.classList.add("active");
 
-        menu.style.display="none";
+};
 
-    });
+closeProfileBtn.onclick = () => {
 
-});
+    profileModal.classList.remove("active");
 
-// =========================================
-// TOGGLE MENU
-// =========================================
+};
 
-function toggleMessageMenu(id){
+changePhotoBtn.onclick = () => {
 
-    document.querySelectorAll(".message-menu").forEach(menu=>{
+    profilePicInput.click();
 
-        if(menu.id!==`menu-${id}`){
+};
 
-            menu.style.display="none";
-
-        }
-
-    });
-
-    const menu=document.getElementById(`menu-${id}`);
-
-    if(!menu) return;
-
-    menu.style.display=
-
-    menu.style.display==="block"
-
-    ?
-
-    "none"
-
-    :
-
-    "block";
-
-}
-
-// =========================================
-// EDIT MESSAGE
-// =========================================
-
-async function editMessage(id){
-
-    const old=document
-
-    .querySelector(`#msg-${id} .message-text`)
-
-    .innerText;
-
-    const text=prompt(
-
-        "Edit Message",
-
-        old
-
-    );
-
-    if(!text) return;
-
-    try{
-
-        const res=await fetch(
-
-            API_URL+"/message/edit/"+id,
-
-            {
-
-                method:"PUT",
-
-                headers:{
-
-                    "Content-Type":"application/json",
-
-                    Authorization:"Bearer "+token
-
-                },
-
-                body:JSON.stringify({
-
-                    content:text
-
-                })
-
-            }
-
-        );
-
-        const data=await res.json();
-
-        alert(data.message);
-
-    }
-
-    catch(err){
-
-        console.log(err);
-
-    }
-
-}
-
-// =========================================
-// DELETE MESSAGE
-// =========================================
-
-async function deleteMessage(id){
-
-    if(
-
-        !confirm(
-
-            "Delete this message?"
-
-        )
-
-    ) return;
-
-    try{
-
-        const res=await fetch(
-
-            API_URL+"/message/delete/"+id,
-
-            {
-
-                method:"PUT",
-
-                headers:{
-
-                    Authorization:"Bearer "+token
-
-                }
-
-            }
-
-        );
-
-        const data=await res.json();
-
-        alert(data.message);
-
-    }
-
-    catch(err){
-
-        console.log(err);
-
-    }
-
-}
-
-// =========================================
-// UPDATE MESSAGE
-// =========================================
-
-function updateMessage(message){
-
-    const div=document.getElementById(
-
-        "msg-"+message._id
-
-    );
-
-    if(!div) return;
-
-    const text=
-
-    div.querySelector(".message-text");
-
-    if(text){
-
-        text.innerHTML=
-
-        message.content+
-
-        (
-
-            message.edited
-
-            ?
-
-            ` <span class="edited-label">(edited)</span>`
-
-            :
-
-            ""
-
-        );
-
-    }
-
-}
-
-// =========================================
-// UPDATE DELETE
-// =========================================
-
-function updateDeletedMessage(message){
-
-    const div=document.getElementById(
-
-        "msg-"+message._id
-
-    );
-
-    if(!div) return;
-
-    div.querySelector(
-
-        ".message-text"
-
-    ).innerHTML=
-
-    "<i>This message was deleted</i>";
-
-    const menu=
-
-    div.querySelector(".message-options");
-
-    if(menu){
-
-        menu.remove();
-
-    }
-
-}
-
-// =========================================
-// SOCKET EDIT
-// =========================================
-
-socket.off("message edited");
-
-socket.on(
-
-    "message edited",
-
-    message=>{
-
-        updateMessage(message);
-
-    }
-
-);
-
-// =========================================
-// SOCKET DELETE
-// =========================================
-
-socket.off("message deleted");
-
-socket.on(
-
-    "message deleted",
-
-    message=>{
-
-        updateDeletedMessage(message);
-
-    }
-
-);
 // =========================================
 // CONTACT MODAL
 // =========================================
 
-const addContactBtn = document.getElementById("addContactBtn");
-const contactModal = document.getElementById("contactModal");
-const closeContactBtn = document.getElementById("closeContactBtn");
-const saveContactBtn = document.getElementById("saveContactBtn");
+addContactBtn.onclick = () => {
 
-if(addContactBtn){
+    contactModal.classList.add("active");
 
-    addContactBtn.onclick=()=>{
+};
 
-        contactModal.style.display="flex";
+closeContactBtn.onclick = () => {
 
-    };
-
-}
-
-if(closeContactBtn){
-
-    closeContactBtn.onclick=()=>{
-
-        contactModal.style.display="none";
-
-    };
-
-}
-
-window.onclick=(e)=>{
-
-    if(e.target===contactModal){
-
-        contactModal.style.display="none";
-
-    }
+    contactModal.classList.remove("active");
 
 };
 
@@ -1187,49 +827,39 @@ window.onclick=(e)=>{
 // SAVE CONTACT
 // =========================================
 
-if(saveContactBtn){
+saveContactBtn.onclick = async () => {
 
-saveContactBtn.onclick=async()=>{
+    const name = contactName.value.trim();
 
-    const name=document
+    const phone = contactPhone.value.trim();
 
-    .getElementById("contactName")
+    if (!name || !phone) {
 
-    .value.trim();
-
-    const phone=document
-
-    .getElementById("contactPhone")
-
-    .value.trim();
-
-    if(!name||!phone){
-
-        alert("Enter Name & Phone");
+        alert("Please enter Name & Phone");
 
         return;
 
     }
 
-    try{
+    try {
 
-        const res=await fetch(
+        const res = await fetch(
 
-            API_URL+"/users/contact",
+            API_URL + "/users/contact",
 
             {
 
-                method:"POST",
+                method: "POST",
 
-                headers:{
+                headers: {
 
-                    "Content-Type":"application/json",
+                    "Content-Type": "application/json",
 
-                    Authorization:"Bearer "+token
+                    Authorization: "Bearer " + token
 
                 },
 
-                body:JSON.stringify({
+                body: JSON.stringify({
 
                     name,
 
@@ -1241,25 +871,17 @@ saveContactBtn.onclick=async()=>{
 
         );
 
-        const data=await res.json();
+        const data = await res.json();
 
         alert(data.message);
 
-        if(data.success){
+        if (data.success) {
 
-            contactModal.style.display="none";
+            contactModal.classList.remove("active");
 
-            document
+            contactName.value = "";
 
-            .getElementById("contactName")
-
-            .value="";
-
-            document
-
-            .getElementById("contactPhone")
-
-            .value="";
+            contactPhone.value = "";
 
             loadChats();
 
@@ -1267,7 +889,7 @@ saveContactBtn.onclick=async()=>{
 
     }
 
-    catch(err){
+    catch (err) {
 
         console.log(err);
 
@@ -1275,55 +897,111 @@ saveContactBtn.onclick=async()=>{
 
 };
 
-}
-
 // =========================================
-// PROFILE PICTURE
+// MENU
 // =========================================
 
-if(profilePicInput){
+menuBtn.onclick = () => {
 
-profilePicInput.onchange=async function(){
+    menuDropdown.classList.toggle("active");
 
-    const file=this.files[0];
+};
 
-    if(!file) return;
+window.addEventListener("click", (e) => {
 
-    const formData=new FormData();
+    if (
 
-    formData.append(
+        !menuBtn.contains(e.target) &&
 
-        "profilePic",
+        !menuDropdown.contains(e.target)
 
-        file
+    ) {
 
-    );
+        menuDropdown.classList.remove("active");
 
-    try{
+    }
 
-        const res=await fetch(
+});
 
-            API_URL+"/users/profile-picture",
+// =========================================
+// LOGOUT
+// =========================================
+
+logoutBtn.onclick = () => {
+
+    if (!confirm("Logout?")) return;
+
+    localStorage.removeItem("token");
+
+    localStorage.removeItem("user");
+
+    location.href = "/index.html";
+
+};
+
+// =========================================
+// MESSAGE STATUS
+// =========================================
+
+socket.on("message delivered", () => {
+
+    if (selectedChat) {
+
+        loadMessages(selectedChat._id);
+
+    }
+
+});
+
+socket.on("message seen", () => {
+
+    if (selectedChat) {
+
+        loadMessages(selectedChat._id);
+
+    }
+
+});
+
+// =========================================
+// PROFILE UPLOAD
+// =========================================
+
+profilePicInput.onchange = async function () {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+
+    formData.append("profilePic", file);
+
+    try {
+
+        const res = await fetch(
+
+            API_URL + "/users/profile-picture",
 
             {
 
-                method:"PUT",
+                method: "PUT",
 
-                headers:{
+                headers: {
 
-                    Authorization:"Bearer "+token
+                    Authorization: "Bearer " + token
 
                 },
 
-                body:formData
+                body: formData
 
             }
 
         );
 
-        const data=await res.json();
+        const data = await res.json();
 
-        if(!data.success){
+        if (!data.success) {
 
             alert(data.message);
 
@@ -1331,7 +1009,7 @@ profilePicInput.onchange=async function(){
 
         }
 
-        currentUser.profilePic=data.user.profilePic;
+        currentUser.profilePic = data.user.profilePic;
 
         localStorage.setItem(
 
@@ -1341,21 +1019,17 @@ profilePicInput.onchange=async function(){
 
         );
 
-        myProfilePic.src=data.user.profilePic;
+        myProfilePic.src = data.user.profilePic;
 
-        if(profilePreview){
-
-            profilePreview.src=data.user.profilePic;
-
-        }
-
-        alert("Profile Updated");
+        profilePreview.src = data.user.profilePic;
 
         loadChats();
 
+        alert("Profile Updated");
+
     }
 
-    catch(err){
+    catch (err) {
 
         console.log(err);
 
@@ -1363,44 +1037,24 @@ profilePicInput.onchange=async function(){
 
 };
 
-}
-
-// =========================================
-// LOGOUT
-// =========================================
-
-logoutBtn.onclick=()=>{
-
-    if(confirm("Logout?")){
-
-        localStorage.removeItem("token");
-
-        localStorage.removeItem("user");
-
-        location.href="/index.html";
-
-    }
-
-};
-
-// =========================================
-// MOBILE BACK
-// =========================================
-
-const backBtn=document.getElementById("backBtn");
-
-if(backBtn){
-
-    backBtn.onclick=closeMobileChat;
-
-}
-
 // =========================================
 // INITIAL LOAD
 // =========================================
 
-window.onload=()=>{
+window.onload = () => {
+
+    loadCurrentUser();
 
     loadChats();
 
 };
+
+// =========================================
+// SOCKET CONNECT
+// =========================================
+
+socket.on("connected", () => {
+
+    console.log("Socket Connected");
+
+});

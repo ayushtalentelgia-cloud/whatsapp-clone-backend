@@ -6,14 +6,17 @@
     <meta charset="UTF-8">
 
     <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+          content="width=device-width, initial-scale=1.0">
 
     <title>VibeChat</title>
 
-    <link rel="stylesheet" href="/css/chat.css">
-
+    <!-- CSS -->
     <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+          href="/css/chat.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 </head>
 
@@ -21,221 +24,436 @@
 
 <div class="app">
 
-    <!-- ================= SIDEBAR ================= -->
+<!-- =========================================
+     SIDEBAR
+========================================= -->
 
-    <div class="sidebar">
+<div class="sidebar">
 
-        <!-- ================= HEADER ================= -->
+<!-- =========================================
+     PROFILE HEADER
+========================================= -->
 
 <div class="sidebar-header">
 
-    <div class="profile-section">
+<div class="profile-section">
 
-        <label
-            for="profilePicInput"
-            class="profile-label"
-        >
+<img
 
-            <img
-                id="myProfilePic"
-                class="profile-pic"
-                src="https://ui-avatars.com/api/?name=User&background=38BDF8&color=fff&size=200"
-                alt="Profile"
-            >
+id="myProfilePic"
 
-        </label>
+class="profile-pic"
 
-        <input
-            type="file"
-            id="profilePicInput"
-            accept="image/*"
-            hidden
-        >
+src="https://ui-avatars.com/api/?name=User"
 
-        <div class="profile-info">
+alt="Profile"
 
-            <h2>Chats</h2>
+>
 
-            <span id="myName">
+<div class="profile-info">
 
-                Welcome
+<h2 id="myName">
 
-            </span>
+Loading...
 
-        </div>
+</h2>
 
-    </div>
+<span>
 
- <div class="header-icons">
+Welcome
 
-    <button class="icon-btn" id="addContactBtn">
-        <i class="fas fa-user-plus"></i>
-    </button>
-
-    <div class="sidebar-menu-wrapper">
-
-        <button class="icon-btn" id="sidebarMenuBtn">
-            <i class="fas fa-ellipsis-vertical"></i>
-        </button>
-
-        <div id="sidebarMenu" class="sidebar-menu">
-
-            <button id="sidebarProfileBtn">
-                <i class="fas fa-user"></i>
-                Profile
-            </button>
-
-            <button id="sidebarLogoutBtn">
-                <i class="fas fa-right-from-bracket"></i>
-                Logout
-            </button>
-
-        </div>
-
-    </div>
+</span>
 
 </div>
-        <!-- ================= SEARCH ================= -->
 
-        <div class="search-box">
+</div>
 
-            <i class="fas fa-search"></i>
+<div class="header-icons">
+
+<button
+
+id="profileBtn"
+
+class="icon-btn"
+
+title="Profile"
+
+>
+
+<i class="fa-solid fa-user"></i>
+
+</button>
+
+<button
+
+id="addContactBtn"
+
+class="icon-btn"
+
+title="Add Contact"
+
+>
+
+<i class="fa-solid fa-user-plus"></i>
+
+</button>
+
+<button
+
+id="menuBtn"
+
+class="icon-btn"
+
+title="Menu"
+
+>
+
+<i class="fa-solid fa-ellipsis-vertical"></i>
+
+</button>
+
+</div>
+
+</div>
+
+<!-- =========================================
+     SEARCH
+========================================= -->
+
+<div class="search-box">
+
+<i class="fas fa-search"></i>
+
+<input
+
+type="text"
+
+id="searchUser"
+
+placeholder="Search contacts..."
+
+>
+
+</div>
+
+<!-- =========================================
+     FILTERS
+========================================= -->
+
+<div class="filters">
+
+<button
+
+class="active"
+
+id="allChatsBtn"
+
+>
+
+All
+
+</button>
+
+<button
+
+id="unreadBtn"
+
+>
+
+Unread
+
+</button>
+
+<button
+
+id="groupBtn"
+
+>
+
+Groups
+
+</button>
+
+</div>
+
+<!-- =========================================
+     CHAT LIST
+========================================= -->
+
+<div
+
+id="chatList"
+
+class="chat-list"
+
+>
+
+<!-- Dynamic Chats -->
+
+</div>
+
+</div>
+<!-- =========================================
+     CHAT SECTION
+========================================= -->
+
+<div class="chat-section">
+
+<!-- =========================================
+     CHAT HEADER
+========================================= -->
+
+<div class="chat-header">
+
+<button
+
+id="backBtn"
+
+class="back-btn"
+
+>
+
+<i class="fas fa-arrow-left"></i>
+
+</button>
+
+<div class="chat-user">
+
+<div
+
+id="userAvatar"
+
+class="chat-avatar"
+
+>
+
+👤
+
+</div>
+
+<div class="chat-user-info">
+
+<h3 id="chatName">
+
+Select Contact
+
+</h3>
+
+<span id="onlineStatus">
+
+Offline
+
+</span>
+
+</div>
+
+</div>
+
+<div class="chat-actions">
+
+<button
+
+id="voiceCallBtn"
+
+title="Voice Call"
+
+>
+
+<i class="fas fa-phone"></i>
+
+</button>
+
+<button
+
+id="videoCallBtn"
+
+title="Video Call"
+
+>
+
+<i class="fas fa-video"></i>
+
+</button>
+
+<button
+
+id="chatMenuBtn"
+
+title="Menu"
+
+>
+
+<i class="fas fa-ellipsis-v"></i>
+
+</button>
+
+</div>
+
+</div>
+
+<!-- =========================================
+     MESSAGE AREA
+========================================= -->
+
+<div
+
+id="messages"
+
+class="messages"
+
+>
+
+<div class="empty-chat">
+
+<i class="fas fa-comments"></i>
+
+<h2>
+
+Welcome to VibeChat
+
+</h2>
+
+<p>
+
+Select any contact from the left sidebar
+to start chatting.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- =========================================
+     TYPING AREA
+========================================= -->
+
+<div
+
+id="typingIndicator"
+
+class="typing-indicator"
+
+style="display:none"
+
+>
+
+Typing...
+
+</div>
+
+<!-- =========================================
+     MESSAGE INPUT
+========================================= -->
+
+<div class="message-input">
+
+<button
+
+id="emojiBtn"
+
+type="button"
+
+>
+
+<i class="far fa-face-smile"></i>
+
+</button>
+
+<button
+
+id="attachmentBtn"
+
+type="button"
+
+>
+
+<i class="fas fa-paperclip"></i>
+
+</button>
+
+<input
+
+type="text"
+
+id="messageInput"
+
+placeholder="Type a message..."
+
+autocomplete="off"
+
+>
+
+<button
+
+id="sendBtn"
+
+class="send-btn"
+
+type="button"
+
+>
+
+<i class="fas fa-paper-plane"></i>
+
+</button>
+
+</div>
+
+</div>
+<!-- =========================================
+     ADD CONTACT MODAL
+========================================= -->
+
+<div id="contactModal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+
+                Add Contact
+
+            </h2>
+
+            <button id="closeContactBtn">
+
+                <i class="fas fa-times"></i>
+
+            </button>
+
+        </div>
+
+        <div class="modal-body">
 
             <input
 
                 type="text"
 
-                id="searchUser"
+                id="contactName"
 
-                placeholder="Search contacts..."
+                placeholder="Contact Name"
 
             >
 
-        </div>
+            <input
 
-        <!-- ================= FILTERS ================= -->
+                type="text"
 
-        <div class="filters">
+                id="contactPhone"
 
-            <button class="active">
+                placeholder="Phone Number"
 
-                All
-
-            </button>
-
-            <button>
-
-                Unread
-
-            </button>
-
-            <button>
-
-                Groups
-
-            </button>
-
-        </div>
-
-        <!-- ================= CHAT LIST ================= -->
-
-        <div
-
-            id="chatList"
-
-            class="chat-list"
-
-        >
-
-        </div>
-
-    </div>
-        <!-- ================= CHAT AREA ================= -->
-
-    <div class="chat-section">
-
-       <!-- ================= CHAT HEADER ================= -->
-
-<div class="chat-header">
-
-    <div class="chat-user">
-
-        <button
-            id="backBtn"
-            class="back-btn"
-        >
-            <i class="fas fa-chevron-left"></i>
-        </button>
-
-        <img
-            id="userAvatar"
-            class="user-avatar-img"
-            src="https://ui-avatars.com/api/?name=User&background=38BDF8&color=fff"
-            alt="Profile"
-        >
-
-        <div class="user-details">
-
-            <h3 id="chatName">
-
-                Select Contact
-
-            </h3>
-
-            <span id="onlineStatus">
-
-                Offline
-
-            </span>
-
-        </div>
-
-    </div>
-
-    <div class="chat-actions">
-
-        <button id="videoCallBtn">
-
-            <i class="fas fa-video"></i>
-
-        </button>
-
-        <button id="voiceCallBtn">
-
-            <i class="fas fa-phone"></i>
-
-        </button>
-
-        <div class="menu-wrapper">
-
-            <button
-                class="icon-btn"
-                id="chatMenuBtn"
             >
 
-                <i class="fas fa-ellipsis-vertical"></i>
+            <button id="saveContactBtn">
+
+                <i class="fas fa-save"></i>
+
+                Save Contact
 
             </button>
-
-            <div id="chatMenu" class="chat-menu">
-
-                <button id="openProfile">
-
-                    <i class="fas fa-user"></i>
-
-                    Profile
-
-                </button>
-
-                <button id="logoutMenu">
-
-                    <i class="fas fa-right-from-bracket"></i>
-
-                    Logout
-
-                </button>
-
-            </div>
 
         </div>
 
@@ -243,32 +461,81 @@
 
 </div>
 
-        <!-- ================= MESSAGES ================= -->
+<!-- =========================================
+     PROFILE MODAL
+========================================= -->
 
-        <div
-            id="messages"
-            class="messages"
-        >
+<div id="profileModal" class="modal">
 
-            <div
-                id="emptyMessages"
-                class="empty-chat"
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+
+                My Profile
+
+            </h2>
+
+            <button id="closeProfileBtn">
+
+                <i class="fas fa-times"></i>
+
+            </button>
+
+        </div>
+
+        <div class="modal-body profile-body">
+
+            <img
+
+                id="profilePreview"
+
+                class="profile-preview"
+
+                src="https://ui-avatars.com/api/?name=User"
+
+                alt="Profile"
+
             >
 
-                <i
-                    class="fas fa-comments"
-                    style="font-size:70px;margin-bottom:20px;"
-                ></i>
+            <input
 
-                <h2>
+                type="file"
 
-                    Welcome to VibeChat
+                id="profilePicInput"
 
-                </h2>
+                accept="image/*"
 
-                <p>
+                hidden
 
-                    Select a contact to start chatting.
+            >
+
+            <button id="changePhotoBtn">
+
+                <i class="fas fa-camera"></i>
+
+                Change Photo
+
+            </button>
+
+            <div class="profile-details">
+
+                <h3 id="profileName">
+
+                    Loading...
+
+                </h3>
+
+                <p id="profilePhone">
+
+                    Phone
+
+                </p>
+
+                <p id="profileEmail">
+
+                    Email
 
                 </p>
 
@@ -276,104 +543,63 @@
 
         </div>
 
-        <!-- ================= MESSAGE INPUT ================= -->
-
-        <div class="message-input">
-
-            <button
-                type="button"
-                id="emojiBtn"
-            >
-
-                <i class="far fa-face-smile"></i>
-
-            </button>
-
-            <button
-                type="button"
-                id="attachmentBtn"
-            >
-
-                <i class="fas fa-paperclip"></i>
-
-            </button>
-
-            <input
-                type="text"
-                id="messageInput"
-                placeholder="Type a message..."
-            >
-
-            <button
-                id="sendBtn"
-                class="send-btn"
-                type="button"
-            >
-
-                <i class="fas fa-paper-plane"></i>
-
-            </button>
-
-        </div>
-
-    </div>
-        <!-- ================= ADD CONTACT MODAL ================= -->
-
-    <div id="contactModal" class="contact-modal">
-
-        <div class="contact-box">
-
-            <h2>
-
-                <i class="fas fa-user-plus"></i>
-
-                Add Contact
-
-            </h2>
-
-            <input
-                type="text"
-                id="contactName"
-                placeholder="Enter Contact Name"
-            >
-
-            <input
-                type="text"
-                id="contactPhone"
-                placeholder="Enter Phone Number"
-            >
-
-            <div class="contact-buttons">
-
-                <button id="saveContactBtn">
-
-                    <i class="fas fa-floppy-disk"></i>
-
-                    Save
-
-                </button>
-
-                <button id="closeContactBtn">
-
-                    <i class="fas fa-xmark"></i>
-
-                    Cancel
-
-                </button>
-
-            </div>
-
-        </div>
-
     </div>
 
-<!-- =============== SOCKET ================= -->
+</div>
+
+<!-- =========================================
+     LOGOUT MENU
+========================================= -->
+
+<div id="menuDropdown" class="menu-dropdown">
+
+    <button id="logoutBtn">
+
+        <i class="fas fa-right-from-bracket"></i>
+
+        Logout
+
+    </button>
+
+</div>
+
+<!-- =========================================
+     MESSAGE MENU
+========================================= -->
+
+<div id="messageContextMenu" class="message-context-menu">
+
+    <button id="editMessageBtn">
+
+        <i class="fas fa-pen"></i>
+
+        Edit
+
+    </button>
+
+    <button id="deleteMessageBtn">
+
+        <i class="fas fa-trash"></i>
+
+        Delete
+
+    </button>
+
+</div>
+
+<!-- =========================================
+     SOCKET
+========================================= -->
 
 <script src="/socket.io/socket.io.js"></script>
 
-<!-- ================= CHAT JS ================= -->
+<!-- =========================================
+     CHAT SCRIPT
+========================================= -->
 
 <script src="/js/chat.js"></script>
+
+</div>
 
 </body>
 
