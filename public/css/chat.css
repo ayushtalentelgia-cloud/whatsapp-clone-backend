@@ -483,6 +483,8 @@ body{
 
     display:flex;
 
+    align-items:center;
+
     gap:10px;
 
 }
@@ -499,7 +501,7 @@ body{
 
     background:rgba(255,255,255,.15);
 
-    color:white;
+    color:#fff;
 
     cursor:pointer;
 
@@ -509,7 +511,75 @@ body{
 
 .chat-actions button:hover{
 
-    background:white;
+    background:#fff;
+
+    color:#38BDF8;
+
+}
+
+/* ================= MENU ================= */
+
+.menu-wrapper{
+
+    position:relative;
+
+}
+
+.chat-menu{
+
+    position:absolute;
+
+    top:48px;
+
+    right:0;
+
+    width:180px;
+
+    background:#1F2937;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    display:none;
+
+    z-index:9999;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.35);
+
+}
+
+.chat-menu button{
+
+    width:100%;
+
+    padding:14px 16px;
+
+    border:none;
+
+    background:transparent;
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    border-radius:0;
+
+}
+
+.chat-menu button:hover{
+
+    background:#374151;
 
     color:#38BDF8;
 
@@ -532,11 +602,8 @@ body{
     background:#F8FAFC;
 
     background-image:
-
     radial-gradient(circle at center,
-
     rgba(56,189,248,.08) 1px,
-
     transparent 1px);
 
     background-size:32px 32px;

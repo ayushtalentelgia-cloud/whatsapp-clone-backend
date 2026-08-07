@@ -1417,10 +1417,16 @@ if (saveProfileBtn) {
                 currentUser.about || "";
 
             // Close Profile Page
-            document.getElementById("profilePage").style.display =
-                "none";
 
-            alert("✅ Profile Updated Successfully");
+const profilePage = document.getElementById("profilePage");
+
+if (profilePage) {
+
+    profilePage.style.display = "none";
+
+}
+
+alert("✅ Profile Updated Successfully");
 
         }
 
