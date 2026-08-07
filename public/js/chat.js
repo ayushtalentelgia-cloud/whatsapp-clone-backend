@@ -1262,37 +1262,37 @@ if (searchUser) {
 // ================= CHAT MENU =================
 
 const chatMenuBtn = document.getElementById("chatMenuBtn");
-
 const chatMenu = document.getElementById("chatMenu");
-
 const openProfile = document.getElementById("openProfile");
-
 const profilePage = document.getElementById("profilePage");
-
 const closeProfile = document.getElementById("closeProfile");
-
 const logoutMenu = document.getElementById("logoutMenu");
 
-// Open Menu
+// Toggle Menu
 
-chatMenuBtn.onclick = () => {
+chatMenuBtn.addEventListener("click", (e) => {
 
-    chatMenu.style.display =
-        chatMenu.style.display === "block"
-            ? "none"
-            : "block";
+    e.stopPropagation();
 
-};
+    if (chatMenu.style.display === "block") {
+
+        chatMenu.style.display = "none";
+
+    } else {
+
+        chatMenu.style.display = "block";
+
+    }
+
+});
 
 // Open Profile
 
-openProfile.onclick = () => {
+openProfile.addEventListener("click", () => {
 
     chatMenu.style.display = "none";
 
     profilePage.style.display = "flex";
-
-    // Load Current User Data
 
     document.getElementById("profileName").value =
         currentUser.name || "";
@@ -1306,6 +1306,9 @@ openProfile.onclick = () => {
     document.getElementById("profileUsername").value =
         currentUser.username || "";
 
+    document.getElementById("profileAbout").value =
+        currentUser.about || "";
+
     if (currentUser.profilePic) {
 
         document.getElementById("profilePreview").src =
@@ -1313,35 +1316,32 @@ openProfile.onclick = () => {
 
     }
 
-};
+});
 
 // Close Profile
 
-closeProfile.onclick = () => {
+closeProfile.addEventListener("click", () => {
 
     profilePage.style.display = "none";
 
-};
+});
 
 // Logout
 
-logoutMenu.onclick = () => {
+logoutMenu.addEventListener("click", () => {
 
     document.getElementById("logoutBtn").click();
 
-};
+});
 
-// Close Menu Outside
+// Close Menu When Click Outside
 
-window.addEventListener("click",(e)=>{
+document.addEventListener("click", (e) => {
 
-    if(
-        !chatMenu.contains(e.target)
-        &&
-        !chatMenuBtn.contains(e.target)
-    ){
+    if (!chatMenu.contains(e.target) &&
+        !chatMenuBtn.contains(e.target)) {
 
-        chatMenu.style.display="none";
+        chatMenu.style.display = "none";
 
     }
 
