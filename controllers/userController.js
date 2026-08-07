@@ -489,12 +489,21 @@ const getContacts = async (req, res) => {
     try {
 
         const user = await User.findById(req.user.id)
-            .populate("contacts.user", "-password");
+
+            .populate({
+
+                path: "contacts.user",
+
+                select: "name phone email profilePic username about"
+
+            });
 
         return res.status(200).json({
 
             success: true,
+
             count: user.contacts.length,
+
             contacts: user.contacts,
 
         });
@@ -506,6 +515,7 @@ const getContacts = async (req, res) => {
         return res.status(500).json({
 
             success: false,
+
             message: error.message,
 
         });

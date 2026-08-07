@@ -418,15 +418,26 @@
             src="https://ui-avatars.com/api/?name=User&background=38BDF8&color=fff&size=400"
         >
 
-        <button id="editProfilePic">
+       <button id="editProfilePic">
 
-            Edit
+    <i class="fas fa-camera"></i>
 
-        </button>
+    Change Photo
 
-        <div class="profile-card">
+</button>
 
-    <label>Name</label>
+<div class="profile-card">
+
+    <div class="profile-title">
+
+        <label>Name</label>
+
+        <i
+            class="fas fa-pen edit-icon"
+            onclick="enableEdit('profileName')"
+        ></i>
+
+    </div>
 
     <input
         type="text"
@@ -438,23 +449,43 @@
 
 <div class="profile-card">
 
-    <label>About</label>
+    <div class="profile-title">
+
+        <label>About</label>
+
+        <i
+            class="fas fa-pen edit-icon"
+            onclick="enableEdit('profileAbout')"
+        ></i>
+
+    </div>
 
     <input
         type="text"
         id="profileAbout"
         value="Hey there! I am using WhatsApp Clone."
+        readonly
     >
 
 </div>
 
 <div class="profile-card">
 
-    <label>Username</label>
+    <div class="profile-title">
+
+        <label>Username</label>
+
+        <i
+            class="fas fa-pen edit-icon"
+            onclick="enableEdit('profileUsername')"
+        ></i>
+
+    </div>
 
     <input
         type="text"
         id="profileUsername"
+        readonly
     >
 
 </div>
@@ -490,9 +521,6 @@
     Save Changes
 
 </button>
-    </div>
-
-</div>
 <!-- ================= SOCKET ================= -->
 
 <script src="/socket.io/socket.io.js"></script>

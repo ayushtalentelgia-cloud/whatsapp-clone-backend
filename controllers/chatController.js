@@ -4,11 +4,14 @@ const User = require("../models/User");
 // ================= Create or Access Chat =================
 
 const accessChat = async (req, res) => {
+
     try {
 
         const { userId, phone } = req.body;
 
         let receiver = null;
+
+        // Find Receiver
 
         if (userId) {
 
@@ -25,8 +28,11 @@ const accessChat = async (req, res) => {
         else {
 
             return res.status(400).json({
+
                 success: false,
+
                 message: "User ID or Phone is required",
+
             });
 
         }
@@ -34,8 +40,11 @@ const accessChat = async (req, res) => {
         if (!receiver) {
 
             return res.status(404).json({
+
                 success: false,
+
                 message: "User not found",
+
             });
 
         }
@@ -43,39 +52,64 @@ const accessChat = async (req, res) => {
         if (receiver._id.toString() === req.user.id) {
 
             return res.status(400).json({
+
                 success: false,
+
                 message: "You cannot chat with yourself",
+
             });
 
         }
 
-        // Existing Chat
+        // ================= EXISTING CHAT =================
 
         let chat = await Chat.findOne({
 
             isGroupChat: false,
 
             users: {
+
                 $all: [req.user.id, receiver._id],
+
             },
 
         })
 
-        .populate("users", "-password")
-        .populate("latestMessage");
+        .populate({
+
+            path: "users",
+
+            select: "-password"
+
+        })
+
+        .populate({
+
+            path: "latestMessage",
+
+            populate: {
+
+                path: "sender",
+
+                select: "name email phone profilePic username about"
+
+            }
+
+        });
 
         if (chat) {
 
             return res.status(200).json({
 
                 success: true,
+
                 chat,
 
             });
 
         }
 
-        // Create New Chat
+        // ================= CREATE NEW CHAT =================
 
         chat = await Chat.create({
 
@@ -89,7 +123,13 @@ const accessChat = async (req, res) => {
 
         chat = await Chat.findById(chat._id)
 
-            .populate("users", "-password");
+            .populate({
+
+                path: "users",
+
+                select: "-password"
+
+            });
 
         return res.status(201).json({
 
@@ -137,10 +177,21 @@ const fetchChats = async (req, res) => {
 
         })
 
-        // 👇 profilePic automatically aa jayegi
-        .populate("users", "-password")
+        .populate({
 
-        .populate("groupAdmin", "-password")
+            path: "users",
+
+            select: "-password"
+
+        })
+
+        .populate({
+
+            path: "groupAdmin",
+
+            select: "-password"
+
+        })
 
         .populate({
 
@@ -150,10 +201,9 @@ const fetchChats = async (req, res) => {
 
                 path: "sender",
 
-                // 👇 profilePic add kar diya
-                select: "name email phone profilePic",
+                select: "name email phone profilePic"
 
-            },
+            }
 
         })
 

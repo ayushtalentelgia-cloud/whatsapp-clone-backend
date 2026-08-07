@@ -271,12 +271,17 @@ async function loadUsers() {
 
             div.innerHTML = `
 
-                <div class="chat-avatar">
+               <div class="chat-avatar">
 
-                    ${avatar}
+    ${
+        otherUser.profilePic
+        ?
+        `<img src="${otherUser.profilePic}" class="avatar-img">`
+        :
+        otherUser.name.charAt(0).toUpperCase()
+    }
 
-                </div>
-
+</div>
                 <div class="chat-details">
 
                     <div class="chat-details-top">
@@ -408,11 +413,17 @@ async function loadChats() {
 
             div.innerHTML = `
 
-                <div class="chat-avatar">
+              <div class="chat-avatar">
 
-                    ${avatar}
+    ${
+        contact.user.profilePic
+        ?
+        `<img src="${contact.user.profilePic}" class="avatar-img">`
+        :
+        contact.name.charAt(0).toUpperCase()
+    }
 
-                </div>
+</div>
 
                 <div class="chat-details">
 
@@ -473,9 +484,13 @@ async function loadChats() {
 
                         <div class="chat-avatar">
 
-                            ${avatar}
+    ${
+        contact.user && contact.user.profilePic
+            ? `<img src="${contact.user.profilePic}" class="avatar-img">`
+            : avatar
+    }
 
-                        </div>
+</div>
 
                         <div class="chat-details">
 
@@ -620,15 +635,27 @@ async function openChat(chat) {
         return;
     }
 
-    // ===== Header =====
+   // ===== Header =====
 
-    document.getElementById("chatName").innerHTML =
-        selectedUser.name;
+document.getElementById("chatName").innerHTML =
+    selectedUser.name;
 
-    document.getElementById("userAvatar").innerHTML =
-        selectedUser.name.charAt(0).toUpperCase();
+// Show Profile Picture
 
-    document.getElementById("onlineStatus").innerHTML =
+const userAvatar = document.getElementById("userAvatar");
+
+if (selectedUser.profilePic) {
+
+    userAvatar.src = selectedUser.profilePic;
+
+} else {
+
+    userAvatar.src =
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name)}&background=38BDF8&color=fff&size=200`;
+
+}
+
+document.getElementById("onlineStatus").innerHTML =
     "🟡 Checking...";
 
     // ===== Clear Old Messages =====
@@ -1408,6 +1435,30 @@ if (saveProfileBtn) {
         }
 
     };
+
+}
+const editProfilePic = document.getElementById("editProfilePic");
+
+if (editProfilePic) {
+
+    editProfilePic.onclick = () => {
+
+        document.getElementById("profilePicInput").click();
+
+    };
+
+}
+// ================= ENABLE EDIT =================
+
+function enableEdit(id) {
+
+    const input = document.getElementById(id);
+
+    input.removeAttribute("readonly");
+
+    input.focus();
+
+    input.selectionStart = input.value.length;
 
 }
 

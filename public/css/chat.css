@@ -1190,6 +1190,12 @@ input{
 
     object-fit:cover;
 
+    border:2px solid #38BDF8;
+
+    background:#1f2937;
+
+    flex-shrink:0;
+
 }
 
 .user-details h3{
@@ -1617,5 +1623,51 @@ input{
 #saveProfileBtn:hover{
 
     background:#0ea5e9;
+
+}
+.profile-title{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:8px;
+
+}
+
+.edit-icon{
+
+    color:#38BDF8;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+.edit-icon:hover{
+
+    color:#ffffff;
+
+}
+
+.profile-card input[readonly]{
+
+    cursor:default;
+
+}
+.avatar-img{
+
+    width:100%;
+
+    height:100%;
+
+    border-radius:50%;
+
+    object-fit:cover;
 
 }
