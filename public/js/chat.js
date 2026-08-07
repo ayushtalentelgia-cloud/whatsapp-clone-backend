@@ -384,82 +384,84 @@ async function loadChats() {
 
         // ================= RECENT CHATS =================
 
-chatData.chats.forEach(chat => {
+        chatData.chats.forEach(chat => {
 
-    const otherUser = chat.users.find(
-        user => user._id !== currentUser._id
-    );
+            const otherUser = chat.users.find(
+                user => user._id !== currentUser._id
+            );
 
-    if (!otherUser) return;
+            if (!otherUser) return;
 
-    openedUsers.push(otherUser._id);
+            openedUsers.push(otherUser._id);
 
-    const avatar = otherUser.name.charAt(0).toUpperCase();
+            const avatar = otherUser.name.charAt(0).toUpperCase();
 
-    const lastMessage = chat.latestMessage
-        ? chat.latestMessage.content
-        : "Start Conversation";
+            const lastMessage = chat.latestMessage
+                ? chat.latestMessage.content
+                : "Start Conversation";
 
-    const time = chat.updatedAt
-        ? new Date(chat.updatedAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-        })
-        : "";
+            const time = chat.updatedAt
+                ? new Date(chat.updatedAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })
+                : "";
 
-    const div = document.createElement("div");
+            const div = document.createElement("div");
 
-    div.className = "chat-item";
+            div.className = "chat-item";
 
-    div.innerHTML = `
+            div.innerHTML = `
 
-        <div class="chat-avatar">
+              <div class="chat-avatar">
 
-            ${
-                otherUser.profilePic
-                    ? `<img src="${otherUser.profilePic}" class="avatar-img">`
-                    : avatar
-            }
+    ${
+        contact.user.profilePic
+        ?
+        `<img src="${contact.user.profilePic}" class="avatar-img">`
+        :
+        contact.name.charAt(0).toUpperCase()
+    }
 
-        </div>
+</div>
 
-        <div class="chat-details">
+                <div class="chat-details">
 
-            <div class="chat-details-top">
+                    <div class="chat-details-top">
 
-                <h4>${otherUser.name}</h4>
+                        <h4>${otherUser.name}</h4>
 
-                <span class="chat-time">${time}</span>
+                        <span class="chat-time">${time}</span>
 
-            </div>
+                    </div>
 
-            <div class="chat-message">
+                    <div class="chat-message">
 
-                ${lastMessage}
+                        ${lastMessage}
 
-            </div>
+                    </div>
 
-        </div>
+                </div>
 
-    `;
+            `;
 
-    div.onclick = async () => {
+            div.onclick = async () => {
 
-        document.querySelectorAll(".chat-item").forEach(item => {
+                document.querySelectorAll(".chat-item").forEach(item => {
 
-            item.classList.remove("active");
+                    item.classList.remove("active");
+
+                });
+
+                div.classList.add("active");
+
+                await openChat(chat);
+
+            };
+
+            chatList.appendChild(div);
 
         });
-
-        div.classList.add("active");
-
-        await openChat(chat);
-
-    };
-
-    chatList.appendChild(div);
-
-});
 
         // ================= SAVED CONTACTS =================
 
@@ -633,27 +635,15 @@ async function openChat(chat) {
         return;
     }
 
-   // ===== Header =====
+    // ===== Header =====
 
-document.getElementById("chatName").innerHTML =
-    selectedUser.name;
+    document.getElementById("chatName").innerHTML =
+        selectedUser.name;
 
-// Show Profile Picture
+    document.getElementById("userAvatar").innerHTML =
+        selectedUser.name.charAt(0).toUpperCase();
 
-const userAvatar = document.getElementById("userAvatar");
-
-if (selectedUser.profilePic) {
-
-    userAvatar.src = selectedUser.profilePic;
-
-} else {
-
-    userAvatar.src =
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name)}&background=38BDF8&color=fff&size=200`;
-
-}
-
-document.getElementById("onlineStatus").innerHTML =
+    document.getElementById("onlineStatus").innerHTML =
     "🟡 Checking...";
 
     // ===== Clear Old Messages =====
@@ -1259,36 +1249,40 @@ if (searchUser) {
     });
 
 }
-// ================= SIDEBAR MENU =================
+// ================= CHAT MENU =================
 
-const sidebarMenuBtn = document.getElementById("sidebarMenuBtn");
-const sidebarMenu = document.getElementById("sidebarMenu");
-const sidebarProfileBtn = document.getElementById("sidebarProfileBtn");
-const sidebarLogoutBtn = document.getElementById("sidebarLogoutBtn");
+const chatMenuBtn = document.getElementById("chatMenuBtn");
+
+const chatMenu = document.getElementById("chatMenu");
+
+const openProfile = document.getElementById("openProfile");
 
 const profilePage = document.getElementById("profilePage");
+
 const closeProfile = document.getElementById("closeProfile");
 
-// Toggle Sidebar Menu
+const logoutMenu = document.getElementById("logoutMenu");
 
-sidebarMenuBtn.addEventListener("click", (e) => {
+// Open Menu
 
-    e.stopPropagation();
+chatMenuBtn.onclick = () => {
 
-    sidebarMenu.style.display =
-        sidebarMenu.style.display === "block"
+    chatMenu.style.display =
+        chatMenu.style.display === "block"
             ? "none"
             : "block";
 
-});
+};
 
 // Open Profile
 
-sidebarProfileBtn.addEventListener("click", () => {
+openProfile.onclick = () => {
 
-    sidebarMenu.style.display = "none";
+    chatMenu.style.display = "none";
 
     profilePage.style.display = "flex";
+
+    // Load Current User Data
 
     document.getElementById("profileName").value =
         currentUser.name || "";
@@ -1302,9 +1296,6 @@ sidebarProfileBtn.addEventListener("click", () => {
     document.getElementById("profileUsername").value =
         currentUser.username || "";
 
-    document.getElementById("profileAbout").value =
-        currentUser.about || "";
-
     if (currentUser.profilePic) {
 
         document.getElementById("profilePreview").src =
@@ -1312,38 +1303,35 @@ sidebarProfileBtn.addEventListener("click", () => {
 
     }
 
-});
+};
 
 // Close Profile
 
-closeProfile.addEventListener("click", () => {
+closeProfile.onclick = () => {
 
     profilePage.style.display = "none";
 
-});
+};
 
 // Logout
 
-sidebarLogoutBtn.addEventListener("click", () => {
+logoutMenu.onclick = () => {
 
-    localStorage.removeItem("token");
+    document.getElementById("logoutBtn").click();
 
-    localStorage.removeItem("user");
+};
 
-    window.location.href = "/";
+// Close Menu Outside
 
-});
+window.addEventListener("click",(e)=>{
 
-// Close Menu When Click Outside
+    if(
+        !chatMenu.contains(e.target)
+        &&
+        !chatMenuBtn.contains(e.target)
+    ){
 
-document.addEventListener("click", (e) => {
-
-    if (
-        !sidebarMenu.contains(e.target) &&
-        !sidebarMenuBtn.contains(e.target)
-    ) {
-
-        sidebarMenu.style.display = "none";
+        chatMenu.style.display="none";
 
     }
 
@@ -1419,16 +1407,10 @@ if (saveProfileBtn) {
                 currentUser.about || "";
 
             // Close Profile Page
+            document.getElementById("profilePage").style.display =
+                "none";
 
-const profilePage = document.getElementById("profilePage");
-
-if (profilePage) {
-
-    profilePage.style.display = "none";
-
-}
-
-alert("✅ Profile Updated Successfully");
+            alert("✅ Profile Updated Successfully");
 
         }
 
@@ -1467,34 +1449,6 @@ function enableEdit(id) {
     input.selectionStart = input.value.length;
 
 }
-// ================= SIDEBAR MENU =================
-
-const sidebarMenuBtn = document.getElementById("sidebarMenuBtn");
-const sidebarMenu = document.getElementById("sidebarMenu");
-
-sidebarMenuBtn.onclick = (e) => {
-
-    e.stopPropagation();
-
-    sidebarMenu.style.display =
-        sidebarMenu.style.display === "block"
-            ? "none"
-            : "block";
-
-};
-
-document.addEventListener("click", (e) => {
-
-    if (
-        !sidebarMenu.contains(e.target) &&
-        !sidebarMenuBtn.contains(e.target)
-    ) {
-
-        sidebarMenu.style.display = "none";
-
-    }
-
-});
 
 // ================= Start =================
 
