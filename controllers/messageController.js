@@ -23,7 +23,7 @@ const sendMessage = async (req, res) => {
         });
 
         message = await Message.findById(message._id)
-            .populate("sender", "-password")
+           .populate("sender", "name email phone profilePic")
             .populate({
                 path: "chat",
                 populate: {
@@ -67,7 +67,7 @@ const allMessages = async (req, res) => {
         const messages = await Message.find({
             chat: req.params.chatId,
         })
-            .populate("sender", "-password")
+           .populate("sender", "name email phone profilePic")
             .populate({
                 path: "chat",
                 populate: {
@@ -123,7 +123,7 @@ const markMessageAsDelivered = async (req, res) => {
         }
 
         message = await Message.findById(message._id)
-            .populate("sender", "-password")
+            .populate("sender", "name email phone profilePic")
             .populate({
                 path: "chat",
                 populate: {
@@ -187,7 +187,7 @@ const markMessageAsSeen = async (req, res) => {
         }
 
         message = await Message.findById(message._id)
-            .populate("sender", "-password")
+            .populate("sender", "name email phone profilePic")
             .populate({
                 path: "chat",
                 populate: {
@@ -261,7 +261,7 @@ const editMessage = async (req, res) => {
         await message.save();
 
         message = await Message.findById(message._id)
-            .populate("sender", "-password")
+            .populate("sender", "name email phone profilePic")
             .populate({
                 path: "chat",
                 populate: {
@@ -329,7 +329,7 @@ const deleteMessage = async (req, res) => {
         await message.save();
 
         message = await Message.findById(message._id)
-            .populate("sender", "-password")
+           .populate("sender", "name email phone profilePic")
             .populate({
                 path: "chat",
                 populate: {
