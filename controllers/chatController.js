@@ -10,14 +10,12 @@ const accessChat = async (req, res) => {
 
         let receiver = null;
 
-        // ---------- Find by userId ----------
         if (userId) {
 
             receiver = await User.findById(userId);
 
         }
 
-        // ---------- Find by phone ----------
         else if (phone) {
 
             receiver = await User.findOne({ phone });
@@ -63,14 +61,16 @@ const accessChat = async (req, res) => {
 
         })
 
-            .populate("users", "-password")
-            .populate("latestMessage");
+        .populate("users", "-password")
+        .populate("latestMessage");
 
         if (chat) {
 
             return res.status(200).json({
+
                 success: true,
                 chat,
+
             });
 
         }
@@ -91,7 +91,7 @@ const accessChat = async (req, res) => {
 
             .populate("users", "-password");
 
-        res.status(201).json({
+        return res.status(201).json({
 
             success: true,
 
@@ -105,7 +105,7 @@ const accessChat = async (req, res) => {
 
     catch (error) {
 
-        res.status(500).json({
+        return res.status(500).json({
 
             success: false,
 
@@ -137,18 +137,33 @@ const fetchChats = async (req, res) => {
 
         })
 
-            .populate("users", "-password")
-            .populate("groupAdmin", "-password")
-            .populate({
-                path: "latestMessage",
-                populate: {
-                    path: "sender",
-                    select: "name email phone",
-                },
-            })
-            .sort({ updatedAt: -1 });
+        // 👇 profilePic automatically aa jayegi
+        .populate("users", "-password")
 
-        res.status(200).json({
+        .populate("groupAdmin", "-password")
+
+        .populate({
+
+            path: "latestMessage",
+
+            populate: {
+
+                path: "sender",
+
+                // 👇 profilePic add kar diya
+                select: "name email phone profilePic",
+
+            },
+
+        })
+
+        .sort({
+
+            updatedAt: -1,
+
+        });
+
+        return res.status(200).json({
 
             success: true,
 
@@ -162,7 +177,7 @@ const fetchChats = async (req, res) => {
 
     catch (error) {
 
-        res.status(500).json({
+        return res.status(500).json({
 
             success: false,
 
