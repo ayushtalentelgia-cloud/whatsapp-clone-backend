@@ -1271,3 +1271,114 @@ input{
 }
 
 }
+/* ================= SIDEBAR HEADER ================= */
+
+.sidebar-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px 18px;
+
+    background:#38BDF8;
+
+}
+
+.profile-section{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+}
+
+.profile-label{
+
+    cursor:pointer;
+
+}
+
+.profile-pic{
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    object-position:center;
+
+    border:3px solid #ffffff;
+
+    background:#ffffff;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.2);
+
+}
+
+.profile-info h2{
+
+    margin:0;
+
+    color:#fff;
+
+    font-size:30px;
+
+    font-weight:700;
+
+}
+
+.profile-info span{
+
+    display:block;
+
+    margin-top:2px;
+
+    color:#eaf6ff;
+
+    font-size:13px;
+
+}
+
+.header-icons{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.header-icons .icon-btn{
+
+    width:44px;
+
+    height:44px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.18);
+
+    color:#fff;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.header-icons .icon-btn:hover{
+
+    background:rgba(255,255,255,.3);
+
+}
