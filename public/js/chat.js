@@ -1310,18 +1310,6 @@ const saveProfileBtn = document.getElementById("saveProfileBtn");
 
 if (saveProfileBtn) {
 
-    saveProfileBtn.onclick = async () => {
-
-        const data = {
-
-            name: document.getElementById("profileName").value,
-
-            username: document.getElementById("profileUsername").value,
-
-            about: document.getElementById("profileAbout").value
-
-        };
-
         try {
 
             const res = await fetch(API_URL + "/users/profile", {
@@ -1363,21 +1351,8 @@ if (saveProfileBtn) {
             document.getElementById("myName").innerText =
                 currentUser.name;
 
-            // Update Profile Fields
-            document.getElementById("profileName").value =
-                currentUser.name;
-
-            document.getElementById("profileUsername").value =
-                currentUser.username || "";
-
-            document.getElementById("profileAbout").value =
-                currentUser.about || "";
-
             // Close Profile Page
-            document.getElementById("profilePage").style.display =
-                "none";
-
-            alert("✅ Profile Updated Successfully");
+           alert("Profile Updated Successfully");
 
         }
 
@@ -1391,7 +1366,6 @@ if (saveProfileBtn) {
 
     };
 
-}
 const editProfilePic = document.getElementById("editProfilePic");
 
 if (editProfilePic) {

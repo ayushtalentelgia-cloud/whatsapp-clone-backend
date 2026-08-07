@@ -398,7 +398,15 @@ body{
 
     flex:1;
 
+    display:flex;
+
+    flex-direction:column;
+
     background:#F8FAFC;
+
+    height:100vh;
+
+    overflow:hidden;
 
 }
 /* ==========================================
@@ -410,6 +418,8 @@ body{
 .chat-header{
 
     height:75px;
+
+    min-height:75px;
 
     background:#38BDF8;
 
@@ -423,57 +433,7 @@ body{
 
     border-bottom:1px solid #BFDBFE;
 
-}
-
-.chat-user{
-
-    display:flex;
-
-    align-items:center;
-
-}
-
-.avatar{
-
-    width:55px;
-
-    height:55px;
-
-    border-radius:50%;
-
-    background:white;
-
-    color:#38BDF8;
-
-    font-size:22px;
-
-    font-weight:bold;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    margin-right:15px;
-
-}
-
-.chat-user h3{
-
-    color:white;
-
-    font-size:18px;
-
-    margin-bottom:4px;
-
-}
-
-#onlineStatus{
-
-    color:#E0F2FE;
-
-    font-size:13px;
+    flex-shrink:0;
 
 }
 
@@ -611,20 +571,6 @@ body{
     transparent 1px);
 
     background-size:32px 32px;
-
-}
-
-.messages::-webkit-scrollbar{
-
-    width:7px;
-
-}
-
-.messages::-webkit-scrollbar-thumb{
-
-    background:#38BDF8;
-
-    border-radius:10px;
 
 }
 
@@ -833,7 +779,9 @@ body{
 
     height:80px;
 
-    background:#FFFFFF;
+    min-height:80px;
+
+    background:#fff;
 
     border-top:1px solid #D6E4F0;
 
@@ -844,6 +792,8 @@ body{
     padding:0 20px;
 
     gap:12px;
+
+    flex-shrink:0;
 
 }
 
