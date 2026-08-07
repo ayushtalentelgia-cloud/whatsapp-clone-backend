@@ -523,17 +523,21 @@ body{
 
     position:relative;
 
+    display:flex;
+
+    align-items:center;
+
 }
 
 .chat-menu{
 
     position:absolute;
 
-    top:48px;
+    top:calc(100% + 8px);
 
     right:0;
 
-    width:180px;
+    min-width:180px;
 
     background:#1F2937;
 
@@ -545,7 +549,7 @@ body{
 
     display:none;
 
-    z-index:9999;
+    z-index:99999;
 
     box-shadow:0 10px 25px rgba(0,0,0,.35);
 
@@ -1439,9 +1443,13 @@ input{
 }
 /* ================= CHAT MENU ================= */
 
-.chat-actions{
+.menu-wrapper{
 
     position:relative;
+
+    display:inline-flex;
+
+    align-items:center;
 
 }
 
@@ -1449,15 +1457,15 @@ input{
 
     position:absolute;
 
-    top:60px;
+    top:100%;
 
-    right:10px;
+    right:0;
+
+    margin-top:8px;
 
     width:180px;
 
     background:#1b1b1b;
-
-    border:1px solid #333;
 
     border-radius:12px;
 
@@ -1467,7 +1475,7 @@ input{
 
     z-index:9999;
 
-    box-shadow:0 10px 25px rgba(0,0,0,.45);
+    box-shadow:0 8px 25px rgba(0,0,0,.35);
 
 }
 
@@ -1475,13 +1483,13 @@ input{
 
     width:100%;
 
-    background:transparent;
-
     border:none;
+
+    background:transparent;
 
     color:#fff;
 
-    padding:14px 18px;
+    padding:14px 16px;
 
     display:flex;
 
@@ -1491,122 +1499,11 @@ input{
 
     cursor:pointer;
 
-    font-size:15px;
-
 }
 
 .chat-menu button:hover{
 
-    background:#2a2a2a;
-
-}
-
-
-/* ================= PROFILE PAGE ================= */
-
-.profile-page{
-
-    position:fixed;
-
-    top:0;
-
-    left:0;
-
-    width:100%;
-
-    height:100%;
-
-    background:#0d0d0d;
-
-    display:none;
-
-    flex-direction:column;
-
-    z-index:10000;
-
-}
-
-.profile-header{
-
-    height:70px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:20px;
-
-    padding:20px;
-
-    color:#fff;
-
-}
-
-.profile-header h2{
-
-    font-size:28px;
-
-}
-
-.profile-header button{
-
-    width:45px;
-
-    height:45px;
-
-    border:none;
-
-    border-radius:50%;
-
-    background:#1f1f1f;
-
-    color:#fff;
-
-    cursor:pointer;
-
-    font-size:18px;
-
-}
-
-.profile-body{
-
-    margin-top:40px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-}
-
-.big-profile-pic{
-
-    width:220px;
-
-    height:220px;
-
-    border-radius:50%;
-
-    object-fit:cover;
-
-    border:4px solid #38BDF8;
-
-}
-
-#editProfilePic{
-
-    margin-top:20px;
-
-    border:none;
-
-    background:none;
-
-    color:#22c55e;
-
-    font-size:24px;
-
-    cursor:pointer;
+    background:#2b2b2b;
 
 }
 /* ================= PROFILE DETAILS ================= */
