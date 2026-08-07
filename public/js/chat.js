@@ -384,84 +384,82 @@ async function loadChats() {
 
         // ================= RECENT CHATS =================
 
-        chatData.chats.forEach(chat => {
+chatData.chats.forEach(chat => {
 
-            const otherUser = chat.users.find(
-                user => user._id !== currentUser._id
-            );
+    const otherUser = chat.users.find(
+        user => user._id !== currentUser._id
+    );
 
-            if (!otherUser) return;
+    if (!otherUser) return;
 
-            openedUsers.push(otherUser._id);
+    openedUsers.push(otherUser._id);
 
-            const avatar = otherUser.name.charAt(0).toUpperCase();
+    const avatar = otherUser.name.charAt(0).toUpperCase();
 
-            const lastMessage = chat.latestMessage
-                ? chat.latestMessage.content
-                : "Start Conversation";
+    const lastMessage = chat.latestMessage
+        ? chat.latestMessage.content
+        : "Start Conversation";
 
-            const time = chat.updatedAt
-                ? new Date(chat.updatedAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                })
-                : "";
+    const time = chat.updatedAt
+        ? new Date(chat.updatedAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+        })
+        : "";
 
-            const div = document.createElement("div");
+    const div = document.createElement("div");
 
-            div.className = "chat-item";
+    div.className = "chat-item";
 
-            div.innerHTML = `
+    div.innerHTML = `
 
-              <div class="chat-avatar">
+        <div class="chat-avatar">
 
-    ${
-        contact.user.profilePic
-        ?
-        `<img src="${contact.user.profilePic}" class="avatar-img">`
-        :
-        contact.name.charAt(0).toUpperCase()
-    }
+            ${
+                otherUser.profilePic
+                    ? `<img src="${otherUser.profilePic}" class="avatar-img">`
+                    : avatar
+            }
 
-</div>
+        </div>
 
-                <div class="chat-details">
+        <div class="chat-details">
 
-                    <div class="chat-details-top">
+            <div class="chat-details-top">
 
-                        <h4>${otherUser.name}</h4>
+                <h4>${otherUser.name}</h4>
 
-                        <span class="chat-time">${time}</span>
+                <span class="chat-time">${time}</span>
 
-                    </div>
+            </div>
 
-                    <div class="chat-message">
+            <div class="chat-message">
 
-                        ${lastMessage}
+                ${lastMessage}
 
-                    </div>
+            </div>
 
-                </div>
+        </div>
 
-            `;
+    `;
 
-            div.onclick = async () => {
+    div.onclick = async () => {
 
-                document.querySelectorAll(".chat-item").forEach(item => {
+        document.querySelectorAll(".chat-item").forEach(item => {
 
-                    item.classList.remove("active");
-
-                });
-
-                div.classList.add("active");
-
-                await openChat(chat);
-
-            };
-
-            chatList.appendChild(div);
+            item.classList.remove("active");
 
         });
+
+        div.classList.add("active");
+
+        await openChat(chat);
+
+    };
+
+    chatList.appendChild(div);
+
+});
 
         // ================= SAVED CONTACTS =================
 
