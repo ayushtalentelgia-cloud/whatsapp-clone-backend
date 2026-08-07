@@ -1382,13 +1382,15 @@ input{
 
     position:absolute;
 
-    top:55px;
+    top:60px;
 
-    right:0;
+    right:10px;
 
     width:180px;
 
-    background:#1c1c1c;
+    background:#1b1b1b;
+
+    border:1px solid #333;
 
     border-radius:12px;
 
@@ -1396,9 +1398,9 @@ input{
 
     display:none;
 
-    box-shadow:0 10px 25px rgba(0,0,0,.35);
-
     z-index:9999;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.45);
 
 }
 
@@ -1406,15 +1408,19 @@ input{
 
     width:100%;
 
-    padding:14px 18px;
+    background:transparent;
 
     border:none;
 
-    background:none;
-
     color:#fff;
 
-    text-align:left;
+    padding:14px 18px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
 
     cursor:pointer;
 
@@ -1422,17 +1428,9 @@ input{
 
 }
 
-.chat-menu button i{
-
-    width:22px;
-
-    margin-right:8px;
-
-}
-
 .chat-menu button:hover{
 
-    background:#2d2d2d;
+    background:#2a2a2a;
 
 }
 
