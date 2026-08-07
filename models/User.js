@@ -57,6 +57,20 @@ const userSchema = new mongoose.Schema(
         default: "",
     },
 
+    // ================= PROFILE =================
+
+username: {
+    type: String,
+    default: "",
+    trim: true,
+},
+
+about: {
+    type: String,
+    default: "Hey there! I am using WhatsApp Clone.",
+    trim: true,
+},
+
     // ================= CONTACTS =================
 
     contacts: {

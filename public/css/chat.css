@@ -1364,3 +1364,258 @@ input{
     background:#2c2c2c;
 
 }
+/* ================= CHAT MENU ================= */
+
+.chat-actions{
+
+    position:relative;
+
+}
+
+.chat-menu{
+
+    position:absolute;
+
+    top:55px;
+
+    right:0;
+
+    width:180px;
+
+    background:#1c1c1c;
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    display:none;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.35);
+
+    z-index:9999;
+
+}
+
+.chat-menu button{
+
+    width:100%;
+
+    padding:14px 18px;
+
+    border:none;
+
+    background:none;
+
+    color:#fff;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+}
+
+.chat-menu button i{
+
+    width:22px;
+
+    margin-right:8px;
+
+}
+
+.chat-menu button:hover{
+
+    background:#2d2d2d;
+
+}
+
+
+/* ================= PROFILE PAGE ================= */
+
+.profile-page{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:#0d0d0d;
+
+    display:none;
+
+    flex-direction:column;
+
+    z-index:10000;
+
+}
+
+.profile-header{
+
+    height:70px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    padding:20px;
+
+    color:#fff;
+
+}
+
+.profile-header h2{
+
+    font-size:28px;
+
+}
+
+.profile-header button{
+
+    width:45px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#1f1f1f;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+}
+
+.profile-body{
+
+    margin-top:40px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+}
+
+.big-profile-pic{
+
+    width:220px;
+
+    height:220px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:4px solid #38BDF8;
+
+}
+
+#editProfilePic{
+
+    margin-top:20px;
+
+    border:none;
+
+    background:none;
+
+    color:#22c55e;
+
+    font-size:24px;
+
+    cursor:pointer;
+
+}
+/* ================= PROFILE DETAILS ================= */
+
+.profile-card{
+
+    width:420px;
+
+    max-width:90%;
+
+    margin-top:18px;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.profile-card label{
+
+    color:#9ca3af;
+
+    font-size:13px;
+
+    margin-bottom:6px;
+
+}
+
+.profile-card input{
+
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#1b1b1b;
+
+    color:#fff;
+
+    font-size:16px;
+
+    outline:none;
+
+}
+
+.profile-card input:focus{
+
+    border:1px solid #38BDF8;
+
+}
+
+#saveProfileBtn{
+
+    width:420px;
+
+    max-width:90%;
+
+    margin-top:30px;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#38BDF8;
+
+    color:white;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+}
+
+#saveProfileBtn:hover{
+
+    background:#0ea5e9;
+
+}

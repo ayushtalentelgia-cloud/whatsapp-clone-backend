@@ -8,6 +8,7 @@ const {
     registerUser,
     loginUser,
     getProfile,
+    updateProfile,
     getAllUsers,
     addContact,
     getContacts,
@@ -34,6 +35,13 @@ router.post("/login", loginUser);
 
 // Get Logged In User Profile
 router.get("/profile", protect, getProfile);
+
+// Update Profile
+router.put(
+    "/profile",
+    protect,
+    updateProfile
+);
 
 // Upload Profile Picture
 router.put(

@@ -329,6 +329,82 @@ const uploadProfilePicture = async (req, res) => {
     }
 
 };
+// ================= UPDATE PROFILE =================
+
+const updateProfile = async (req, res) => {
+
+    try {
+
+        const {
+
+            name,
+            username,
+            about
+
+        } = req.body;
+
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "User not found"
+
+            });
+
+        }
+
+        if (name) {
+
+            user.name = name;
+
+        }
+
+        if (username) {
+
+            user.username = username;
+
+        }
+
+        if (about) {
+
+            user.about = about;
+
+        }
+
+        await user.save();
+
+        const updatedUser = await User.findById(user._id)
+            .select("-password");
+
+        return res.status(200).json({
+
+            success: true,
+
+            message: "Profile Updated Successfully",
+
+            user: updatedUser
+
+        });
+
+    }
+
+    catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: error.message
+
+        });
+
+    }
+
+};
 
 // ================= ADD CONTACT =================
 
@@ -447,6 +523,8 @@ module.exports = {
     loginUser,
 
     getProfile,
+
+    updateProfile,
 
     getAllUsers,
 

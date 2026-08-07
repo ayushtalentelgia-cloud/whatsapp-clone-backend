@@ -1234,6 +1234,182 @@ if (searchUser) {
     });
 
 }
+// ================= CHAT MENU =================
+
+const chatMenuBtn = document.getElementById("chatMenuBtn");
+
+const chatMenu = document.getElementById("chatMenu");
+
+const openProfile = document.getElementById("openProfile");
+
+const profilePage = document.getElementById("profilePage");
+
+const closeProfile = document.getElementById("closeProfile");
+
+const logoutMenu = document.getElementById("logoutMenu");
+
+// Open Menu
+
+chatMenuBtn.onclick = () => {
+
+    chatMenu.style.display =
+        chatMenu.style.display === "block"
+            ? "none"
+            : "block";
+
+};
+
+// Open Profile
+
+openProfile.onclick = () => {
+
+    chatMenu.style.display = "none";
+
+    profilePage.style.display = "flex";
+
+    // Load Current User Data
+
+    document.getElementById("profileName").value =
+        currentUser.name || "";
+
+    document.getElementById("profilePhone").value =
+        currentUser.phone || "";
+
+    document.getElementById("profileEmail").value =
+        currentUser.email || "";
+
+    document.getElementById("profileUsername").value =
+        currentUser.username || "";
+
+    if (currentUser.profilePic) {
+
+        document.getElementById("profilePreview").src =
+            currentUser.profilePic;
+
+    }
+
+};
+
+// Close Profile
+
+closeProfile.onclick = () => {
+
+    profilePage.style.display = "none";
+
+};
+
+// Logout
+
+logoutMenu.onclick = () => {
+
+    document.getElementById("logoutBtn").click();
+
+};
+
+// Close Menu Outside
+
+window.addEventListener("click",(e)=>{
+
+    if(
+        !chatMenu.contains(e.target)
+        &&
+        !chatMenuBtn.contains(e.target)
+    ){
+
+        chatMenu.style.display="none";
+
+    }
+
+});
+
+// ================= SAVE PROFILE =================
+
+const saveProfileBtn = document.getElementById("saveProfileBtn");
+
+if (saveProfileBtn) {
+
+    saveProfileBtn.onclick = async () => {
+
+        const data = {
+
+            name: document.getElementById("profileName").value,
+
+            username: document.getElementById("profileUsername").value,
+
+            about: document.getElementById("profileAbout").value
+
+        };
+
+        try {
+
+            const res = await fetch(API_URL + "/users/profile", {
+
+                method: "PUT",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                    Authorization: "Bearer " + token
+
+                },
+
+                body: JSON.stringify(data)
+
+            });
+
+            const result = await res.json();
+
+            if (!result.success) {
+
+                alert(result.message);
+
+                return;
+
+            }
+
+            // Update current user
+            currentUser = result.user;
+
+            // Save in Local Storage
+            localStorage.setItem(
+                "user",
+                JSON.stringify(currentUser)
+            );
+
+            // Update Sidebar Name
+            document.getElementById("myName").innerText =
+                currentUser.name;
+
+            // Update Profile Fields
+            document.getElementById("profileName").value =
+                currentUser.name;
+
+            document.getElementById("profileUsername").value =
+                currentUser.username || "";
+
+            document.getElementById("profileAbout").value =
+                currentUser.about || "";
+
+            // Close Profile Page
+            document.getElementById("profilePage").style.display =
+                "none";
+
+            alert("✅ Profile Updated Successfully");
+
+        }
+
+        catch (err) {
+
+            console.log(err);
+
+            alert("Something went wrong.");
+
+        }
+
+    };
+
+}
 
 // ================= Start =================
 
