@@ -1252,15 +1252,8 @@ if (searchUser) {
 // ================= CHAT MENU =================
 
 const chatMenuBtn = document.getElementById("chatMenuBtn");
-
 const chatMenu = document.getElementById("chatMenu");
-
 const openProfile = document.getElementById("openProfile");
-
-const profilePage = document.getElementById("profilePage");
-
-const closeProfile = document.getElementById("closeProfile");
-
 const logoutMenu = document.getElementById("logoutMenu");
 
 // Open Menu
@@ -1280,36 +1273,8 @@ openProfile.onclick = () => {
 
     chatMenu.style.display = "none";
 
-    profilePage.style.display = "flex";
-
-    // Load Current User Data
-
-    document.getElementById("profileName").value =
-        currentUser.name || "";
-
-    document.getElementById("profilePhone").value =
-        currentUser.phone || "";
-
-    document.getElementById("profileEmail").value =
-        currentUser.email || "";
-
-    document.getElementById("profileUsername").value =
-        currentUser.username || "";
-
-    if (currentUser.profilePic) {
-
-        document.getElementById("profilePreview").src =
-            currentUser.profilePic;
-
-    }
-
-};
-
-// Close Profile
-
-closeProfile.onclick = () => {
-
-    profilePage.style.display = "none";
+    // Abhi profile page remove kiya hai
+    alert("Profile page is temporarily disabled.");
 
 };
 
@@ -1317,21 +1282,23 @@ closeProfile.onclick = () => {
 
 logoutMenu.onclick = () => {
 
-    document.getElementById("logoutBtn").click();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    window.location.href = "/";
 
 };
 
 // Close Menu Outside
 
-window.addEventListener("click",(e)=>{
+window.addEventListener("click", (e) => {
 
-    if(
-        !chatMenu.contains(e.target)
-        &&
+    if (
+        !chatMenu.contains(e.target) &&
         !chatMenuBtn.contains(e.target)
-    ){
+    ) {
 
-        chatMenu.style.display="none";
+        chatMenu.style.display = "none";
 
     }
 
