@@ -4,6 +4,8 @@ const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
 
+const upload = require("../middleware/uploadMiddleware");
+
 const {
 
     sendMessage,
@@ -19,7 +21,17 @@ const {
 // SEND MESSAGE
 // =========================================
 
-router.post("/", protect, sendMessage);
+router.post(
+
+    "/",
+
+    protect,
+
+    upload.single("file"),
+
+    sendMessage
+
+);
 
 // =========================================
 // GET ALL MESSAGES

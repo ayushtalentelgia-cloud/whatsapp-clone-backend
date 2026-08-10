@@ -422,6 +422,7 @@ const uploadProfilePicture = async (req, res) => {
 
         // Cloudinary URL
         user.profilePic = req.file.path;
+        console.log("Cloudinary URL:", req.file.path);
 
         await user.save();
 

@@ -41,15 +41,28 @@ let typingTimeout = null;
 // =========================================
 
 // Sidebar
-const chatList = document.getElementById("chatList");
-const searchUser = document.getElementById("searchUser");
 
-// Chat
-const chatName = document.getElementById("chatName");
-const onlineStatus = document.getElementById("onlineStatus");
-const userAvatar = document.getElementById("userAvatar");
+const chatList =
+document.getElementById("chatList");
 
-const messages = document.getElementById("messages");
+const searchUser =
+document.getElementById("searchUser");
+
+// =========================================
+// CHAT
+// =========================================
+
+const chatName =
+document.getElementById("chatName");
+
+const onlineStatus =
+document.getElementById("onlineStatus");
+
+const userAvatar =
+document.getElementById("userAvatar");
+
+const messages =
+document.getElementById("messages");
 
 const messageInput =
 document.getElementById("messageInput");
@@ -57,7 +70,32 @@ document.getElementById("messageInput");
 const sendBtn =
 document.getElementById("sendBtn");
 
-// Profile
+// =========================================
+// EMOJI
+// =========================================
+
+const emojiBtn =
+document.getElementById("emojiBtn");
+
+const emojiContainer =
+document.getElementById("emojiContainer");
+
+const emojiPicker =
+document.querySelector("emoji-picker");
+
+// =========================================
+// ATTACHMENT
+// =========================================
+
+const attachmentBtn =
+document.getElementById("attachmentBtn");
+
+const fileInput =
+document.getElementById("fileInput");
+
+// =========================================
+// PROFILE
+// =========================================
 
 const myProfilePic =
 document.getElementById("myProfilePic");
@@ -80,7 +118,9 @@ document.getElementById("profilePhone");
 const profileEmail =
 document.getElementById("profileEmail");
 
-// Buttons
+// =========================================
+// BUTTONS
+// =========================================
 
 const profileBtn =
 document.getElementById("profileBtn");
@@ -1338,5 +1378,57 @@ window.addEventListener("load", () => {
 socket.on("connect", () => {
 
     socket.emit("setup", currentUser);
+
+});
+// =========================================
+// EMOJI PICKER
+// =========================================
+
+// Open Emoji Picker
+
+emojiBtn.addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
+    emojiContainer.classList.toggle("active");
+
+});
+
+// Select Emoji
+
+emojiPicker.addEventListener("emoji-click", (event) => {
+
+    messageInput.value += event.detail.unicode;
+
+    messageInput.focus();
+
+});
+
+// Close Picker Outside
+
+document.addEventListener("click", (e) => {
+
+    if (
+
+        !emojiContainer.contains(e.target) &&
+
+        !emojiBtn.contains(e.target)
+
+    ) {
+
+        emojiContainer.classList.remove("active");
+
+    }
+
+});
+// =========================================
+// ATTACHMENT
+// =========================================
+
+// Open File Picker
+
+attachmentBtn.addEventListener("click", () => {
+
+    fileInput.click();
 
 });

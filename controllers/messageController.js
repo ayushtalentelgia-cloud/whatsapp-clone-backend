@@ -5,57 +5,139 @@ const { getIO } = require("../socket/socketManager");
 // ================= SEND MESSAGE =================
 
 const sendMessage = async (req, res) => {
+
     try {
 
         const { content, chatId } = req.body;
 
-        if (!content || !chatId) {
+        if (!chatId) {
+
             return res.status(400).json({
+
                 success: false,
-                message: "Content and Chat ID are required",
+
+                message: "Chat ID is required."
+
             });
+
         }
 
+        // ================= FILE DETAILS =================
+
+        let type = "text";
+
+        let fileUrl = "";
+
+        let fileName = "";
+
+        if (req.file) {
+
+            fileUrl = req.file.path;
+
+            fileName = req.file.originalname;
+
+            if (req.file.mimetype.startsWith("image/")) {
+
+                type = "image";
+
+            }
+
+            else if (req.file.mimetype.startsWith("video/")) {
+
+                type = "video";
+
+            }
+
+            else if (req.file.mimetype.startsWith("audio/")) {
+
+                type = "audio";
+
+            }
+
+            else {
+
+                type = "file";
+
+            }
+
+        }
+
+        // ================= CREATE MESSAGE =================
+
         let message = await Message.create({
+
             sender: req.user._id,
-            content,
+
             chat: chatId,
+
+            content: content || "",
+
+            type,
+
+            fileUrl,
+
+            fileName,
+
         });
+
+        // ================= POPULATE =================
 
         message = await Message.findById(message._id)
-           .populate("sender", "name email phone profilePic")
+
+            .populate("sender", "name email phone profilePic")
+
             .populate({
+
                 path: "chat",
+
                 populate: {
+
                     path: "users",
+
                     select: "-password",
+
                 },
+
             });
 
+        // ================= UPDATE LATEST MESSAGE =================
+
         await Chat.findByIdAndUpdate(chatId, {
+
             latestMessage: message._id,
+
         });
+
+        // ================= SOCKET =================
 
         const io = getIO();
 
-        // Send message to everyone in chat
         io.to(chatId).emit("message received", message);
 
         console.log("📩 Message Sent");
 
         return res.status(201).json({
+
             success: true,
+
             message,
-        });
 
-    } catch (error) {
-
-        return res.status(500).json({
-            success: false,
-            message: error.message,
         });
 
     }
+
+    catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+
+    }
+
 };
 
 // ================= GET ALL MESSAGES =================

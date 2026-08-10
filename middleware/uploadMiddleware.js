@@ -10,35 +10,21 @@ const storage = new CloudinaryStorage({
 
     cloudinary,
 
-    params: {
+    params: async (req, file) => {
 
-        folder: "VibeChat",
+        let folder = "VibeChat";
 
-        allowed_formats: [
+        let resource_type = "auto";
 
-            "jpg",
+        return {
 
-            "jpeg",
+            folder,
 
-            "png",
+            resource_type,
 
-            "webp"
+            public_id: Date.now() + "-" + file.originalname,
 
-        ],
-
-        transformation: [
-
-            {
-
-                width: 500,
-
-                height: 500,
-
-                crop: "fill"
-
-            }
-
-        ]
+        };
 
     }
 
@@ -54,31 +40,51 @@ const upload = multer({
 
     limits: {
 
-        fileSize: 5 * 1024 * 1024
+        fileSize: 20 * 1024 * 1024
 
     },
 
     fileFilter: (req, file, cb) => {
 
-        if (
+        const allowedTypes = [
 
-            file.mimetype.startsWith("image/")
+            "image/",
 
-        ) {
+            "video/",
+
+            "audio/",
+
+            "application/pdf",
+
+            "application/msword",
+
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+
+            "application/vnd.ms-excel",
+
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+            "application/zip",
+
+            "application/x-zip-compressed"
+
+        ];
+
+        const allowed = allowedTypes.some(type =>
+
+            file.mimetype.startsWith(type) ||
+
+            file.mimetype === type
+
+        );
+
+        if (allowed) {
 
             cb(null, true);
 
-        }
+        } else {
 
-        else {
-
-            cb(
-
-                new Error("Only image files are allowed."),
-
-                false
-
-            );
+            cb(new Error("Unsupported file type."), false);
 
         }
 

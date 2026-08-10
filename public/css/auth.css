@@ -19,7 +19,7 @@ body{
 
     align-items:center;
 
-    background:linear-gradient(135deg,#38BDF8,#0EA5E9,#7DD3FC);
+    background:linear-gradient(135deg,#111111,#000000,#2c2c2c);
 
     overflow:hidden;
 
@@ -43,7 +43,7 @@ body{
 
     width:430px;
 
-    background:rgba(255,255,255,.96);
+    background:#ffffff;
 
     backdrop-filter:blur(15px);
 
@@ -81,11 +81,11 @@ body{
 
     font-size:42px;
 
-    background:#38BDF8;
+    background:#000000;
 
     color:white;
 
-    box-shadow:0 10px 25px rgba(56,189,248,.35);
+    box-shadow:0 12px 25px rgba(0,0,0,.25);
 
 }
 
@@ -145,11 +145,11 @@ body{
 
 .login-card input:focus{
 
-    border-color:#38BDF8;
+    border-color:#000;
 
     background:white;
 
-    box-shadow:0 0 0 4px rgba(56,189,248,.18);
+    box-shadow:0 0 0 4px rgba(0,0,0,.12);
 
 }
 
@@ -165,7 +165,7 @@ body{
 
     border-radius:12px;
 
-    background:#38BDF8;
+    background:#000000;
 
     color:white;
 
@@ -181,11 +181,11 @@ body{
 
 .login-card button:hover{
 
-    background:#0EA5E9;
+    background:#222;
 
     transform:translateY(-3px);
 
-    box-shadow:0 12px 25px rgba(56,189,248,.35);
+    box-shadow:0 12px 25px rgba(0,0,0,.35);
 
 }
 
@@ -203,7 +203,7 @@ body{
 
 .bottom-text a{
 
-    color:#0EA5E9;
+    color:#000;
 
     text-decoration:none;
 
@@ -213,7 +213,7 @@ body{
 
 .bottom-text a:hover{
 
-    color:#0284C7;
+    color:#444;
 
     text-decoration:underline;
 

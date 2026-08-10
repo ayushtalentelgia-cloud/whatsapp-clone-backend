@@ -348,59 +348,80 @@ Typing...
 
 <div class="message-input">
 
-<button
+    <!-- Emoji -->
 
-id="emojiBtn"
+    <button id="emojiBtn" type="button">
 
-type="button"
+        <i class="far fa-face-smile"></i>
 
->
+    </button>
 
-<i class="far fa-face-smile"></i>
+    <!-- Attachment -->
 
-</button>
+    <button id="attachmentBtn" type="button">
 
-<button
+        <i class="fas fa-paperclip"></i>
 
-id="attachmentBtn"
+    </button>
 
-type="button"
+    <!-- Hidden File Input -->
 
->
+    <input
 
-<i class="fas fa-paperclip"></i>
+        type="file"
 
-</button>
+        id="fileInput"
 
-<input
+        hidden
 
-type="text"
+        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.zip"
 
-id="messageInput"
+    >
 
-placeholder="Type a message..."
+    <!-- Message -->
 
-autocomplete="off"
+    <input
 
->
+        type="text"
 
-<button
+        id="messageInput"
 
-id="sendBtn"
+        placeholder="Type a message..."
 
-class="send-btn"
+        autocomplete="off"
 
-type="button"
+    >
 
->
+    <!-- Send -->
 
-<i class="fas fa-paper-plane"></i>
+    <button
 
-</button>
+        id="sendBtn"
+
+        class="send-btn"
+
+        type="button"
+
+    >
+
+        <i class="fas fa-paper-plane"></i>
+
+    </button>
+
+</div>
+
+<!-- =========================================
+     EMOJI PICKER
+========================================= -->
+
+<div id="emojiContainer" class="emoji-container">
+
+    <emoji-picker></emoji-picker>
 
 </div>
 
 </div>
+
 <!-- =========================================
      ADD CONTACT MODAL
 ========================================= -->
@@ -599,8 +620,7 @@ type="button"
 
 <script src="/js/chat.js"></script>
 
-</div>
-
+<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 </body>
 
 </html>
