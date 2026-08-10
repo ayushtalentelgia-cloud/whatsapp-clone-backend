@@ -95,18 +95,12 @@ const accessChat = async (req, res) => {
         .populate("users", "-password")
 
         .populate({
-
-            path: "latestMessage",
-
-            populate: {
-
-                path: "sender",
-
-                select: "-password"
-
-            }
-
-        });
+    path: "latestMessage",
+    populate: {
+        path: "sender",
+        select: "name phone email profilePic"
+    }
+});
 
         if (chat) {
 
@@ -186,8 +180,6 @@ const fetchChats = async (req, res) => {
                 }
 
             },
-
-            isArchived: false
 
         })
 

@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const cloudinary = require("../config/cloudinary");
 
 // =========================================
 // GENERATE TOKEN
@@ -234,13 +233,6 @@ const loginUser = async (req, res) => {
             });
 
         }
-
-        user.isOnline = true;
-
-        user.lastSeen = new Date();
-
-        await user.save();
-
         const userData = await User.findById(user._id)
 
             .select("-password");

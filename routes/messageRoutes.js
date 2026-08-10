@@ -2,29 +2,85 @@ const express = require("express");
 
 const router = express.Router();
 
+const protect = require("../middleware/authMiddleware");
+
 const {
+
     sendMessage,
     allMessages,
+    markMessageAsDelivered,
     markMessageAsSeen,
     editMessage,
     deleteMessage,
+
 } = require("../controllers/messageController");
 
-const protect = require("../middleware/authMiddleware");
+// =========================================
+// SEND MESSAGE
+// =========================================
 
-// ================= Send Message =================
 router.post("/", protect, sendMessage);
 
-// ================= Get All Messages =================
+// =========================================
+// GET ALL MESSAGES
+// =========================================
+
 router.get("/:chatId", protect, allMessages);
 
-// ================= Edit Message (5 Minutes) =================
-router.put("/:messageId", protect, editMessage);
+// =========================================
+// MARK DELIVERED
+// =========================================
 
-// ================= Delete Message (5 Minutes) =================
-router.delete("/:messageId", protect, deleteMessage);
+router.put(
 
-// ================= Mark Message As Seen =================
-router.put("/seen/:messageId", protect, markMessageAsSeen);
+    "/delivered/:messageId",
+
+    protect,
+
+    markMessageAsDelivered
+
+);
+
+// =========================================
+// MARK SEEN
+// =========================================
+
+router.put(
+
+    "/seen/:messageId",
+
+    protect,
+
+    markMessageAsSeen
+
+);
+
+// =========================================
+// EDIT MESSAGE
+// =========================================
+
+router.put(
+
+    "/edit/:messageId",
+
+    protect,
+
+    editMessage
+
+);
+
+// =========================================
+// DELETE MESSAGE
+// =========================================
+
+router.put(
+
+    "/delete/:messageId",
+
+    protect,
+
+    deleteMessage
+
+);
 
 module.exports = router;

@@ -5,36 +5,51 @@ const {
     setUserOffline,
 } = require("./socketManager");
 
+// =========================================
+// SOCKET HANDLER
+// =========================================
+
 const socketHandler = (io) => {
 
     io.on("connection", (socket) => {
 
         console.log("🟢 Socket Connected :", socket.id);
 
-        // ================= SETUP =================
+        // =========================================
+        // SETUP
+        // =========================================
 
         socket.on("setup", (userData) => {
 
-            socket.join(userData._id);
+            if (!userData || !userData._id) return;
 
             socket.userId = userData._id;
 
-            setUserOnline(userData._id, socket.id);
+            socket.join(userData._id);
 
-            console.log("✅ User Setup :", userData.name);
+            setUserOnline(userData._id, socket.id);
 
             socket.emit("connected");
 
             io.emit("user online", {
+
                 _id: userData._id,
+
                 name: userData.name,
+
             });
+
+            console.log("✅ User Setup :", userData.name);
 
         });
 
-        // ================= JOIN CHAT =================
+        // =========================================
+        // JOIN CHAT
+        // =========================================
 
         socket.on("join chat", (chatId) => {
+
+            if (!chatId) return;
 
             socket.join(chatId);
 
@@ -42,7 +57,9 @@ const socketHandler = (io) => {
 
         });
 
-        // ================= TYPING =================
+        // =========================================
+        // TYPING
+        // =========================================
 
         socket.on("typing", (chatId) => {
 
@@ -56,20 +73,30 @@ const socketHandler = (io) => {
 
         });
 
-        // ================= MESSAGE DELIVERED =================
+        // =========================================
+        // MESSAGE DELIVERED
+        // =========================================
 
         socket.on("message delivered", async ({ messageId }) => {
 
             try {
 
                 let message = await Message.findById(messageId)
+
                     .populate("sender", "-password")
+
                     .populate({
+
                         path: "chat",
+
                         populate: {
+
                             path: "users",
+
                             select: "-password",
+
                         },
+
                     });
 
                 if (!message) return;
@@ -77,41 +104,51 @@ const socketHandler = (io) => {
                 if (!message.delivered) {
 
                     message.delivered = true;
+
                     message.deliveredAt = new Date();
 
                     await message.save();
 
                 }
 
-                io.to(message.sender._id.toString()).emit(
-                    "message delivered",
-                    message
-                );
+                io.to(message.sender._id.toString())
 
-                console.log("✅ Delivered :", message._id);
+                    .emit("message delivered", message);
 
-            } catch (error) {
+            }
 
-                console.log(error.message);
+            catch (err) {
+
+                console.log(err.message);
 
             }
 
         });
 
-        // ================= MESSAGE SEEN =================
+        // =========================================
+        // MESSAGE SEEN
+        // =========================================
 
         socket.on("message seen", async ({ messageId, userId }) => {
 
             try {
 
                 let message = await Message.findById(messageId)
+
                     .populate("sender", "-password")
+
                     .populate({
+
                         path: "chat",
+
                         populate: {
+
                             path: "users",
+
                             select: "-password",
+
                         },
+
                     });
 
                 if (!message) return;
@@ -119,43 +156,46 @@ const socketHandler = (io) => {
                 if (!message.seen) {
 
                     message.seen = true;
+
                     message.seenBy = userId;
+
                     message.seenAt = new Date();
 
                     await message.save();
 
                 }
 
-                io.to(message.sender._id.toString()).emit(
-                    "message seen",
-                    message
-                );
+                io.to(message.sender._id.toString())
 
-                console.log("👀 Seen :", message._id);
+                    .emit("message seen", message);
 
-            } catch (error) {
+            }
 
-                console.log(error.message);
+            catch (err) {
+
+                console.log(err.message);
 
             }
 
         });
 
-        // ================= DISCONNECT =================
+        // =========================================
+        // DISCONNECT
+        // =========================================
 
         socket.on("disconnect", () => {
 
             console.log("🔴 Socket Disconnected :", socket.id);
 
-            if (socket.userId) {
+            if (!socket.userId) return;
 
-                setUserOffline(socket.userId);
+            setUserOffline(socket.userId);
 
-                io.emit("user offline", {
-                    _id: socket.userId,
-                });
+            io.emit("user offline", {
 
-            }
+                _id: socket.userId
+
+            });
 
         });
 

@@ -858,7 +858,7 @@ body{
 
     min-height:80px;
 
-    background:white;
+    background:#ffffff;
 
     border-top:1px solid #dbeafe;
 
@@ -910,11 +910,11 @@ body{
 
     border:1px solid #bfdbfe;
 
-    border-radius:25px;
+    border-radius:30px;
 
     outline:none;
 
-    padding:0 20px;
+    padding:0 18px;
 
     font-size:15px;
 
@@ -954,7 +954,7 @@ body{
 
     inset:0;
 
-    background:rgba(15,23,42,.45);
+    background:rgba(0,0,0,.45);
 
     display:none;
 
@@ -974,7 +974,7 @@ body{
 
 .modal-content{
 
-    width:430px;
+    width:420px;
 
     max-width:92%;
 
@@ -984,21 +984,17 @@ body{
 
     overflow:hidden;
 
-    box-shadow:0 15px 40px rgba(0,0,0,.18);
+    animation:popup .25s ease;
 
 }
 
-/* =========================================
-   MODAL HEADER
-========================================= */
-
 .modal-header{
+
+    height:65px;
 
     background:#38bdf8;
 
     color:white;
-
-    padding:18px 20px;
 
     display:flex;
 
@@ -1006,37 +1002,33 @@ body{
 
     align-items:center;
 
+    padding:0 20px;
+
 }
 
 .modal-header h2{
 
-    font-size:20px;
-
-    font-weight:600;
+    font-size:22px;
 
 }
 
 .modal-header button{
 
-    width:36px;
+    width:40px;
 
-    height:36px;
+    height:40px;
 
     border:none;
 
     border-radius:50%;
 
-    background:rgba(255,255,255,.2);
+    background:rgba(255,255,255,.18);
 
     color:white;
 
     cursor:pointer;
 
 }
-
-/* =========================================
-   MODAL BODY
-========================================= */
 
 .modal-body{
 
@@ -1050,13 +1042,13 @@ body{
 
     height:48px;
 
-    margin-bottom:16px;
-
     border:1px solid #cbd5e1;
 
     border-radius:10px;
 
     padding:0 15px;
+
+    margin-bottom:15px;
 
     outline:none;
 
@@ -1084,11 +1076,11 @@ body{
 
     color:white;
 
-    cursor:pointer;
-
     font-size:15px;
 
-    font-weight:600;
+    cursor:pointer;
+
+    transition:.25s;
 
 }
 
@@ -1132,9 +1124,9 @@ body{
 
     width:100%;
 
-    text-align:center;
+    margin-top:20px;
 
-    margin-top:18px;
+    text-align:center;
 
 }
 
@@ -1150,19 +1142,19 @@ body{
 
     color:#64748b;
 
-    margin-bottom:6px;
+    margin-top:6px;
 
 }
 
 /* =========================================
-   DROPDOWN MENU
+   DROPDOWN
 ========================================= */
 
 .menu-dropdown{
 
     position:fixed;
 
-    top:85px;
+    top:80px;
 
     right:20px;
 
@@ -1174,9 +1166,9 @@ body{
 
     overflow:hidden;
 
-    display:none;
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
 
-    box-shadow:0 8px 20px rgba(0,0,0,.15);
+    display:none;
 
     z-index:999;
 
@@ -1192,19 +1184,17 @@ body{
 
     width:100%;
 
-    padding:14px;
-
     border:none;
 
     background:white;
 
-    cursor:pointer;
+    padding:14px;
 
     text-align:left;
 
-    font-size:15px;
+    cursor:pointer;
 
-    transition:.2s;
+    font-size:15px;
 
 }
 
@@ -1224,7 +1214,7 @@ body{
 
     position:fixed;
 
-    width:170px;
+    width:180px;
 
     background:white;
 
@@ -1234,15 +1224,9 @@ body{
 
     display:none;
 
-    box-shadow:0 10px 25px rgba(0,0,0,.15);
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
 
-    z-index:9999;
-
-}
-
-.message-context-menu.active{
-
-    display:block;
+    z-index:10000;
 
 }
 
@@ -1250,11 +1234,11 @@ body{
 
     width:100%;
 
-    padding:13px;
-
     border:none;
 
     background:white;
+
+    padding:14px;
 
     cursor:pointer;
 
@@ -1271,185 +1255,137 @@ body{
     color:#0284c7;
 
 }
-/* =========================================
-   RESPONSIVE
-========================================= */
-
-@media(max-width:900px){
-
-.app{
-
-    position:relative;
-
-}
-
-.sidebar{
-
-    width:100%;
-
-    min-width:100%;
-
-    position:absolute;
-
-    left:0;
-
-    top:0;
-
-    z-index:10;
-
-}
-
-.sidebar.hide{
-
-    display:none;
-
-}
-
-.chat-section{
-
-    width:100%;
-
-    display:none;
-
-}
-
-.chat-section.active{
-
-    display:flex;
-
-}
-
-.back-btn{
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-}
-
-.chat-header{
-
-    padding:0 15px;
-
-}
-
-.messages{
-
-    padding:15px;
-
-}
-
-.message{
-
-    max-width:85%;
-
-}
-
-.message-input{
-
-    padding:0 12px;
-
-}
-
-.message-input button{
-
-    width:42px;
-
-    height:42px;
-
-}
-
-}
 
 /* =========================================
-   SMALL MOBILE
+   POPUP ANIMATION
 ========================================= */
 
-@media(max-width:500px){
+@keyframes popup{
 
-.sidebar-header{
+    from{
 
-    padding:15px;
+        opacity:0;
+
+        transform:scale(.9);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+}
+/* =========================================
+   MOBILE RESPONSIVE
+========================================= */
+
+@media screen and (max-width:900px){
+
+    .sidebar{
+
+        width:100%;
+
+        min-width:100%;
+
+    }
+
+    .sidebar.hide{
+
+        display:none;
+
+    }
+
+    .chat-section{
+
+        display:none;
+
+        width:100%;
+
+    }
+
+    .chat-section.active{
+
+        display:flex;
+
+    }
+
+    .back-btn{
+
+        display:flex;
+
+        justify-content:center;
+
+        align-items:center;
+
+    }
 
 }
 
-.profile-pic{
+@media screen and (max-width:600px){
 
-    width:48px;
+    .sidebar-header{
 
-    height:48px;
+        padding:15px;
 
-}
+    }
 
-.profile-info h2{
+    .profile-pic{
 
-    font-size:18px;
+        width:48px;
 
-}
+        height:48px;
 
-.chat-header{
+    }
 
-    height:70px;
+    .profile-info h2{
 
-}
+        font-size:18px;
 
-.chat-avatar{
+    }
 
-    width:48px;
+    .chat-header{
 
-    height:48px;
+        padding:0 12px;
 
-}
+    }
 
-.chat-user-info h3{
+    .chat-user-info h3{
 
-    font-size:17px;
+        font-size:18px;
 
-}
+    }
 
-.chat-actions{
+    .chat-avatar{
 
-    gap:8px;
+        width:48px;
 
-}
+        height:48px;
 
-.chat-actions button{
+    }
 
-    width:38px;
+    .message{
 
-    height:38px;
+        max-width:88%;
 
-}
+    }
 
-.message-input{
+    .message-input{
 
-    height:72px;
+        padding:0 10px;
 
-}
+    }
 
-.message-input input{
+    .message-input button{
 
-    height:44px;
+        width:42px;
 
-    font-size:14px;
+        height:42px;
 
-}
-
-.modal-content{
-
-    width:95%;
-
-}
-
-.profile-preview{
-
-    width:110px;
-
-    height:110px;
-
-}
+    }
 
 }
 
@@ -1457,15 +1393,22 @@ body{
    SCROLLBAR
 ========================================= */
 
-::-webkit-scrollbar{
+.chat-list::-webkit-scrollbar,
+.messages::-webkit-scrollbar{
 
-    width:7px;
-
-    height:7px;
+    width:8px;
 
 }
 
-::-webkit-scrollbar-thumb{
+.chat-list::-webkit-scrollbar-track,
+.messages::-webkit-scrollbar-track{
+
+    background:#eef7ff;
+
+}
+
+.chat-list::-webkit-scrollbar-thumb,
+.messages::-webkit-scrollbar-thumb{
 
     background:#38bdf8;
 
@@ -1473,9 +1416,28 @@ body{
 
 }
 
-::-webkit-scrollbar-track{
+/* Firefox */
 
-    background:#eef7ff;
+.chat-list,
+.messages{
+
+    scrollbar-width:thin;
+
+    scrollbar-color:#38bdf8 #eef7ff;
+
+}
+
+/* =========================================
+   IMAGE SUPPORT
+========================================= */
+
+.chat-avatar img,
+.profile-pic,
+.profile-preview{
+
+    object-fit:cover;
+
+    object-position:center;
 
 }
 
@@ -1493,7 +1455,9 @@ body{
 
 .offline{
 
-    color:#cbd5e1 !important;
+    color:#ffffff;
+
+    opacity:.8;
 
 }
 
@@ -1503,15 +1467,15 @@ body{
 
 .message-status{
 
-    margin-left:5px;
+    margin-left:6px;
 
-    font-size:11px;
+    font-size:12px;
 
 }
 
 .message-status.sent{
 
-    color:white;
+    color:#ffffff;
 
 }
 
@@ -1523,21 +1487,63 @@ body{
 
 .message-status.seen{
 
-    color:#2563eb;
+    color:#1d4ed8;
 
 }
 
 /* =========================================
-   EDIT LABEL
+   HOVER EFFECTS
 ========================================= */
 
-.edited-label{
+.chat-item{
 
-    font-size:10px;
+    transition:.25s;
 
-    opacity:.75;
+}
 
-    margin-left:5px;
+.chat-item:hover{
+
+    transform:translateX(3px);
+
+}
+
+.chat-avatar{
+
+    transition:.25s;
+
+}
+
+.chat-avatar:hover{
+
+    transform:scale(1.06);
+
+}
+
+.profile-pic:hover{
+
+    box-shadow:0 0 12px rgba(255,255,255,.45);
+
+}
+
+.icon-btn,
+.chat-actions button,
+.message-input button{
+
+    transition:.25s;
+
+}
+
+.icon-btn:hover,
+.chat-actions button:hover,
+.message-input button:hover{
+
+    transform:scale(1.08);
+
+}
+
+button{
+
+    user-select:none;
 
 }
 
@@ -1557,7 +1563,7 @@ body{
 
     border-radius:50%;
 
-    animation:spin .8s linear infinite;
+    animation:spin 1s linear infinite;
 
     margin:auto;
 
@@ -1580,83 +1586,29 @@ body{
 }
 
 /* =========================================
-   IMAGE
-========================================= */
-
-img{
-
-    user-select:none;
-
-    -webkit-user-drag:none;
-
-}
-
-/* =========================================
-   BUTTONS
-========================================= */
-
-button{
-
-    transition:.25s ease;
-
-}
-
-button:active{
-
-    transform:scale(.96);
-
-}
-
-/* =========================================
-   INPUTS
-========================================= */
-
-input{
-
-    transition:.25s ease;
-
-}
-
-/* =========================================
    REMOVE TAP HIGHLIGHT
 ========================================= */
 
 button,
-input,
-img{
+img,
+input{
 
     -webkit-tap-highlight-color:transparent;
 
 }
 
 /* =========================================
-   SHADOWS
+   FINAL
 ========================================= */
 
-.sidebar{
+.hidden{
 
-    box-shadow:2px 0 10px rgba(0,0,0,.05);
-
-}
-
-.chat-header{
-
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    display:none !important;
 
 }
 
-.message{
+.show{
 
-    transition:.2s;
-
-}
-
-.message:hover{
-
-    transform:translateY(-2px);
+    display:flex !important;
 
 }
-
-/* =========================================
-   END
-========================================= */

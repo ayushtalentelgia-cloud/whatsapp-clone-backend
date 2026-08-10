@@ -17,7 +17,7 @@ const sendMessage = async (req, res) => {
         }
 
         let message = await Message.create({
-            sender: req.user.id,
+            sender: req.user._id,
             content,
             chat: chatId,
         });
@@ -179,7 +179,7 @@ const markMessageAsSeen = async (req, res) => {
         if (!message.seen) {
 
             message.seen = true;
-            message.seenBy = req.user.id;
+            message.seenBy = req.user._id;
             message.seenAt = new Date();
 
             await message.save();

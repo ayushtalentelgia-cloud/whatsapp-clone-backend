@@ -1,18 +1,16 @@
 // =========================================
-// API
+// API CONFIG
 // =========================================
 
 const API_URL = "https://whatsapp-clone-backend-b5o7.onrender.com/api";
+const SOCKET_URL = "https://whatsapp-clone-backend-b5o7.onrender.com";
 
 // =========================================
 // AUTH
 // =========================================
 
 const token = localStorage.getItem("token");
-
-const currentUser = JSON.parse(
-    localStorage.getItem("user")
-);
+const currentUser = JSON.parse(localStorage.getItem("user"));
 
 if (!token || !currentUser) {
 
@@ -24,160 +22,194 @@ if (!token || !currentUser) {
 // SOCKET
 // =========================================
 
-const socket = io(
-    "https://whatsapp-clone-backend-b5o7.onrender.com"
-);
+const socket = io(SOCKET_URL);
 
 socket.emit("setup", currentUser);
 
 // =========================================
-// VARIABLES
+// GLOBAL VARIABLES
 // =========================================
 
 let selectedChat = null;
-
 let selectedUser = null;
 
 let typing = false;
-
-let typingTimeout;
+let typingTimeout = null;
 
 // =========================================
 // DOM ELEMENTS
 // =========================================
 
 // Sidebar
-
-const myProfilePic = document.getElementById("myProfilePic");
-
-const myName = document.getElementById("myName");
-
 const chatList = document.getElementById("chatList");
-
 const searchUser = document.getElementById("searchUser");
 
-// Chat Header
-
-const userAvatar = document.getElementById("userAvatar");
-
+// Chat
 const chatName = document.getElementById("chatName");
-
 const onlineStatus = document.getElementById("onlineStatus");
-
-// Messages
+const userAvatar = document.getElementById("userAvatar");
 
 const messages = document.getElementById("messages");
 
-const typingIndicator =
-    document.getElementById("typingIndicator");
-
-// Input
-
 const messageInput =
-    document.getElementById("messageInput");
+document.getElementById("messageInput");
 
 const sendBtn =
-    document.getElementById("sendBtn");
+document.getElementById("sendBtn");
+
+// Profile
+
+const myProfilePic =
+document.getElementById("myProfilePic");
+
+const myName =
+document.getElementById("myName");
+
+const profilePreview =
+document.getElementById("profilePreview");
+
+const profilePicInput =
+document.getElementById("profilePicInput");
+
+const profileName =
+document.getElementById("profileName");
+
+const profilePhone =
+document.getElementById("profilePhone");
+
+const profileEmail =
+document.getElementById("profileEmail");
 
 // Buttons
 
 const profileBtn =
-    document.getElementById("profileBtn");
+document.getElementById("profileBtn");
 
-const addContactBtn =
-    document.getElementById("addContactBtn");
-
-const menuBtn =
-    document.getElementById("menuBtn");
+const logoutBtn =
+document.getElementById("logoutBtn");
 
 const backBtn =
-    document.getElementById("backBtn");
+document.getElementById("backBtn");
 
-// Contact Modal
+// Contact
+
+const addContactBtn =
+document.getElementById("addContactBtn");
 
 const contactModal =
-    document.getElementById("contactModal");
-
-const contactName =
-    document.getElementById("contactName");
-
-const contactPhone =
-    document.getElementById("contactPhone");
+document.getElementById("contactModal");
 
 const saveContactBtn =
-    document.getElementById("saveContactBtn");
+document.getElementById("saveContactBtn");
 
 const closeContactBtn =
-    document.getElementById("closeContactBtn");
+document.getElementById("closeContactBtn");
 
 // Profile Modal
 
 const profileModal =
-    document.getElementById("profileModal");
-
-const profilePreview =
-    document.getElementById("profilePreview");
-
-const profilePicInput =
-    document.getElementById("profilePicInput");
-
-const changePhotoBtn =
-    document.getElementById("changePhotoBtn");
-
-const profileName =
-    document.getElementById("profileName");
-
-const profilePhone =
-    document.getElementById("profilePhone");
-
-const profileEmail =
-    document.getElementById("profileEmail");
+document.getElementById("profileModal");
 
 const closeProfileBtn =
-    document.getElementById("closeProfileBtn");
+document.getElementById("closeProfileBtn");
 
-// Menu
-
-const menuDropdown =
-    document.getElementById("menuDropdown");
-
-const logoutBtn =
-    document.getElementById("logoutBtn");
-
-// Message Menu
-
-const messageContextMenu =
-    document.getElementById("messageContextMenu");
-
-const editMessageBtn =
-    document.getElementById("editMessageBtn");
-
-const deleteMessageBtn =
-    document.getElementById("deleteMessageBtn");
+const changePhotoBtn =
+document.getElementById("changePhotoBtn");
 
 // =========================================
-// LOAD USER
+// LOAD CURRENT USER
 // =========================================
 
-function loadCurrentUser() {
+function loadCurrentUser(){
 
     myName.innerText = currentUser.name;
 
-    profileName.innerText = currentUser.name;
+    if(profileName){
 
-    profilePhone.innerText = currentUser.phone;
+        profileName.innerText = currentUser.name;
 
-    profileEmail.innerText = currentUser.email;
+    }
 
-    if (currentUser.profilePic) {
+    if(profilePhone){
 
-        myProfilePic.src = currentUser.profilePic;
+        profilePhone.innerText = currentUser.phone;
 
-        profilePreview.src = currentUser.profilePic;
+    }
+
+    if(profileEmail){
+
+        profileEmail.innerText = currentUser.email;
+
+    }
+
+    const image = currentUser.profilePic
+    ?
+
+    currentUser.profilePic
+
+    :
+
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=38BDF8&color=ffffff`;
+
+    myProfilePic.src = image;
+
+    if(profilePreview){
+
+        profilePreview.src = image;
 
     }
 
 }
+
+// =========================================
+// SOCKET EVENTS
+// =========================================
+
+socket.on("connected",()=>{
+
+    console.log("✅ Socket Connected");
+
+});
+
+socket.on("user online",(user)=>{
+
+    if(
+
+        selectedUser &&
+
+        selectedUser._id===user._id
+
+    ){
+
+        onlineStatus.innerText="Online";
+
+        onlineStatus.className="online";
+
+    }
+
+});
+
+socket.on("user offline",(user)=>{
+
+    if(
+
+        selectedUser &&
+
+        selectedUser._id===user._id
+
+    ){
+
+        onlineStatus.innerText="Offline";
+
+        onlineStatus.className="offline";
+
+    }
+
+});
+
+// =========================================
+// START
+// =========================================
 
 loadCurrentUser();
 // =========================================
@@ -208,123 +240,185 @@ async function loadChats() {
 
         }
 
-        chatList.innerHTML = "";
-
-        data.chats.forEach(chat => {
-
-            const otherUser = chat.users.find(
-
-                user => user._id !== currentUser._id
-
-            );
-
-            if (!otherUser) return;
-
-            const div = document.createElement("div");
-
-            div.className = "chat-item";
-
-            div.innerHTML = `
-
-                <div class="chat-avatar">
-
-                    ${otherUser.profilePic
-
-                        ? `<img src="${otherUser.profilePic}">`
-
-                        : otherUser.name.charAt(0).toUpperCase()
-                    }
-
-                </div>
-
-                <div class="chat-details">
-
-                    <div class="chat-details-top">
-
-                        <h4>${otherUser.name}</h4>
-
-                        <span>
-
-                            ${chat.updatedAt
-                                ? new Date(chat.updatedAt).toLocaleTimeString([], {
-                                      hour: "2-digit",
-                                      minute: "2-digit"
-                                  })
-                                : ""
-                            }
-
-                        </span>
-
-                    </div>
-
-                    <div class="chat-message">
-
-                        ${chat.latestMessage
-
-                            ? chat.latestMessage.content
-
-                            : "Start Conversation"
-
-                        }
-
-                    </div>
-
-                </div>
-
-            `;
-
-            div.onclick = () => {
-
-                document
-                    .querySelectorAll(".chat-item")
-                    .forEach(item => item.classList.remove("active"));
-
-                div.classList.add("active");
-
-                openChat(chat);
-
-            };
-
-            chatList.appendChild(div);
-
-        });
+        renderChats(data.chats);
 
     }
 
     catch (err) {
 
-        console.log(err);
+        console.log("Load Chat Error :", err);
 
     }
 
 }
 
 // =========================================
-// SEARCH
+// RENDER CHAT LIST
 // =========================================
 
-searchUser.addEventListener("input", function () {
+function renderChats(chats) {
 
-    const value = this.value.trim().toLowerCase();
+    chatList.innerHTML = "";
 
-    document.querySelectorAll(".chat-item").forEach(chat => {
+    if (chats.length === 0) {
 
-        const name = chat.querySelector("h4")
-            .innerText
-            .toLowerCase();
+        chatList.innerHTML = `
+            <div class="empty-chat-list">
+                No Chats Found
+            </div>
+        `;
+
+        return;
+
+    }
+
+    chats.forEach(chat => {
+
+        const otherUser = chat.users.find(
+
+            user => user._id !== currentUser._id
+
+        );
+
+        if (!otherUser) return;
+
+        const profilePic = otherUser.profilePic
+            ?
+            `<img src="${otherUser.profilePic}" class="avatar-img">`
+            :
+            otherUser.name.charAt(0).toUpperCase();
+
+        const lastMessage =
+
+            chat.latestMessage
+
+            ?
+
+            chat.latestMessage.content
+
+            :
+
+            "Start Conversation";
+
+        const time = chat.updatedAt
+
+            ?
+
+            new Date(chat.updatedAt)
+
+            .toLocaleTimeString([], {
+
+                hour: "2-digit",
+
+                minute: "2-digit"
+
+            })
+
+            :
+
+            "";
+
+        const div = document.createElement("div");
+
+        div.className = "chat-item";
+
+        div.innerHTML = `
+
+            <div class="chat-avatar">
+
+                ${profilePic}
+
+            </div>
+
+            <div class="chat-details">
+
+                <div class="chat-details-top">
+
+                    <h4>${otherUser.name}</h4>
+
+                    <span>${time}</span>
+
+                </div>
+
+                <div class="chat-message">
+
+                    ${lastMessage}
+
+                </div>
+
+            </div>
+
+        `;
+
+        div.addEventListener("click", () => {
+
+            document.querySelectorAll(".chat-item")
+
+            .forEach(item => item.classList.remove("active"));
+
+            div.classList.add("active");
+
+            openChat(chat);
+
+        });
+
+        chatList.appendChild(div);
+
+    });
+
+}
+
+// =========================================
+// SEARCH CHAT
+// =========================================
+
+searchUser.addEventListener("keyup", function () {
+
+    const value = this.value.toLowerCase();
+
+    document.querySelectorAll(".chat-item")
+
+    .forEach(chat => {
+
+        const name = chat
+
+        .querySelector("h4")
+
+        .innerText
+
+        .toLowerCase();
 
         chat.style.display =
 
             name.includes(value)
 
-            ? "flex"
+            ?
 
-            : "none";
+            "flex"
+
+            :
+
+            "none";
 
     });
 
 });
 
+// =========================================
+// REFRESH CHAT LIST
+// =========================================
+
+function refreshChats() {
+
+    loadChats();
+
+}
+
+// =========================================
+// INITIAL CHAT LOAD
+// =========================================
+
+loadChats();
 // =========================================
 // OPEN CHAT
 // =========================================
@@ -343,108 +437,53 @@ async function openChat(chat) {
 
     chatName.innerText = selectedUser.name;
 
-    if (selectedUser.profilePic) {
-
-        userAvatar.innerHTML =
-
-            `<img src="${selectedUser.profilePic}">`;
-
-    }
-
-    else {
-
-        userAvatar.innerHTML =
-
-            selectedUser.name.charAt(0).toUpperCase();
-
-    }
-
     onlineStatus.innerText = "Offline";
 
     onlineStatus.className = "offline";
 
-    if (window.innerWidth < 900) {
+    // Header Profile Picture
 
-        document
-            .querySelector(".sidebar")
-            .classList.add("hide");
+    if (selectedUser.profilePic) {
 
-        document
-            .querySelector(".chat-section")
-            .classList.add("active");
+        userAvatar.innerHTML = `
+
+            <img
+                src="${selectedUser.profilePic}"
+                class="avatar-img"
+            >
+
+        `;
+
+    } else {
+
+        userAvatar.innerHTML =
+            selectedUser.name.charAt(0).toUpperCase();
 
     }
 
     await loadMessages(chat._id);
 
+    // Mobile View
+
+    if (window.innerWidth <= 900) {
+
+        document.querySelector(".sidebar")
+            .classList.add("hide");
+
+        document.querySelector(".chat-section")
+            .classList.add("active");
+
+    }
+
 }
 
-// =========================================
-// MOBILE BACK
-// =========================================
-
-backBtn.onclick = () => {
-
-    document
-        .querySelector(".sidebar")
-        .classList.remove("hide");
-
-    document
-        .querySelector(".chat-section")
-        .classList.remove("active");
-
-};
-
-// =========================================
-// SOCKET ONLINE
-// =========================================
-
-socket.on("user online", user => {
-
-    if (
-
-        selectedUser &&
-
-        selectedUser._id === user._id
-
-    ) {
-
-        onlineStatus.innerText = "Online";
-
-        onlineStatus.className = "online";
-
-    }
-
-});
-
-// =========================================
-// SOCKET OFFLINE
-// =========================================
-
-socket.on("user offline", user => {
-
-    if (
-
-        selectedUser &&
-
-        selectedUser._id === user._id
-
-    ) {
-
-        onlineStatus.innerText = "Offline";
-
-        onlineStatus.className = "offline";
-
-    }
-
-});
 // =========================================
 // LOAD MESSAGES
 // =========================================
 
-async function loadMessages(chatId){
+async function loadMessages(chatId) {
 
-    try{
+    try {
 
         const res = await fetch(
 
@@ -452,9 +491,10 @@ async function loadMessages(chatId){
 
             {
 
-                headers:{
+                headers: {
 
-                    Authorization:"Bearer " + token
+                    Authorization:
+                        "Bearer " + token
 
                 }
 
@@ -464,7 +504,7 @@ async function loadMessages(chatId){
 
         const data = await res.json();
 
-        if(!data.success){
+        if (!data.success) {
 
             console.log(data.message);
 
@@ -474,37 +514,17 @@ async function loadMessages(chatId){
 
         messages.innerHTML = "";
 
-        if(data.messages.length===0){
+        data.messages.forEach(message => {
 
-            messages.innerHTML=`
-
-            <div class="empty-chat">
-
-                <i class="fas fa-comments"></i>
-
-                <h2>No Messages Yet</h2>
-
-                <p>Start your conversation.</p>
-
-            </div>
-
-            `;
-
-            return;
-
-        }
-
-        data.messages.forEach(message=>{
-
-            addMessage(message);
+            renderMessage(message);
 
         });
 
-        messages.scrollTop=messages.scrollHeight;
+        scrollBottom();
 
     }
 
-    catch(err){
+    catch (err) {
 
         console.log(err);
 
@@ -513,54 +533,33 @@ async function loadMessages(chatId){
 }
 
 // =========================================
-// ADD MESSAGE
+// RENDER MESSAGE
 // =========================================
 
-function addMessage(message){
+function renderMessage(message) {
 
-    const already=document.getElementById(
+    const div = document.createElement("div");
 
-        "msg-"+message._id
+    div.id = "msg-" + message._id;
 
-    );
+    div.className =
+        message.sender._id === currentUser._id
+        ?
+        "message sent"
+        :
+        "message received";
 
-    if(already) return;
+    const time =
+        new Date(message.createdAt)
+        .toLocaleTimeString([], {
 
-    const div=document.createElement("div");
+            hour: "2-digit",
 
-    div.id="msg-"+message._id;
+            minute: "2-digit"
 
-    div.className=
+        });
 
-        "message "+
-
-        (
-
-            message.sender._id===currentUser._id
-
-            ?
-
-            "sent"
-
-            :
-
-            "received"
-
-        );
-
-    const time=new Date(
-
-        message.createdAt
-
-    ).toLocaleTimeString([],{
-
-        hour:"2-digit",
-
-        minute:"2-digit"
-
-    });
-
-    div.innerHTML=`
+    div.innerHTML = `
 
         <div class="message-text">
 
@@ -578,53 +577,109 @@ function addMessage(message){
 
     messages.appendChild(div);
 
-    messages.scrollTop=messages.scrollHeight;
+}
+
+// =========================================
+// SCROLL TO BOTTOM
+// =========================================
+
+function scrollBottom() {
+
+    messages.scrollTop =
+        messages.scrollHeight;
 
 }
 
 // =========================================
+// MOBILE BACK BUTTON
+// =========================================
+
+if (backBtn) {
+
+    backBtn.onclick = () => {
+
+        document.querySelector(".sidebar")
+            .classList.remove("hide");
+
+        document.querySelector(".chat-section")
+            .classList.remove("active");
+
+    };
+
+}
+
+// =========================================
+// SOCKET RECEIVE MESSAGE
+// =========================================
+
+socket.off("message received");
+
+socket.on("message received", (message) => {
+
+    if (
+
+        selectedChat &&
+
+        selectedChat._id === message.chat._id
+
+    ) {
+
+        renderMessage(message);
+
+        scrollBottom();
+
+    }
+
+    refreshChats();
+
+});
+// =========================================
 // SEND MESSAGE
 // =========================================
 
-async function sendMessage(){
+async function sendMessage() {
 
-    const content=messageInput.value.trim();
+    if (!selectedChat) {
 
-    if(!content || !selectedChat) return;
+        alert("Select a chat first");
 
-    try{
+        return;
 
-        const res=await fetch(
+    }
 
-            API_URL+"/message",
+    const content = messageInput.value.trim();
 
-            {
+    if (!content) return;
 
-                method:"POST",
+    socket.emit("stop typing", selectedChat._id);
 
-                headers:{
+    try {
 
-                    "Content-Type":"application/json",
+        const res = await fetch(API_URL + "/message", {
 
-                    Authorization:"Bearer "+token
+            method: "POST",
 
-                },
+            headers: {
 
-                body:JSON.stringify({
+                "Content-Type": "application/json",
 
-                    content,
+                Authorization: "Bearer " + token
 
-                    chatId:selectedChat._id
+            },
 
-                })
+            body: JSON.stringify({
 
-            }
+                content,
 
-        );
+                chatId: selectedChat._id
 
-        const data=await res.json();
+            })
 
-        if(!data.success){
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
 
             alert(data.message);
 
@@ -632,23 +687,17 @@ async function sendMessage(){
 
         }
 
-        messageInput.value="";
+        messageInput.value = "";
 
-        socket.emit(
+        renderMessage(data.message);
 
-            "stop typing",
+        scrollBottom();
 
-            selectedChat._id
-
-        );
-
-        addMessage(data.message);
-
-        loadChats();
+        refreshChats();
 
     }
 
-    catch(err){
+    catch (err) {
 
         console.log(err);
 
@@ -660,194 +709,417 @@ async function sendMessage(){
 // SEND BUTTON
 // =========================================
 
-sendBtn.onclick=sendMessage;
+sendBtn.addEventListener("click", sendMessage);
 
 // =========================================
-// ENTER KEY
+// ENTER TO SEND
 // =========================================
 
-messageInput.addEventListener(
+messageInput.addEventListener("keydown", function (e) {
 
-    "keypress",
+    if (e.key === "Enter") {
 
-    e=>{
+        e.preventDefault();
 
-        if(e.key==="Enter"){
-
-            sendMessage();
-
-        }
+        sendMessage();
 
     }
 
-);
-
-// =========================================
-// SOCKET RECEIVE
-// =========================================
-
-socket.off("message received");
-
-socket.on(
-
-    "message received",
-
-    message=>{
-
-        if(
-
-            selectedChat &&
-
-            selectedChat._id===message.chat._id
-
-        ){
-
-            addMessage(message);
-
-        }
-
-        loadChats();
-
-    }
-
-);
+});
 
 // =========================================
 // TYPING
 // =========================================
 
-messageInput.addEventListener(
+messageInput.addEventListener("input", () => {
 
-    "input",
+    if (!selectedChat) return;
 
-    ()=>{
+    if (!typing) {
 
-        if(!selectedChat) return;
+        typing = true;
 
-        if(!typing){
-
-            typing=true;
-
-            socket.emit(
-
-                "typing",
-
-                selectedChat._id
-
-            );
-
-        }
-
-        clearTimeout(typingTimeout);
-
-        typingTimeout=setTimeout(()=>{
-
-            socket.emit(
-
-                "stop typing",
-
-                selectedChat._id
-
-            );
-
-            typing=false;
-
-        },1500);
+        socket.emit("typing", selectedChat._id);
 
     }
 
-);
+    clearTimeout(typingTimeout);
+
+    typingTimeout = setTimeout(() => {
+
+        socket.emit("stop typing", selectedChat._id);
+
+        typing = false;
+
+    }, 1500);
+
+});
 
 // =========================================
 // SHOW TYPING
 // =========================================
 
-socket.on(
+socket.on("typing", () => {
 
-    "typing",
+    const indicator = document.getElementById("typingIndicator");
 
-    ()=>{
+    if (indicator) {
 
-        typingIndicator.style.display="block";
+        indicator.style.display = "block";
 
-    }
-
-);
-
-socket.on(
-
-    "stop typing",
-
-    ()=>{
-
-        typingIndicator.style.display="none";
+        indicator.innerText = "Typing...";
 
     }
 
-);
-// =========================================
-// PROFILE MODAL
-// =========================================
-
-profileBtn.onclick = () => {
-
-    profileModal.classList.add("active");
-
-};
-
-closeProfileBtn.onclick = () => {
-
-    profileModal.classList.remove("active");
-
-};
-
-changePhotoBtn.onclick = () => {
-
-    profilePicInput.click();
-
-};
+});
 
 // =========================================
-// CONTACT MODAL
+// STOP TYPING
 // =========================================
 
-addContactBtn.onclick = () => {
+socket.on("stop typing", () => {
 
-    contactModal.classList.add("active");
+    const indicator = document.getElementById("typingIndicator");
 
-};
+    if (indicator) {
 
-closeContactBtn.onclick = () => {
-
-    contactModal.classList.remove("active");
-
-};
-
-// =========================================
-// SAVE CONTACT
-// =========================================
-
-saveContactBtn.onclick = async () => {
-
-    const name = contactName.value.trim();
-
-    const phone = contactPhone.value.trim();
-
-    if (!name || !phone) {
-
-        alert("Please enter Name & Phone");
-
-        return;
+        indicator.style.display = "none";
 
     }
+
+});
+
+// =========================================
+// MESSAGE DELIVERED
+// =========================================
+
+socket.on("message delivered", () => {
+
+    if (selectedChat) {
+
+        loadMessages(selectedChat._id);
+
+    }
+
+});
+
+// =========================================
+// MESSAGE SEEN
+// =========================================
+
+socket.on("message seen", () => {
+
+    if (selectedChat) {
+
+        loadMessages(selectedChat._id);
+
+    }
+
+});
+
+// =========================================
+// AUTO MARK SEEN
+// =========================================
+
+async function markMessagesSeen(messageId) {
 
     try {
 
-        const res = await fetch(
+        await fetch(API_URL + "/message/seen/" + messageId, {
 
-            API_URL + "/users/contact",
+            method: "PUT",
 
-            {
+            headers: {
+
+                Authorization: "Bearer " + token
+
+            }
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+    }
+
+}
+// =========================================
+// MESSAGE MENU
+// =========================================
+
+let selectedMessageId = null;
+
+messages.addEventListener("contextmenu", function (e) {
+
+    const bubble = e.target.closest(".message.sent");
+
+    if (!bubble) return;
+
+    e.preventDefault();
+
+    selectedMessageId = bubble.id.replace("msg-", "");
+
+    const menu = document.getElementById("messageContextMenu");
+
+    menu.style.display = "block";
+
+    menu.style.left = e.pageX + "px";
+
+    menu.style.top = e.pageY + "px";
+
+});
+
+// =========================================
+// HIDE MENU
+// =========================================
+
+document.addEventListener("click", () => {
+
+    const menu = document.getElementById("messageContextMenu");
+
+    if (menu) {
+
+        menu.style.display = "none";
+
+    }
+
+});
+
+// =========================================
+// EDIT MESSAGE
+// =========================================
+
+const editBtn = document.getElementById("editMessageBtn");
+
+if (editBtn) {
+
+    editBtn.addEventListener("click", async () => {
+
+        if (!selectedMessageId) return;
+
+        const bubble = document.querySelector(
+
+            "#msg-" + selectedMessageId + " .message-text"
+
+        );
+
+        if (!bubble) return;
+
+        const oldText = bubble.innerText;
+
+        const newText = prompt(
+
+            "Edit Message",
+
+            oldText
+
+        );
+
+        if (!newText) return;
+
+        try {
+
+            const res = await fetch(
+
+                API_URL + "/message/edit/" + selectedMessageId,
+
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Content-Type": "application/json",
+
+                        Authorization: "Bearer " + token
+
+                    },
+
+                    body: JSON.stringify({
+
+                        content: newText
+
+                    })
+
+                }
+
+            );
+
+            const data = await res.json();
+
+            if (!data.success) {
+
+                alert(data.message);
+
+                return;
+
+            }
+
+        }
+
+        catch (err) {
+
+            console.log(err);
+
+        }
+
+    });
+
+}
+
+// =========================================
+// DELETE MESSAGE
+// =========================================
+
+const deleteBtn = document.getElementById("deleteMessageBtn");
+
+if (deleteBtn) {
+
+    deleteBtn.addEventListener("click", async () => {
+
+        if (!selectedMessageId) return;
+
+        if (!confirm("Delete this message?")) return;
+
+        try {
+
+            const res = await fetch(
+
+                API_URL + "/message/delete/" + selectedMessageId,
+
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        Authorization: "Bearer " + token
+
+                    }
+
+                }
+
+            );
+
+            const data = await res.json();
+
+            if (!data.success) {
+
+                alert(data.message);
+
+                return;
+
+            }
+
+        }
+
+        catch (err) {
+
+            console.log(err);
+
+        }
+
+    });
+
+}
+
+// =========================================
+// SOCKET MESSAGE EDITED
+// =========================================
+
+socket.off("message edited");
+
+socket.on("message edited", (message) => {
+
+    const div = document.getElementById(
+
+        "msg-" + message._id
+
+    );
+
+    if (!div) return;
+
+    div.querySelector(".message-text").innerHTML =
+
+        message.content +
+
+        ' <small style="opacity:.6">(edited)</small>';
+
+});
+
+// =========================================
+// SOCKET MESSAGE DELETED
+// =========================================
+
+socket.off("message deleted");
+
+socket.on("message deleted", (message) => {
+
+    const div = document.getElementById(
+
+        "msg-" + message._id
+
+    );
+
+    if (!div) return;
+
+    div.querySelector(".message-text").innerHTML =
+
+        "<i>This message was deleted</i>";
+
+});
+// =========================================
+// ADD CONTACT
+// =========================================
+
+if (addContactBtn) {
+
+    addContactBtn.addEventListener("click", () => {
+
+        contactModal.classList.add("active");
+
+    });
+
+}
+
+if (closeContactBtn) {
+
+    closeContactBtn.addEventListener("click", () => {
+
+        contactModal.classList.remove("active");
+
+    });
+
+}
+
+if (saveContactBtn) {
+
+    saveContactBtn.addEventListener("click", async () => {
+
+        const name = document
+            .getElementById("contactName")
+            .value
+            .trim();
+
+        const phone = document
+            .getElementById("contactPhone")
+            .value
+            .trim();
+
+        if (!name || !phone) {
+
+            alert("Enter Name & Phone");
+
+            return;
+
+        }
+
+        try {
+
+            const res = await fetch(API_URL + "/users/contact", {
 
                 method: "POST",
 
@@ -867,194 +1139,204 @@ saveContactBtn.onclick = async () => {
 
                 })
 
+            });
+
+            const data = await res.json();
+
+            alert(data.message);
+
+            if (data.success) {
+
+                contactModal.classList.remove("active");
+
+                document.getElementById("contactName").value = "";
+
+                document.getElementById("contactPhone").value = "";
+
+                loadChats();
+
             }
-
-        );
-
-        const data = await res.json();
-
-        alert(data.message);
-
-        if (data.success) {
-
-            contactModal.classList.remove("active");
-
-            contactName.value = "";
-
-            contactPhone.value = "";
-
-            loadChats();
 
         }
 
-    }
+        catch (err) {
 
-    catch (err) {
+            console.log(err);
 
-        console.log(err);
+        }
 
-    }
+    });
 
-};
+}
 
 // =========================================
-// MENU
+// PROFILE MODAL
 // =========================================
 
-menuBtn.onclick = () => {
+if (profileBtn) {
 
-    menuDropdown.classList.toggle("active");
+    profileBtn.onclick = () => {
 
-};
+        profileModal.classList.add("active");
 
-window.addEventListener("click", (e) => {
+    };
 
-    if (
+}
 
-        !menuBtn.contains(e.target) &&
+if (closeProfileBtn) {
 
-        !menuDropdown.contains(e.target)
+    closeProfileBtn.onclick = () => {
 
-    ) {
+        profileModal.classList.remove("active");
 
-        menuDropdown.classList.remove("active");
+    };
 
-    }
+}
 
-});
+// =========================================
+// PROFILE PICTURE
+// =========================================
+
+if (changePhotoBtn) {
+
+    changePhotoBtn.onclick = () => {
+
+        profilePicInput.click();
+
+    };
+
+}
+
+if (profilePicInput) {
+
+    profilePicInput.onchange = async function () {
+
+        const file = this.files[0];
+
+        if (!file) return;
+
+        const formData = new FormData();
+
+        formData.append("profilePic", file);
+
+        try {
+
+            const res = await fetch(
+
+                API_URL + "/users/profile-picture",
+
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        Authorization: "Bearer " + token
+
+                    },
+
+                    body: formData
+
+                }
+
+            );
+
+            const data = await res.json();
+
+            if (!data.success) {
+
+                alert(data.message);
+
+                return;
+
+            }
+
+            currentUser.profilePic = data.user.profilePic;
+
+            localStorage.setItem(
+
+                "user",
+
+                JSON.stringify(currentUser)
+
+            );
+
+            loadCurrentUser();
+
+            loadChats();
+
+            alert("Profile Updated");
+
+        }
+
+        catch (err) {
+
+            console.log(err);
+
+        }
+
+    };
+
+}
 
 // =========================================
 // LOGOUT
 // =========================================
 
-logoutBtn.onclick = () => {
+if (logoutBtn) {
 
-    if (!confirm("Logout?")) return;
+    logoutBtn.onclick = () => {
 
-    localStorage.removeItem("token");
+        if (!confirm("Logout?")) return;
 
-    localStorage.removeItem("user");
+        localStorage.removeItem("token");
 
-    location.href = "/index.html";
+        localStorage.removeItem("user");
 
-};
+        window.location.href = "/index.html";
+
+    };
+
+}
 
 // =========================================
-// MESSAGE STATUS
+// CLOSE MODAL
 // =========================================
 
-socket.on("message delivered", () => {
+window.addEventListener("click", (e) => {
 
-    if (selectedChat) {
+    if (e.target === contactModal) {
 
-        loadMessages(selectedChat._id);
+        contactModal.classList.remove("active");
+
+    }
+
+    if (e.target === profileModal) {
+
+        profileModal.classList.remove("active");
 
     }
 
 });
 
-socket.on("message seen", () => {
-
-    if (selectedChat) {
-
-        loadMessages(selectedChat._id);
-
-    }
-
-});
-
 // =========================================
-// PROFILE UPLOAD
+// PAGE LOAD
 // =========================================
 
-profilePicInput.onchange = async function () {
-
-    const file = this.files[0];
-
-    if (!file) return;
-
-    const formData = new FormData();
-
-    formData.append("profilePic", file);
-
-    try {
-
-        const res = await fetch(
-
-            API_URL + "/users/profile-picture",
-
-            {
-
-                method: "PUT",
-
-                headers: {
-
-                    Authorization: "Bearer " + token
-
-                },
-
-                body: formData
-
-            }
-
-        );
-
-        const data = await res.json();
-
-        if (!data.success) {
-
-            alert(data.message);
-
-            return;
-
-        }
-
-        currentUser.profilePic = data.user.profilePic;
-
-        localStorage.setItem(
-
-            "user",
-
-            JSON.stringify(currentUser)
-
-        );
-
-        myProfilePic.src = data.user.profilePic;
-
-        profilePreview.src = data.user.profilePic;
-
-        loadChats();
-
-        alert("Profile Updated");
-
-    }
-
-    catch (err) {
-
-        console.log(err);
-
-    }
-
-};
-
-// =========================================
-// INITIAL LOAD
-// =========================================
-
-window.onload = () => {
+window.addEventListener("load", () => {
 
     loadCurrentUser();
 
     loadChats();
 
-};
+});
 
 // =========================================
-// SOCKET CONNECT
+// SOCKET RECONNECT
 // =========================================
 
-socket.on("connected", () => {
+socket.on("connect", () => {
 
-    console.log("Socket Connected");
+    socket.emit("setup", currentUser);
 
 });

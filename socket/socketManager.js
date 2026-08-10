@@ -1,17 +1,25 @@
 let io;
 
-// ================= ONLINE USERS =================
+// =========================================
+// ONLINE USERS
+// =========================================
 
 const onlineUsers = {};
 
-// Save Socket.IO instance
+// =========================================
+// SET SOCKET.IO INSTANCE
+// =========================================
+
 const setIO = (socketIO) => {
 
     io = socketIO;
 
 };
 
-// Get Socket.IO instance
+// =========================================
+// GET SOCKET.IO INSTANCE
+// =========================================
+
 const getIO = () => {
 
     if (!io) {
@@ -24,31 +32,66 @@ const getIO = () => {
 
 };
 
-// ================= ONLINE USERS =================
+// =========================================
+// SET USER ONLINE
+// =========================================
 
 const setUserOnline = (userId, socketId) => {
+
+    if (!userId || !socketId) return;
 
     onlineUsers[userId] = socketId;
 
 };
 
+// =========================================
+// SET USER OFFLINE
+// =========================================
+
 const setUserOffline = (userId) => {
+
+    if (!userId) return;
 
     delete onlineUsers[userId];
 
 };
 
+// =========================================
+// CHECK USER ONLINE
+// =========================================
+
 const isUserOnline = (userId) => {
 
-    return !!onlineUsers[userId];
+    return Object.prototype.hasOwnProperty.call(
+        onlineUsers,
+        userId
+    );
 
 };
+
+// =========================================
+// GET USER SOCKET ID
+// =========================================
+
+const getSocketId = (userId) => {
+
+    return onlineUsers[userId] || null;
+
+};
+
+// =========================================
+// GET ALL ONLINE USERS
+// =========================================
 
 const getOnlineUsers = () => {
 
     return onlineUsers;
 
 };
+
+// =========================================
+// EXPORTS
+// =========================================
 
 module.exports = {
 
@@ -61,6 +104,8 @@ module.exports = {
     setUserOffline,
 
     isUserOnline,
+
+    getSocketId,
 
     getOnlineUsers,
 
