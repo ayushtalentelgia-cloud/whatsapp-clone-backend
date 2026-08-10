@@ -160,42 +160,56 @@ document.getElementById("changePhotoBtn");
 // LOAD CURRENT USER
 // =========================================
 
-function loadCurrentUser(){
+function loadCurrentUser() {
 
     myName.innerText = currentUser.name;
 
-    if(profileName){
+    if (profileName) {
 
         profileName.innerText = currentUser.name;
 
     }
 
-    if(profilePhone){
+    if (profilePhone) {
 
         profilePhone.innerText = currentUser.phone;
 
     }
 
-    if(profileEmail){
+    if (profileEmail) {
 
         profileEmail.innerText = currentUser.email;
 
     }
 
-    const image = currentUser.profilePic
-    ?
+    const image =
 
-    currentUser.profilePic
+        currentUser.profilePic &&
+        currentUser.profilePic.trim() !== ""
 
-    :
+            ? currentUser.profilePic
 
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=38BDF8&color=ffffff`;
+            : `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=38BDF8&color=ffffff`;
 
     myProfilePic.src = image;
 
-    if(profilePreview){
+    myProfilePic.onerror = () => {
+
+        myProfilePic.src =
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=38BDF8&color=ffffff`;
+
+    };
+
+    if (profilePreview) {
 
         profilePreview.src = image;
+
+        profilePreview.onerror = () => {
+
+            profilePreview.src =
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=38BDF8&color=ffffff`;
+
+        };
 
     }
 

@@ -66,6 +66,62 @@ const registerUser = async (req, res) => {
 
         }
 
+        // =========================================
+        // VALIDATIONS
+        // =========================================
+
+        if (name.trim().length < 3) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Name must be at least 3 characters."
+
+            });
+
+        }
+
+        const phoneRegex = /^[0-9]{10}$/;
+
+        if (!phoneRegex.test(phone)) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Invalid Phone Number."
+
+            });
+
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Invalid Email."
+
+            });
+
+        }
+
+        if (password.length < 8) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Password must be at least 8 characters."
+
+            });
+
+        }
+
         const existingUser = await User.findOne({
 
             $or: [
@@ -94,17 +150,17 @@ const registerUser = async (req, res) => {
 
             password,
 
-            10
+            12
 
         );
 
         const user = await User.create({
 
-            name,
+            name: name.trim(),
 
             phone,
 
-            email,
+            email: email.toLowerCase(),
 
             password: hashedPassword,
 
@@ -130,11 +186,13 @@ const registerUser = async (req, res) => {
 
     catch (error) {
 
+        console.error(error);
+
         return res.status(500).json({
 
             success: false,
 
-            message: error.message,
+            message: "Internal Server Error"
 
         });
 
@@ -204,15 +262,15 @@ const loginUser = async (req, res) => {
 
         if (!user) {
 
-            return res.status(404).json({
+    return res.status(401).json({
 
-                success: false,
+        success: false,
 
-                message: "User not found."
+        message: "Invalid Email/Phone or Password."
 
-            });
+    });
 
-        }
+}
 
         const match = await bcrypt.compare(
 
@@ -224,15 +282,15 @@ const loginUser = async (req, res) => {
 
         if (!match) {
 
-            return res.status(401).json({
+    return res.status(401).json({
 
-                success: false,
+        success: false,
 
-                message: "Invalid Password."
+        message: "Invalid Email/Phone or Password."
 
-            });
+    });
 
-        }
+}
         const userData = await User.findById(user._id)
 
             .select("-password");
@@ -342,15 +400,35 @@ const updateProfile = async (req, res) => {
 
         }
 
+        // =========================================
+        // NAME VALIDATION
+        // =========================================
+
         if (name) {
 
-            user.name = name;
+            if (name.trim().length < 3) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message: "Name must be at least 3 characters."
+
+                });
+
+            }
+
+            user.name = name.trim();
 
         }
 
+        // =========================================
+        // ABOUT
+        // =========================================
+
         if (about) {
 
-            user.about = about;
+            user.about = about.trim();
 
         }
 
@@ -374,11 +452,13 @@ const updateProfile = async (req, res) => {
 
     catch (error) {
 
+        console.error(error);
+
         return res.status(500).json({
 
             success: false,
 
-            message: error.message,
+            message: "Internal Server Error"
 
         });
 

@@ -1,6 +1,10 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+//const mongoSanitize = require("express-mongo-sanitize");
+const hpp = require("hpp");
 const connectDB = require("./config/db");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -15,14 +19,21 @@ const messageRoutes = require("./routes/messageRoutes");
 const socketHandler = require("./socket/socket");
 const { setIO } = require("./socket/socketManager");
 
-// Load Environment Variables
+// =========================================
+// LOAD ENV
+// =========================================
+
 dotenv.config();
 
-// ================= CONNECT DATABASE =================
+// =========================================
+// CONNECT DATABASE
+// =========================================
 
 connectDB();
 
-// ================= CLOUDINARY =================
+// =========================================
+// CLOUDINARY
+// =========================================
 
 cloudinary.config({
 
@@ -34,21 +45,138 @@ cloudinary.config({
 
 });
 
-// ================= EXPRESS =================
+// =========================================
+// EXPRESS
+// =========================================
 
 const app = express();
 
-// Middleware
+// =========================================
+// RATE LIMITER
+// =========================================
 
-app.use(cors());
+const limiter = rateLimit({
+
+    windowMs: 15 * 60 * 1000,
+
+    max: 10000,
+
+    standardHeaders: true,
+
+    legacyHeaders: false,
+
+    message: {
+
+        success: false,
+
+        message: "Too many requests. Please try again later."
+
+    }
+
+});
+
+// =========================================
+// SECURITY
+// =========================================
+
+app.use(
+    helmet({
+
+        contentSecurityPolicy: {
+
+            directives: {
+
+                defaultSrc: ["'self'"],
+
+                imgSrc: [
+
+                    "'self'",
+
+                    "data:",
+
+                    "https://res.cloudinary.com",
+
+                    "https://ui-avatars.com"
+
+                ],
+
+                scriptSrc: [
+
+                    "'self'",
+
+                    "'unsafe-inline'",
+
+                    "https://cdn.jsdelivr.net"
+
+                ],
+
+                styleSrc: [
+
+                    "'self'",
+
+                    "'unsafe-inline'",
+
+                    "https://cdnjs.cloudflare.com"
+
+                ],
+
+                fontSrc: [
+
+                    "'self'",
+
+                    "https://cdnjs.cloudflare.com"
+
+                ],
+
+                connectSrc: [
+
+                    "'self'",
+
+                    "ws:",
+
+                    "wss:",
+
+                    "https://whatsapp-clone-backend-b5o7.onrender.com"
+
+                ]
+
+            }
+
+        }
+
+    })
+);
+
+app.use(cors({
+
+    origin: true,
+
+    credentials: true,
+
+}));
+///app.use(limiter);
+
+///app.use(mongoSanitize());
+
+app.use(hpp());
+
+// =========================================
+// BODY PARSER
+// =========================================
 
 app.use(express.json());
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+
+    extended: true
+
+}));
 
 app.use(express.static("public"));
 
-// ================= ROOT =================
+// =========================================
+// ROOT
+// =========================================
 
 app.get("/", (req, res) => {
 
@@ -56,17 +184,23 @@ app.get("/", (req, res) => {
 
 });
 
-// ================= HTTP SERVER =================
+// =========================================
+// HTTP SERVER
+// =========================================
 
 const server = http.createServer(app);
 
-// ================= SOCKET =================
+// =========================================
+// SOCKET
+// =========================================
 
 const io = new Server(server, {
 
     cors: {
 
-        origin: "*",
+        origin: true,
+
+        credentials: true,
 
         methods: ["GET", "POST"],
 
@@ -78,7 +212,9 @@ setIO(io);
 
 socketHandler(io);
 
-// ================= ROUTES =================
+// =========================================
+// ROUTES
+// =========================================
 
 app.use("/api/users", userRoutes);
 
@@ -86,7 +222,9 @@ app.use("/api/chat", chatRoutes);
 
 app.use("/api/message", messageRoutes);
 
-// ================= START SERVER =================
+// =========================================
+// START SERVER
+// =========================================
 
 const PORT = process.env.PORT || 5000;
 
