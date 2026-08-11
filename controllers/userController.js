@@ -283,19 +283,34 @@ const startRegistration = async (req, res) => {
 
             });
 
-        // =========================================
-        // SEND EMAIL OTP
-        // =========================================
+// =========================================
+// SEND EMAIL OTP
+// =========================================
 
-        await sendEmailOTP(
-            cleanEmail,
-            emailOTP
-        );
+console.log(
+    "🚀 ABOUT TO SEND EMAIL OTP:",
+    cleanEmail
+);
+
+sendEmailOTP(
+    cleanEmail,
+    emailOTP
+)
+    .then(() => {
 
         console.log(
-            "📧 Email OTP sent successfully."
+            "📧 BACKGROUND EMAIL FUNCTION FINISHED"
         );
 
+    })
+    .catch((error) => {
+
+        console.error(
+            "📧 BACKGROUND EMAIL ERROR:",
+            error
+        );
+
+    });
         // =========================================
         // DEVELOPMENT ONLY
         // =========================================

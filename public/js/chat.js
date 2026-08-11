@@ -641,26 +641,56 @@ async function loadMessages(chatId) {
 
 function renderMessage(message) {
 
-    const div = document.createElement("div");
+    // =========================================
+    // PREVENT DUPLICATE MESSAGE
+    // =========================================
 
-    div.id = "msg-" + message._id;
+    if (!message || !message._id) {
+        return;
+    }
+
+    const existingMessage =
+        document.getElementById(
+            "msg-" + message._id
+        );
+
+    if (existingMessage) {
+        return;
+    }
+
+    // =========================================
+    // CREATE MESSAGE ELEMENT
+    // =========================================
+
+    const div =
+        document.createElement("div");
+
+    div.id =
+        "msg-" + message._id;
 
     div.className =
         message.sender._id === currentUser._id
-        ?
-        "message sent"
-        :
-        "message received";
+            ? "message sent"
+            : "message received";
+
+    // =========================================
+    // MESSAGE TIME
+    // =========================================
 
     const time =
-        new Date(message.createdAt)
-        .toLocaleTimeString([], {
+        new Date(
+            message.createdAt
+        ).toLocaleTimeString(
+            [],
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
 
-            hour: "2-digit",
-
-            minute: "2-digit"
-
-        });
+    // =========================================
+    // MESSAGE CONTENT
+    // =========================================
 
     div.innerHTML = `
 
@@ -678,9 +708,14 @@ function renderMessage(message) {
 
     `;
 
+    // =========================================
+    // ADD MESSAGE
+    // =========================================
+
     messages.appendChild(div);
 
 }
+
 
 // =========================================
 // SCROLL TO BOTTOM
@@ -693,6 +728,7 @@ function scrollBottom() {
 
 }
 
+
 // =========================================
 // MOBILE BACK BUTTON
 // =========================================
@@ -701,15 +737,18 @@ if (backBtn) {
 
     backBtn.onclick = () => {
 
-        document.querySelector(".sidebar")
+        document
+            .querySelector(".sidebar")
             .classList.remove("hide");
 
-        document.querySelector(".chat-section")
+        document
+            .querySelector(".chat-section")
             .classList.remove("active");
 
     };
 
 }
+
 
 // =========================================
 // SOCKET RECEIVE MESSAGE
@@ -717,25 +756,35 @@ if (backBtn) {
 
 socket.off("message received");
 
-socket.on("message received", (message) => {
+socket.on(
+    "message received",
+    (message) => {
 
-    if (
+        // =========================================
+        // CURRENTLY OPEN CHAT
+        // =========================================
 
-        selectedChat &&
+        if (
+            selectedChat &&
+            message.chat &&
+            selectedChat._id ===
+                message.chat._id
+        ) {
 
-        selectedChat._id === message.chat._id
+            renderMessage(message);
 
-    ) {
+            scrollBottom();
 
-        renderMessage(message);
+        }
 
-        scrollBottom();
+        // =========================================
+        // REFRESH CHAT LIST
+        // =========================================
+
+        refreshChats();
 
     }
-
-    refreshChats();
-
-});
+);
 // =========================================
 // SEND MESSAGE
 // =========================================
@@ -743,11 +792,8 @@ socket.on("message received", (message) => {
 async function sendMessage() {
 
     if (!selectedChat) {
-
         alert("Select a chat first");
-
         return;
-
     }
 
     const content = messageInput.value.trim();
@@ -757,62 +803,51 @@ async function sendMessage() {
     socket.emit("stop typing", selectedChat._id);
 
     try {
-
         const res = await fetch(API_URL + "/message", {
-
             method: "POST",
 
             headers: {
-
                 "Content-Type": "application/json",
-
-                Authorization: "Bearer " + token
-
+                "Authorization": "Bearer " + token
             },
 
             body: JSON.stringify({
-
-                content,
-
+                content: content,
                 chatId: selectedChat._id
-
             })
-
         });
 
         const data = await res.json();
 
         if (!data.success) {
-
             alert(data.message);
-
             return;
-
         }
 
+        // Clear input
         messageInput.value = "";
 
+        // Show sent message once
         renderMessage(data.message);
 
+        // Scroll to bottom
         scrollBottom();
 
+        // Refresh chat list
         refreshChats();
 
+    } catch (err) {
+        console.error("Send message error:", err);
     }
-
-    catch (err) {
-
-        console.log(err);
-
-    }
-
 }
+
 
 // =========================================
 // SEND BUTTON
 // =========================================
 
 sendBtn.addEventListener("click", sendMessage);
+
 
 // =========================================
 // ENTER TO SEND
@@ -825,11 +860,9 @@ messageInput.addEventListener("keydown", function (e) {
         e.preventDefault();
 
         sendMessage();
-
     }
 
 });
-
 // =========================================
 // TYPING
 // =========================================

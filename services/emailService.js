@@ -10,6 +10,8 @@ const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
 
+    pool: true,
+
     host: process.env.SMTP_HOST,
 
     port: Number(process.env.SMTP_PORT),
@@ -24,8 +26,17 @@ const transporter = nodemailer.createTransport({
 
     },
 
-});
+    maxConnections: 5,
 
+    maxMessages: 100,
+
+    connectionTimeout: 10000,
+
+    greetingTimeout: 10000,
+
+    socketTimeout: 15000,
+
+});
 
 // =========================================
 // SEND EMAIL OTP
@@ -33,15 +44,23 @@ const transporter = nodemailer.createTransport({
 
 const sendEmailOTP = async (email, otp) => {
 
+    const startTime = Date.now();
+
     try {
+
+        console.log(
+            `📧 Sending OTP to ${email}...`
+        );
 
         await transporter.sendMail({
 
-            from: `"VibeChat" <${process.env.SMTP_USER}>`,
+            from:
+                `"VibeChat" <${process.env.SMTP_USER}>`,
 
             to: email,
 
-            subject: "VibeChat Verification Code",
+            subject:
+                "VibeChat Verification Code",
 
             text:
                 `Your VibeChat verification code is ${otp}. ` +
@@ -88,8 +107,15 @@ const sendEmailOTP = async (email, otp) => {
 
         });
 
+        const timeTaken =
+            Date.now() - startTime;
+
         console.log(
-            `📧 Email OTP sent successfully to ${email}`
+            `✅ OTP email sent successfully to ${email}`
+        );
+
+        console.log(
+            `⏱️ Email sending time: ${timeTaken} ms`
         );
 
         return true;
@@ -98,8 +124,11 @@ const sendEmailOTP = async (email, otp) => {
 
     catch (error) {
 
+        const timeTaken =
+            Date.now() - startTime;
+
         console.error(
-            "Email OTP Error:",
+            `❌ Email OTP Error after ${timeTaken} ms:`,
             error
         );
 
@@ -109,6 +138,28 @@ const sendEmailOTP = async (email, otp) => {
 
 };
 
+// =========================================
+// VERIFY SMTP CONNECTION
+// =========================================
+
+transporter.verify((error) => {
+
+    if (error) {
+
+        console.error(
+            "❌ SMTP Connection Error:",
+            error
+        );
+
+    } else {
+
+        console.log(
+            "✅ SMTP server is ready."
+        );
+
+    }
+
+});
 
 // =========================================
 // EXPORT
