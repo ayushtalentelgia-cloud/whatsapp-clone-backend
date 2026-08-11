@@ -1,6 +1,23 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const PendingRegistration = require("../models/PendingRegistration");
+
+const {
+    sendEmailOTP
+} = require("../services/emailService");
+
+// =========================================
+// GENERATE OTP
+// =========================================
+
+const generateOTP = () => {
+
+    return Math.floor(
+        100000 + Math.random() * 900000
+    ).toString();
+
+};
 
 // =========================================
 // GENERATE TOKEN
@@ -21,6 +38,317 @@ const generateToken = (id) => {
         }
 
     );
+
+};
+
+// =========================================
+// START REGISTRATION
+// =========================================
+
+const startRegistration = async (req, res) => {
+
+    try {
+
+        const {
+            name,
+            phone,
+            email,
+            password,
+        } = req.body;
+
+        // =========================================
+        // REQUIRED FIELDS
+        // =========================================
+
+        if (
+            !name ||
+            !phone ||
+            !email ||
+            !password
+        ) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "All fields are required."
+
+            });
+
+        }
+
+        // =========================================
+        // NAME VALIDATION
+        // =========================================
+
+        if (name.trim().length < 3) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Name must be at least 3 characters."
+
+            });
+
+        }
+
+        // =========================================
+        // PHONE VALIDATION
+        // =========================================
+
+        const phoneRegex = /^[0-9]{10}$/;
+
+        if (!phoneRegex.test(phone)) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Invalid Phone Number."
+
+            });
+
+        }
+
+        // =========================================
+        // EMAIL VALIDATION
+        // =========================================
+
+        const emailRegex =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Invalid Email."
+
+            });
+
+        }
+
+        // =========================================
+        // PASSWORD VALIDATION
+        // =========================================
+
+        if (password.length < 8) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Password must be at least 8 characters."
+
+            });
+
+        }
+
+        // =========================================
+        // NORMALIZE DATA
+        // =========================================
+
+        const cleanName = name.trim();
+
+        const cleanEmail =
+            email.trim().toLowerCase();
+
+        const cleanPhone =
+            phone.trim();
+
+        // =========================================
+        // CHECK EXISTING USER
+        // =========================================
+
+        const existingUser = await User.findOne({
+
+            $or: [
+
+                {
+                    email: cleanEmail
+                },
+
+                {
+                    phone: cleanPhone
+                }
+
+            ]
+
+        });
+
+        if (existingUser) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Email or Phone already exists."
+
+            });
+
+        }
+
+        // =========================================
+        // GENERATE OTPs
+        // =========================================
+
+        const emailOTP = generateOTP();
+
+        const phoneOTP = generateOTP();
+
+        // =========================================
+        // HASH PASSWORD
+        // =========================================
+
+        const passwordHash =
+            await bcrypt.hash(
+                password,
+                12
+            );
+
+        // =========================================
+        // HASH OTPs
+        // =========================================
+
+        const emailOtpHash =
+            await bcrypt.hash(
+                emailOTP,
+                10
+            );
+
+        const phoneOtpHash =
+            await bcrypt.hash(
+                phoneOTP,
+                10
+            );
+
+        // =========================================
+        // OTP EXPIRY
+        // 5 MINUTES
+        // =========================================
+
+        const otpExpiresAt =
+            new Date(
+                Date.now() +
+                5 * 60 * 1000
+            );
+
+        // =========================================
+        // REMOVE OLD PENDING REGISTRATION
+        // =========================================
+
+        await PendingRegistration.deleteMany({
+
+            $or: [
+
+                {
+                    email: cleanEmail
+                },
+
+                {
+                    phone: cleanPhone
+                }
+
+            ]
+
+        });
+
+        // =========================================
+        // CREATE PENDING REGISTRATION
+        // =========================================
+
+        const pendingRegistration =
+            await PendingRegistration.create({
+
+                name: cleanName,
+
+                email: cleanEmail,
+
+                phone: cleanPhone,
+
+                passwordHash,
+
+                emailOtpHash,
+
+                phoneOtpHash,
+
+                otpExpiresAt,
+
+                otpAttempts: 0,
+
+            });
+
+        // =========================================
+        // SEND EMAIL OTP
+        // =========================================
+
+        await sendEmailOTP(
+            cleanEmail,
+            emailOTP
+        );
+
+        console.log(
+            "📧 Email OTP sent successfully."
+        );
+
+        // =========================================
+        // DEVELOPMENT ONLY
+        // =========================================
+
+        console.log(
+            "📧 Email OTP:",
+            emailOTP
+        );
+
+        console.log(
+            "📱 Phone OTP:",
+            phoneOTP
+        );
+
+        // =========================================
+        // RESPONSE
+        // =========================================
+
+        return res.status(200).json({
+
+            success: true,
+
+            message:
+                "Verification code sent successfully.",
+
+            registrationId:
+                pendingRegistration._id,
+
+        });
+
+    }
+
+    // =========================================
+    // CATCH ERROR
+    // =========================================
+
+    catch (error) {
+
+        console.error(
+            "Start Registration Error:",
+            error
+        );
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Unable to start registration."
+
+        });
+
+    }
 
 };
 
@@ -887,12 +1215,292 @@ const logoutUser = async (req, res) => {
 };
 
 // =========================================
+// VERIFY REGISTRATION OTP
+// =========================================
+
+const verifyRegistrationOTP = async (req, res) => {
+
+    try {
+
+        const {
+            registrationId,
+            otp,
+        } = req.body;
+
+        // =========================================
+        // REQUIRED FIELDS
+        // =========================================
+
+        if (!registrationId || !otp) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Registration ID and OTP are required."
+
+            });
+
+        }
+
+        // =========================================
+        // OTP FORMAT
+        // =========================================
+
+        if (!/^\d{6}$/.test(otp)) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "OTP must be a 6-digit code."
+
+            });
+
+        }
+
+        // =========================================
+        // FIND PENDING REGISTRATION
+        // =========================================
+
+        const pendingRegistration =
+            await PendingRegistration.findById(
+                registrationId
+            );
+
+        if (!pendingRegistration) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message:
+                    "Registration request not found or expired."
+
+            });
+
+        }
+
+        // =========================================
+        // CHECK OTP EXPIRY
+        // =========================================
+
+        if (
+            new Date() >
+            pendingRegistration.otpExpiresAt
+        ) {
+
+            await PendingRegistration.findByIdAndDelete(
+                registrationId
+            );
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "OTP has expired. Please register again."
+
+            });
+
+        }
+
+        // =========================================
+        // CHECK OTP ATTEMPTS
+        // =========================================
+
+        if (
+            pendingRegistration.otpAttempts >= 5
+        ) {
+
+            await PendingRegistration.findByIdAndDelete(
+                registrationId
+            );
+
+            return res.status(429).json({
+
+                success: false,
+
+                message:
+                    "Too many incorrect OTP attempts. Please register again."
+
+            });
+
+        }
+
+        // =========================================
+        // VERIFY EMAIL OTP
+        // =========================================
+
+        const emailOtpMatch =
+            await bcrypt.compare(
+                otp,
+                pendingRegistration.emailOtpHash
+            );
+
+        // =========================================
+        // VERIFY PHONE OTP
+        // =========================================
+
+        const phoneOtpMatch =
+            await bcrypt.compare(
+                otp,
+                pendingRegistration.phoneOtpHash
+            );
+
+        // =========================================
+        // EMAIL OR PHONE OTP
+        // ANY ONE CORRECT = VALID
+        // =========================================
+
+        if (!emailOtpMatch && !phoneOtpMatch) {
+
+            pendingRegistration.otpAttempts += 1;
+
+            await pendingRegistration.save();
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Invalid verification code."
+
+            });
+
+        }
+
+        // =========================================
+        // CHECK USER AGAIN
+        // =========================================
+
+        const existingUser =
+            await User.findOne({
+
+                $or: [
+
+                    {
+                        email:
+                            pendingRegistration.email
+                    },
+
+                    {
+                        phone:
+                            pendingRegistration.phone
+                    }
+
+                ]
+
+            });
+
+        if (existingUser) {
+
+            await PendingRegistration.findByIdAndDelete(
+                registrationId
+            );
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Email or Phone already exists."
+
+            });
+
+        }
+
+        // =========================================
+        // CREATE USER
+        // =========================================
+
+        const user = await User.create({
+
+            name:
+                pendingRegistration.name,
+
+            phone:
+                pendingRegistration.phone,
+
+            email:
+                pendingRegistration.email,
+
+            password:
+                pendingRegistration.passwordHash,
+
+        });
+
+        // =========================================
+        // GET USER WITHOUT PASSWORD
+        // =========================================
+
+        const userData =
+            await User.findById(user._id)
+                .select("-password");
+
+        // =========================================
+        // DELETE PENDING REGISTRATION
+        // =========================================
+
+        await PendingRegistration.findByIdAndDelete(
+            registrationId
+        );
+
+        // =========================================
+        // SUCCESS
+        // =========================================
+
+        return res.status(201).json({
+
+            success: true,
+
+            message:
+                "Account Created Successfully.",
+
+            token:
+                generateToken(user._id),
+
+            user:
+                userData,
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Verify Registration OTP Error:",
+            error
+        );
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Internal Server Error"
+
+        });
+
+    }
+
+};
+
+
+// =========================================
 // EXPORTS
 // =========================================
 
 module.exports = {
 
     registerUser,
+
+    startRegistration,
+
+    verifyRegistrationOTP,
 
     loginUser,
 

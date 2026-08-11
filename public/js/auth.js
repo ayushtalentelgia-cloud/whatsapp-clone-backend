@@ -4,6 +4,13 @@
 
 const API_BASE = "https://whatsapp-clone-backend-b5o7.onrender.com/api/users";
 
+
+// =========================================
+// API CONFIG - LOCAL
+// =========================================
+
+//const API_BASE =
+  //  "http://localhost:5000/api/users";
 // =========================================
 // SIGNUP
 // =========================================
@@ -16,50 +23,171 @@ if (signupForm) {
 
         e.preventDefault();
 
-        const name = document.getElementById("signupName").value.trim();
-        const email = document.getElementById("signupEmail").value.trim();
-        const phone = document.getElementById("signupPhone").value.trim();
-        const password = document.getElementById("signupPassword").value;
+        const name =
+            document.getElementById("signupName").value.trim();
+
+        const email =
+            document.getElementById("signupEmail").value.trim();
+
+        const phone =
+            document.getElementById("signupPhone").value.trim();
+
+        const password =
+            document.getElementById("signupPassword").value;
 
         try {
 
-            const res = await fetch(`${API_BASE}/register`, {
+            // =========================================
+            // START REGISTRATION
+            // =========================================
 
-                method: "POST",
+            const res = await fetch(
+                `${API_BASE}/register/start`,
+                {
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                    method: "POST",
 
-                body: JSON.stringify({
-                    name,
-                    email,
-                    phone,
-                    password
-                })
+                    headers: {
 
-            });
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        name,
+
+                        email,
+
+                        phone,
+
+                        password
+
+                    })
+
+                }
+            );
 
             const data = await res.json();
 
-            if (data.success) {
+            // =========================================
+            // START REGISTRATION FAILED
+            // =========================================
 
-                alert("✅ Account Created Successfully");
-
-                // Signup ke baad login page par bhejo
-                window.location.href = "/index.html";
-
-            } else {
+            if (!data.success) {
 
                 alert(data.message);
 
+                return;
+
             }
 
-        } catch (err) {
+            // =========================================
+            // ASK FOR OTP
+            // =========================================
 
-            console.error(err);
+            const otp = prompt(
+                "Enter the 6-digit verification code sent to your email:"
+            );
 
-            alert("Server Error");
+            if (!otp) {
+
+                alert(
+                    "Verification code is required."
+                );
+
+                return;
+
+            }
+
+            // =========================================
+            // VERIFY OTP
+            // =========================================
+
+            const verifyRes = await fetch(
+                `${API_BASE}/register/verify-otp`,
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        registrationId:
+                            data.registrationId,
+
+                        otp: otp.trim()
+
+                    })
+
+                }
+            );
+
+            const verifyData =
+                await verifyRes.json();
+
+            // =========================================
+            // VERIFICATION FAILED
+            // =========================================
+
+            if (!verifyData.success) {
+
+                alert(
+                    verifyData.message
+                );
+
+                return;
+
+            }
+
+            // =========================================
+            // ACCOUNT CREATED
+            // =========================================
+
+           showToast("Account Created Successfully");
+
+            // =========================================
+            // SAVE LOGIN DATA
+            // =========================================
+
+            localStorage.setItem(
+                "token",
+                verifyData.token
+            );
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(
+                    verifyData.user
+                )
+            );
+
+            // =========================================
+            // GO TO CHAT
+            // =========================================
+
+            window.location.href =
+                "/chat.html";
+
+        }
+
+        catch (err) {
+
+            console.error(
+                "Signup Error:",
+                err
+            );
+
+            alert(
+                "Server Error. Please try again."
+            );
 
         }
 
@@ -113,7 +241,7 @@ if (loginForm) {
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("user", JSON.stringify(data.user));
 
-                alert("✅ Login Successful");
+                showToast("Login Successful");
 
                 // Login ke baad direct WhatsApp UI
                 window.location.href = "/chat.html";
@@ -134,4 +262,40 @@ if (loginForm) {
 
     });
 
+}
+
+// =========================================
+// VIBECHAT TOAST
+// =========================================
+
+function showToast(message, type = "success") {
+
+    const oldToast =
+        document.getElementById("vibeToast");
+
+    if (oldToast) {
+        oldToast.remove();
+    }
+
+    const toast =
+        document.createElement("div");
+
+    toast.id = "vibeToast";
+
+    toast.className =
+        `vibe-toast ${type}`;
+
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.classList.add("hide");
+
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+
+    }, 2500);
 }

@@ -48,6 +48,55 @@ document.getElementById("chatList");
 const searchUser =
 document.getElementById("searchUser");
 
+const logoutBtn =
+document.getElementById("logoutBtn");
+
+const menuBtn =
+document.getElementById("menuBtn");
+
+const menuDropdown =
+document.getElementById("menuDropdown");
+
+// =========================================
+// LOGOUT
+// =========================================
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener("click", () => {
+
+        localStorage.removeItem("token");
+
+        localStorage.removeItem("user");
+
+        window.location.href = "/index.html";
+
+    });
+
+}
+
+// =========================================
+// SIDEBAR MENU
+// =========================================
+
+if (menuBtn && menuDropdown) {
+
+    menuBtn.addEventListener("click", (event) => {
+
+        event.stopPropagation();
+
+        menuDropdown.classList.toggle("show");
+
+    });
+
+    document.addEventListener("click", () => {
+
+        menuDropdown.classList.remove("show");
+
+    });
+
+}
+
 // =========================================
 // CHAT
 // =========================================
@@ -125,8 +174,8 @@ document.getElementById("profileEmail");
 const profileBtn =
 document.getElementById("profileBtn");
 
-const logoutBtn =
-document.getElementById("logoutBtn");
+//const logoutBtn =
+//document.getElementById("logoutBtn");
 
 const backBtn =
 document.getElementById("backBtn");

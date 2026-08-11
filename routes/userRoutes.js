@@ -1,12 +1,18 @@
 const express = require("express");
+
 const router = express.Router();
 
-const protect = require("../middleware/authMiddleware");
-const upload = require("../middleware/uploadMiddleware");
+const protect =
+    require("../middleware/authMiddleware");
+
+const upload =
+    require("../middleware/uploadMiddleware");
 
 const {
 
-    registerUser,
+    startRegistration,
+
+    verifyRegistrationOTP,
 
     loginUser,
 
@@ -28,30 +34,80 @@ const {
 
 } = require("../controllers/userController");
 
+
 // =========================================
 // AUTH
 // =========================================
 
-// Register
-router.post("/register", registerUser);
 
-// Login
-router.post("/login", loginUser);
+// =========================================
+// START REGISTRATION
+// Send Email OTP
+// =========================================
 
-// Logout
-router.post("/logout", protect, logoutUser);
+router.post(
+    "/register/start",
+    startRegistration
+);
+
+
+// =========================================
+// VERIFY REGISTRATION OTP
+// Create Account
+// =========================================
+
+router.post(
+    "/register/verify-otp",
+    verifyRegistrationOTP
+);
+
+
+// =========================================
+// LOGIN
+// =========================================
+
+router.post(
+    "/login",
+    loginUser
+);
+
+
+// =========================================
+// LOGOUT
+// =========================================
+
+router.post(
+    "/logout",
+    protect,
+    logoutUser
+);
+
 
 // =========================================
 // PROFILE
 // =========================================
 
+
 // Get Profile
-router.get("/profile", protect, getProfile);
+
+router.get(
+    "/profile",
+    protect,
+    getProfile
+);
+
 
 // Update Profile
-router.put("/profile", protect, updateProfile);
+
+router.put(
+    "/profile",
+    protect,
+    updateProfile
+);
+
 
 // Upload Profile Picture
+
 router.put(
     "/profile-picture",
     protect,
@@ -59,24 +115,55 @@ router.put(
     uploadProfilePicture
 );
 
+
 // =========================================
 // CONTACTS
 // =========================================
 
+
 // Add Contact
-router.post("/contact", protect, addContact);
+
+router.post(
+    "/contact",
+    protect,
+    addContact
+);
+
 
 // Get Contacts
-router.get("/contacts", protect, getContacts);
+
+router.get(
+    "/contacts",
+    protect,
+    getContacts
+);
+
 
 // =========================================
 // USERS
 // =========================================
 
+
 // Search Users
-router.get("/search", protect, searchUsers);
+
+router.get(
+    "/search",
+    protect,
+    searchUsers
+);
+
 
 // Get All Users
-router.get("/", protect, getAllUsers);
+
+router.get(
+    "/",
+    protect,
+    getAllUsers
+);
+
+
+// =========================================
+// EXPORT ROUTER
+// =========================================
 
 module.exports = router;
