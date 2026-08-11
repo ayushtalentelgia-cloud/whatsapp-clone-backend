@@ -8,7 +8,6 @@ const chatSchema = new mongoose.Schema(
 
     {
 
-        // Chat Name
         chatName: {
 
             type: String,
@@ -19,7 +18,6 @@ const chatSchema = new mongoose.Schema(
 
         },
 
-        // Group or Private
         isGroupChat: {
 
             type: Boolean,
@@ -28,7 +26,6 @@ const chatSchema = new mongoose.Schema(
 
         },
 
-        // Users
         users: [
 
             {
@@ -41,7 +38,6 @@ const chatSchema = new mongoose.Schema(
 
         ],
 
-        // Latest Message
         latestMessage: {
 
             type: mongoose.Schema.Types.ObjectId,
@@ -50,7 +46,6 @@ const chatSchema = new mongoose.Schema(
 
         },
 
-        // Group Admin
         groupAdmin: {
 
             type: mongoose.Schema.Types.ObjectId,
@@ -61,7 +56,6 @@ const chatSchema = new mongoose.Schema(
 
         },
 
-        // Group Icon
         groupIcon: {
 
             type: String,
@@ -70,7 +64,6 @@ const chatSchema = new mongoose.Schema(
 
         },
 
-        // Group Description
         description: {
 
             type: String,
@@ -79,7 +72,6 @@ const chatSchema = new mongoose.Schema(
 
         },
 
-        // Unread Count
         unreadCount: {
 
             type: Number,
@@ -88,7 +80,6 @@ const chatSchema = new mongoose.Schema(
 
         },
 
-        // Mute Chat
         isMuted: {
 
             type: Boolean,
@@ -97,7 +88,6 @@ const chatSchema = new mongoose.Schema(
 
         },
 
-        // Archive Chat
         isArchived: {
 
             type: Boolean,
@@ -106,7 +96,6 @@ const chatSchema = new mongoose.Schema(
 
         },
 
-        // Pin Chat
         isPinned: {
 
             type: Boolean,
@@ -129,4 +118,8 @@ const chatSchema = new mongoose.Schema(
 // EXPORT
 // =========================================
 
-module.exports = mongoose.model("Chat", chatSchema);
+module.exports =
+    mongoose.model(
+        "Chat",
+        chatSchema
+    );

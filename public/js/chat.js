@@ -2,19 +2,28 @@
 // API CONFIG
 // =========================================
 
-const API_URL = "https://whatsapp-clone-backend-b5o7.onrender.com/api";
-const SOCKET_URL = "https://whatsapp-clone-backend-b5o7.onrender.com";
+const API_URL =
+    "https://whatsapp-clone-backend-b5o7.onrender.com/api";
+
+const SOCKET_URL =
+    "https://whatsapp-clone-backend-b5o7.onrender.com";
 
 // =========================================
 // AUTH
 // =========================================
 
-const token = localStorage.getItem("token");
-const currentUser = JSON.parse(localStorage.getItem("user"));
+const token =
+    localStorage.getItem("token");
+
+const currentUser =
+    JSON.parse(
+        localStorage.getItem("user")
+    );
 
 if (!token || !currentUser) {
 
-    window.location.href = "/index.html";
+    window.location.href =
+        "/index.html";
 
 }
 
@@ -22,18 +31,24 @@ if (!token || !currentUser) {
 // SOCKET
 // =========================================
 
-const socket = io(SOCKET_URL);
+const socket =
+    io(SOCKET_URL);
 
-socket.emit("setup", currentUser);
+socket.emit(
+    "setup",
+    currentUser
+);
 
 // =========================================
 // GLOBAL VARIABLES
 // =========================================
 
 let selectedChat = null;
+
 let selectedUser = null;
 
 let typing = false;
+
 let typingTimeout = null;
 
 // =========================================
@@ -43,19 +58,19 @@ let typingTimeout = null;
 // Sidebar
 
 const chatList =
-document.getElementById("chatList");
+    document.getElementById("chatList");
 
 const searchUser =
-document.getElementById("searchUser");
+    document.getElementById("searchUser");
 
 const logoutBtn =
-document.getElementById("logoutBtn");
+    document.getElementById("logoutBtn");
 
 const menuBtn =
-document.getElementById("menuBtn");
+    document.getElementById("menuBtn");
 
 const menuDropdown =
-document.getElementById("menuDropdown");
+    document.getElementById("menuDropdown");
 
 // =========================================
 // LOGOUT
@@ -63,15 +78,23 @@ document.getElementById("menuDropdown");
 
 if (logoutBtn) {
 
-    logoutBtn.addEventListener("click", () => {
+    logoutBtn.addEventListener(
+        "click",
+        () => {
 
-        localStorage.removeItem("token");
+            localStorage.removeItem(
+                "token"
+            );
 
-        localStorage.removeItem("user");
+            localStorage.removeItem(
+                "user"
+            );
 
-        window.location.href = "/index.html";
+            window.location.href =
+                "/index.html";
 
-    });
+        }
+    );
 
 }
 
@@ -79,21 +102,34 @@ if (logoutBtn) {
 // SIDEBAR MENU
 // =========================================
 
-if (menuBtn && menuDropdown) {
+if (
+    menuBtn &&
+    menuDropdown
+) {
 
-    menuBtn.addEventListener("click", (event) => {
+    menuBtn.addEventListener(
+        "click",
+        (event) => {
 
-        event.stopPropagation();
+            event.stopPropagation();
 
-        menuDropdown.classList.toggle("show");
+            menuDropdown.classList.toggle(
+                "show"
+            );
 
-    });
+        }
+    );
 
-    document.addEventListener("click", () => {
+    document.addEventListener(
+        "click",
+        () => {
 
-        menuDropdown.classList.remove("show");
+            menuDropdown.classList.remove(
+                "show"
+            );
 
-    });
+        }
+    );
 
 }
 
@@ -102,108 +138,477 @@ if (menuBtn && menuDropdown) {
 // =========================================
 
 const chatName =
-document.getElementById("chatName");
+    document.getElementById("chatName");
 
 const onlineStatus =
-document.getElementById("onlineStatus");
+    document.getElementById("onlineStatus");
 
 const userAvatar =
-document.getElementById("userAvatar");
+    document.getElementById("userAvatar");
 
 const messages =
-document.getElementById("messages");
+    document.getElementById("messages");
 
 const messageInput =
-document.getElementById("messageInput");
+    document.getElementById("messageInput");
 
 const sendBtn =
-document.getElementById("sendBtn");
+    document.getElementById("sendBtn");
 
 // =========================================
 // EMOJI
 // =========================================
 
 const emojiBtn =
-document.getElementById("emojiBtn");
+    document.getElementById("emojiBtn");
 
 const emojiContainer =
-document.getElementById("emojiContainer");
+    document.getElementById(
+        "emojiContainer"
+    );
 
 const emojiPicker =
-document.querySelector("emoji-picker");
+    document.querySelector(
+        "emoji-picker"
+    );
 
 // =========================================
 // ATTACHMENT
 // =========================================
 
 const attachmentBtn =
-document.getElementById("attachmentBtn");
+    document.getElementById(
+        "attachmentBtn"
+    );
 
 const fileInput =
-document.getElementById("fileInput");
+    document.getElementById(
+        "fileInput"
+    );
 
 // =========================================
 // PROFILE
 // =========================================
 
 const myProfilePic =
-document.getElementById("myProfilePic");
+    document.getElementById(
+        "myProfilePic"
+    );
 
 const myName =
-document.getElementById("myName");
+    document.getElementById("myName");
 
 const profilePreview =
-document.getElementById("profilePreview");
+    document.getElementById(
+        "profilePreview"
+    );
 
 const profilePicInput =
-document.getElementById("profilePicInput");
+    document.getElementById(
+        "profilePicInput"
+    );
 
 const profileName =
-document.getElementById("profileName");
+    document.getElementById(
+        "profileName"
+    );
 
 const profilePhone =
-document.getElementById("profilePhone");
+    document.getElementById(
+        "profilePhone"
+    );
 
 const profileEmail =
-document.getElementById("profileEmail");
+    document.getElementById(
+        "profileEmail"
+    );
 
 // =========================================
 // BUTTONS
 // =========================================
 
 const profileBtn =
-document.getElementById("profileBtn");
-
-//const logoutBtn =
-//document.getElementById("logoutBtn");
+    document.getElementById(
+        "profileBtn"
+    );
 
 const backBtn =
-document.getElementById("backBtn");
+    document.getElementById(
+        "backBtn"
+    );
 
-// Contact
+// =========================================
+// CONTACT
+// =========================================
 
 const addContactBtn =
-document.getElementById("addContactBtn");
+    document.getElementById(
+        "addContactBtn"
+    );
 
 const contactModal =
-document.getElementById("contactModal");
+    document.getElementById(
+        "contactModal"
+    );
 
 const saveContactBtn =
-document.getElementById("saveContactBtn");
+    document.getElementById(
+        "saveContactBtn"
+    );
 
 const closeContactBtn =
-document.getElementById("closeContactBtn");
+    document.getElementById(
+        "closeContactBtn"
+    );
 
-// Profile Modal
+// =========================================
+// PROFILE MODAL
+// =========================================
 
 const profileModal =
-document.getElementById("profileModal");
+    document.getElementById(
+        "profileModal"
+    );
 
 const closeProfileBtn =
-document.getElementById("closeProfileBtn");
+    document.getElementById(
+        "closeProfileBtn"
+    );
 
 const changePhotoBtn =
-document.getElementById("changePhotoBtn");
+    document.getElementById(
+        "changePhotoBtn"
+    );
+
+// =========================================
+// PROFILE IMAGE VIEWER
+// =========================================
+
+let imageViewer = null;
+
+let imageViewerImg = null;
+
+let closeImageViewerBtn = null;
+
+
+// =========================================
+// CREATE PROFILE IMAGE VIEWER
+// =========================================
+
+function createImageViewer() {
+
+    // Already created
+    if (
+        document.getElementById(
+            "imageViewer"
+        )
+    ) {
+
+        imageViewer =
+            document.getElementById(
+                "imageViewer"
+            );
+
+        imageViewerImg =
+            document.getElementById(
+                "imageViewerImg"
+            );
+
+        closeImageViewerBtn =
+            document.getElementById(
+                "closeImageViewer"
+            );
+
+        return;
+
+    }
+
+    // =====================================
+    // CREATE VIEWER
+    // =====================================
+
+    imageViewer =
+        document.createElement("div");
+
+    imageViewer.id =
+        "imageViewer";
+
+    imageViewer.innerHTML = `
+
+        <button
+            type="button"
+            id="closeImageViewer"
+            aria-label="Close image"
+        >
+            ×
+        </button>
+
+        <img
+            id="imageViewerImg"
+            src=""
+            alt="Profile Image"
+        >
+
+    `;
+
+    document.body.appendChild(
+        imageViewer
+    );
+
+    imageViewerImg =
+        document.getElementById(
+            "imageViewerImg"
+        );
+
+    closeImageViewerBtn =
+        document.getElementById(
+            "closeImageViewer"
+        );
+
+    // =====================================
+    // VIEWER CSS
+    // =====================================
+
+    const style =
+        document.createElement("style");
+
+    style.id =
+        "profileImageViewerStyles";
+
+    style.innerHTML = `
+
+        #imageViewer {
+
+            position: fixed;
+
+            inset: 0;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                rgba(0, 0, 0, 0.88);
+
+            z-index: 999999;
+
+            padding: 20px;
+
+        }
+
+        #imageViewer.active {
+
+            display: flex;
+
+        }
+
+        #imageViewerImg {
+
+            width: min(420px, 85vw);
+
+            height: min(420px, 85vw);
+
+            max-width: 90vw;
+
+            max-height: 85vh;
+
+            object-fit: cover;
+
+            object-position: center;
+
+            border-radius: 50%;
+
+            border: 4px solid #ffffff;
+
+            box-shadow:
+                0 20px 60px
+                rgba(0, 0, 0, 0.55);
+
+            background: #000;
+
+        }
+
+        #closeImageViewer {
+
+            position: absolute;
+
+            top: 20px;
+
+            right: 24px;
+
+            width: 46px;
+
+            height: 46px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,.15);
+
+            color: #ffffff;
+
+            font-size: 30px;
+
+            line-height: 46px;
+
+            text-align: center;
+
+            cursor: pointer;
+
+            z-index: 1000000;
+
+        }
+
+        #closeImageViewer:hover {
+
+            background: #ffffff;
+
+            color: #000000;
+
+        }
+
+        .profile-pic,
+        .chat-avatar,
+        .chat-avatar img {
+
+            cursor: pointer;
+
+        }
+
+    `;
+
+    document.head.appendChild(
+        style
+    );
+
+    // =====================================
+    // CLOSE BUTTON
+    // =====================================
+
+    closeImageViewerBtn.onclick =
+        closeProfileImage;
+
+    // =====================================
+    // BACKGROUND CLICK
+    // =====================================
+
+    imageViewer.addEventListener(
+        "click",
+        (event) => {
+
+            if (
+                event.target ===
+                imageViewer
+            ) {
+
+                closeProfileImage();
+
+            }
+
+        }
+    );
+
+}
+
+
+// =========================================
+// OPEN PROFILE IMAGE
+// =========================================
+
+function openProfileImage(
+    imageSrc
+) {
+
+    if (!imageSrc) return;
+
+    if (!imageViewer) {
+
+        createImageViewer();
+
+    }
+
+    imageViewerImg.src =
+        imageSrc;
+
+    imageViewer.classList.add(
+        "active"
+    );
+
+}
+
+
+// =========================================
+// CLOSE PROFILE IMAGE
+// =========================================
+
+function closeProfileImage() {
+
+    if (!imageViewer) return;
+
+    imageViewer.classList.remove(
+        "active"
+    );
+
+    if (imageViewerImg) {
+
+        imageViewerImg.src = "";
+
+    }
+
+}
+
+
+// =========================================
+// ESC KEY CLOSE
+// =========================================
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeProfileImage();
+
+        }
+
+    }
+);
+
+// =========================================
+// GET USER PROFILE IMAGE
+// =========================================
+
+function getUserProfileImage(
+    user
+) {
+
+    if (
+        user &&
+        user.profilePic &&
+        user.profilePic.trim() !== ""
+    ) {
+
+        return user.profilePic;
+
+    }
+
+    return `
+        https://ui-avatars.com/api/
+        ?name=${encodeURIComponent(
+            user?.name || "User"
+        )}
+        &background=38BDF8
+        &color=ffffff
+    `.replace(/\s/g, "");
+
+}
 
 // =========================================
 // LOAD CURRENT USER
@@ -211,54 +616,91 @@ document.getElementById("changePhotoBtn");
 
 function loadCurrentUser() {
 
-    myName.innerText = currentUser.name;
+    if (myName) {
+
+        myName.innerText =
+            currentUser.name;
+
+    }
 
     if (profileName) {
 
-        profileName.innerText = currentUser.name;
+        profileName.innerText =
+            currentUser.name;
 
     }
 
     if (profilePhone) {
 
-        profilePhone.innerText = currentUser.phone;
+        profilePhone.innerText =
+            currentUser.phone;
 
     }
 
     if (profileEmail) {
 
-        profileEmail.innerText = currentUser.email;
+        profileEmail.innerText =
+            currentUser.email;
 
     }
 
     const image =
+        getUserProfileImage(
+            currentUser
+        );
 
-        currentUser.profilePic &&
-        currentUser.profilePic.trim() !== ""
-
-            ? currentUser.profilePic
-
-            : `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=38BDF8&color=ffffff`;
-
-    myProfilePic.src = image;
-
-    myProfilePic.onerror = () => {
+    if (myProfilePic) {
 
         myProfilePic.src =
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=38BDF8&color=ffffff`;
+            image;
 
-    };
+        myProfilePic.onerror =
+            () => {
+
+                myProfilePic.src =
+                    getUserProfileImage(
+                        {
+                            name:
+                                currentUser.name
+                        }
+                    );
+
+            };
+
+        // =================================
+        // OPEN MY PROFILE IMAGE
+        // =================================
+
+        myProfilePic.onclick =
+            (event) => {
+
+                event.stopPropagation();
+
+                openProfileImage(
+                    myProfilePic.src
+                );
+
+            };
+
+    }
 
     if (profilePreview) {
 
-        profilePreview.src = image;
+        profilePreview.src =
+            image;
 
-        profilePreview.onerror = () => {
+        profilePreview.onerror =
+            () => {
 
-            profilePreview.src =
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=38BDF8&color=ffffff`;
+                profilePreview.src =
+                    getUserProfileImage(
+                        {
+                            name:
+                                currentUser.name
+                        }
+                    );
 
-        };
+            };
 
     }
 
@@ -268,53 +710,73 @@ function loadCurrentUser() {
 // SOCKET EVENTS
 // =========================================
 
-socket.on("connected",()=>{
+socket.on(
+    "connected",
+    () => {
 
-    console.log("✅ Socket Connected");
-
-});
-
-socket.on("user online",(user)=>{
-
-    if(
-
-        selectedUser &&
-
-        selectedUser._id===user._id
-
-    ){
-
-        onlineStatus.innerText="Online";
-
-        onlineStatus.className="online";
+        console.log(
+            "✅ Socket Connected"
+        );
 
     }
+);
 
-});
+socket.on(
+    "user online",
+    (user) => {
 
-socket.on("user offline",(user)=>{
+        if (
 
-    if(
+            selectedUser &&
 
-        selectedUser &&
+            selectedUser._id ===
+                user._id
 
-        selectedUser._id===user._id
+        ) {
 
-    ){
+            onlineStatus.innerText =
+                "Online";
 
-        onlineStatus.innerText="Offline";
+            onlineStatus.className =
+                "online";
 
-        onlineStatus.className="offline";
+        }
 
     }
+);
 
-});
+socket.on(
+    "user offline",
+    (user) => {
+
+        if (
+
+            selectedUser &&
+
+            selectedUser._id ===
+                user._id
+
+        ) {
+
+            onlineStatus.innerText =
+                "Offline";
+
+            onlineStatus.className =
+                "offline";
+
+        }
+
+    }
+);
 
 // =========================================
 // START
 // =========================================
 
+createImageViewer();
+
 loadCurrentUser();
+
 // =========================================
 // LOAD CHATS
 // =========================================
@@ -323,33 +785,46 @@ async function loadChats() {
 
     try {
 
-        const res = await fetch(API_URL + "/chat", {
+        const res =
+            await fetch(
+                API_URL + "/chat",
+                {
 
-            headers: {
+                    headers: {
 
-                Authorization: "Bearer " + token
+                        Authorization:
+                            "Bearer " + token
 
-            }
+                    }
 
-        });
+                }
+            );
 
-        const data = await res.json();
+        const data =
+            await res.json();
 
         if (!data.success) {
 
-            console.log(data.message);
+            console.log(
+                data.message
+            );
 
             return;
 
         }
 
-        renderChats(data.chats);
+        renderChats(
+            data.chats
+        );
 
     }
 
     catch (err) {
 
-        console.log("Load Chat Error :", err);
+        console.log(
+            "Load Chat Error :",
+            err
+        );
 
     }
 
@@ -363,7 +838,9 @@ function renderChats(chats) {
 
     chatList.innerHTML = "";
 
-    if (chats.length === 0) {
+    if (
+        chats.length === 0
+    ) {
 
         chatList.innerHTML = `
             <div class="empty-chat-list">
@@ -375,99 +852,167 @@ function renderChats(chats) {
 
     }
 
-    chats.forEach(chat => {
+    chats.forEach(
+        chat => {
 
-        const otherUser = chat.users.find(
+            const otherUser =
+                chat.users.find(
+                    user =>
+                        user._id !==
+                        currentUser._id
+                );
 
-            user => user._id !== currentUser._id
+            if (!otherUser) return;
 
-        );
+            const profilePic =
+                otherUser.profilePic
 
-        if (!otherUser) return;
+                ?
 
-        const profilePic = otherUser.profilePic
-            ?
-            `<img src="${otherUser.profilePic}" class="avatar-img">`
-            :
-            otherUser.name.charAt(0).toUpperCase();
+                `<img
+                    src="${otherUser.profilePic}"
+                    class="avatar-img"
+                    alt="${otherUser.name}"
+                >`
 
-        const lastMessage =
+                :
 
-            chat.latestMessage
+                otherUser.name
+                    .charAt(0)
+                    .toUpperCase();
 
-            ?
+            const lastMessage =
+                chat.latestMessage
+                    ?
+                    chat.latestMessage.content
+                    :
+                    "Start Conversation";
 
-            chat.latestMessage.content
+            const time =
+                chat.updatedAt
 
-            :
+                    ?
 
-            "Start Conversation";
+                    new Date(
+                        chat.updatedAt
+                    ).toLocaleTimeString(
+                        [],
+                        {
+                            hour:
+                                "2-digit",
 
-        const time = chat.updatedAt
+                            minute:
+                                "2-digit"
+                        }
+                    )
 
-            ?
+                    :
 
-            new Date(chat.updatedAt)
+                    "";
 
-            .toLocaleTimeString([], {
+            const div =
+                document.createElement(
+                    "div"
+                );
 
-                hour: "2-digit",
+            div.className =
+                "chat-item";
 
-                minute: "2-digit"
+            div.innerHTML = `
 
-            })
+                <div class="chat-avatar">
 
-            :
-
-            "";
-
-        const div = document.createElement("div");
-
-        div.className = "chat-item";
-
-        div.innerHTML = `
-
-            <div class="chat-avatar">
-
-                ${profilePic}
-
-            </div>
-
-            <div class="chat-details">
-
-                <div class="chat-details-top">
-
-                    <h4>${otherUser.name}</h4>
-
-                    <span>${time}</span>
+                    ${profilePic}
 
                 </div>
 
-                <div class="chat-message">
+                <div class="chat-details">
 
-                    ${lastMessage}
+                    <div class="chat-details-top">
+
+                        <h4>
+                            ${otherUser.name}
+                        </h4>
+
+                        <span>
+                            ${time}
+                        </span>
+
+                    </div>
+
+                    <div class="chat-message">
+
+                        ${lastMessage}
+
+                    </div>
 
                 </div>
 
-            </div>
+            `;
 
-        `;
+            // =================================
+            // CHAT ITEM CLICK
+            // =================================
 
-        div.addEventListener("click", () => {
+            div.addEventListener(
+                "click",
+                () => {
 
-            document.querySelectorAll(".chat-item")
+                    document
+                        .querySelectorAll(
+                            ".chat-item"
+                        )
+                        .forEach(
+                            item =>
+                                item.classList
+                                    .remove(
+                                        "active"
+                                    )
+                        );
 
-            .forEach(item => item.classList.remove("active"));
+                    div.classList.add(
+                        "active"
+                    );
 
-            div.classList.add("active");
+                    openChat(chat);
 
-            openChat(chat);
+                }
+            );
 
-        });
+            // =================================
+            // CHAT LIST IMAGE CLICK
+            // =================================
 
-        chatList.appendChild(div);
+            const chatAvatar =
+                div.querySelector(
+                    ".chat-avatar"
+                );
 
-    });
+            if (chatAvatar) {
+
+                chatAvatar.addEventListener(
+                    "click",
+                    (event) => {
+
+                        event.stopPropagation();
+
+                        openProfileImage(
+                            getUserProfileImage(
+                                otherUser
+                            )
+                        );
+
+                    }
+                );
+
+            }
+
+            chatList.appendChild(
+                div
+            );
+
+        }
+    );
 
 }
 
@@ -475,37 +1020,47 @@ function renderChats(chats) {
 // SEARCH CHAT
 // =========================================
 
-searchUser.addEventListener("keyup", function () {
+if (searchUser) {
 
-    const value = this.value.toLowerCase();
+    searchUser.addEventListener(
+        "keyup",
+        function () {
 
-    document.querySelectorAll(".chat-item")
+            const value =
+                this.value
+                    .toLowerCase();
 
-    .forEach(chat => {
+            document
+                .querySelectorAll(
+                    ".chat-item"
+                )
+                .forEach(
+                    chat => {
 
-        const name = chat
+                        const name =
+                            chat
+                                .querySelector(
+                                    "h4"
+                                )
+                                .innerText
+                                .toLowerCase();
 
-        .querySelector("h4")
+                        chat.style.display =
+                            name.includes(
+                                value
+                            )
+                                ?
+                                "flex"
+                                :
+                                "none";
 
-        .innerText
+                    }
+                );
 
-        .toLowerCase();
+        }
+    );
 
-        chat.style.display =
-
-            name.includes(value)
-
-            ?
-
-            "flex"
-
-            :
-
-            "none";
-
-    });
-
-});
+}
 
 // =========================================
 // REFRESH CHAT LIST
@@ -522,59 +1077,102 @@ function refreshChats() {
 // =========================================
 
 loadChats();
+
 // =========================================
 // OPEN CHAT
 // =========================================
 
 async function openChat(chat) {
 
-    selectedChat = chat;
+    selectedChat =
+        chat;
 
-    selectedUser = chat.users.find(
+    selectedUser =
+        chat.users.find(
+            user =>
+                user._id !==
+                currentUser._id
+        );
 
-        user => user._id !== currentUser._id
-
+    socket.emit(
+        "join chat",
+        chat._id
     );
 
-    socket.emit("join chat", chat._id);
+    chatName.innerText =
+        selectedUser.name;
 
-    chatName.innerText = selectedUser.name;
+    onlineStatus.innerText =
+        "Offline";
 
-    onlineStatus.innerText = "Offline";
+    onlineStatus.className =
+        "offline";
 
-    onlineStatus.className = "offline";
+    // =====================================
+    // HEADER PROFILE IMAGE
+    // =====================================
 
-    // Header Profile Picture
+    const selectedUserImage =
+        getUserProfileImage(
+            selectedUser
+        );
 
-    if (selectedUser.profilePic) {
+    userAvatar.innerHTML = `
 
-        userAvatar.innerHTML = `
+        <img
+            src="${selectedUserImage}"
+            class="avatar-img"
+            alt="${selectedUser.name}"
+        >
 
-            <img
-                src="${selectedUser.profilePic}"
-                class="avatar-img"
-            >
+    `;
 
-        `;
+    // =====================================
+    // OPEN OTHER USER IMAGE
+    // =====================================
 
-    } else {
+    userAvatar.onclick =
+        (event) => {
 
-        userAvatar.innerHTML =
-            selectedUser.name.charAt(0).toUpperCase();
+            event.stopPropagation();
 
-    }
+            openProfileImage(
+                selectedUserImage
+            );
 
-    await loadMessages(chat._id);
+        };
 
-    // Mobile View
+    // =====================================
+    // LOAD MESSAGES
+    // =====================================
 
-    if (window.innerWidth <= 900) {
+    await loadMessages(
+        chat._id
+    );
 
-        document.querySelector(".sidebar")
-            .classList.add("hide");
+    // =====================================
+    // MOBILE VIEW
+    // =====================================
 
-        document.querySelector(".chat-section")
-            .classList.add("active");
+    if (
+        window.innerWidth <= 900
+    ) {
+
+        document
+            .querySelector(
+                ".sidebar"
+            )
+            .classList.add(
+                "hide"
+            );
+
+        document
+            .querySelector(
+                ".chat-section"
+            )
+            .classList.add(
+                "active"
+            );
 
     }
 
@@ -584,44 +1182,55 @@ async function openChat(chat) {
 // LOAD MESSAGES
 // =========================================
 
-async function loadMessages(chatId) {
+async function loadMessages(
+    chatId
+) {
 
     try {
 
-        const res = await fetch(
+        const res =
+            await fetch(
+                API_URL +
+                "/message/" +
+                chatId,
+                {
 
-            API_URL + "/message/" + chatId,
+                    headers: {
 
-            {
+                        Authorization:
+                            "Bearer " +
+                            token
 
-                headers: {
-
-                    Authorization:
-                        "Bearer " + token
+                    }
 
                 }
+            );
 
-            }
-
-        );
-
-        const data = await res.json();
+        const data =
+            await res.json();
 
         if (!data.success) {
 
-            console.log(data.message);
+            console.log(
+                data.message
+            );
 
             return;
 
         }
 
-        messages.innerHTML = "";
+        messages.innerHTML =
+            "";
 
-        data.messages.forEach(message => {
+        data.messages.forEach(
+            message => {
 
-            renderMessage(message);
+                renderMessage(
+                    message
+                );
 
-        });
+            }
+        );
 
         scrollBottom();
 
@@ -639,43 +1248,51 @@ async function loadMessages(chatId) {
 // RENDER MESSAGE
 // =========================================
 
-function renderMessage(message) {
+function renderMessage(
+    message
+) {
 
-    // =========================================
-    // PREVENT DUPLICATE MESSAGE
-    // =========================================
+    if (
+        !message ||
+        !message._id
+    ) {
 
-    if (!message || !message._id) {
         return;
+
     }
 
     const existingMessage =
         document.getElementById(
-            "msg-" + message._id
+            "msg-" +
+            message._id
         );
 
     if (existingMessage) {
+
         return;
+
     }
 
-    // =========================================
-    // CREATE MESSAGE ELEMENT
-    // =========================================
-
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     div.id =
-        "msg-" + message._id;
+        "msg-" +
+        message._id;
 
     div.className =
-        message.sender._id === currentUser._id
-            ? "message sent"
-            : "message received";
+        message.sender._id ===
+            currentUser._id
 
-    // =========================================
-    // MESSAGE TIME
-    // =========================================
+            ?
+
+            "message sent"
+
+            :
+
+            "message received";
 
     const time =
         new Date(
@@ -683,14 +1300,13 @@ function renderMessage(message) {
         ).toLocaleTimeString(
             [],
             {
-                hour: "2-digit",
-                minute: "2-digit"
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit"
             }
         );
-
-    // =========================================
-    // MESSAGE CONTENT
-    // =========================================
 
     div.innerHTML = `
 
@@ -708,14 +1324,11 @@ function renderMessage(message) {
 
     `;
 
-    // =========================================
-    // ADD MESSAGE
-    // =========================================
-
-    messages.appendChild(div);
+    messages.appendChild(
+        div
+    );
 
 }
-
 
 // =========================================
 // SCROLL TO BOTTOM
@@ -728,63 +1341,71 @@ function scrollBottom() {
 
 }
 
-
 // =========================================
 // MOBILE BACK BUTTON
 // =========================================
 
 if (backBtn) {
 
-    backBtn.onclick = () => {
+    backBtn.onclick =
+        () => {
 
-        document
-            .querySelector(".sidebar")
-            .classList.remove("hide");
+            document
+                .querySelector(
+                    ".sidebar"
+                )
+                .classList.remove(
+                    "hide"
+                );
 
-        document
-            .querySelector(".chat-section")
-            .classList.remove("active");
+            document
+                .querySelector(
+                    ".chat-section"
+                )
+                .classList.remove(
+                    "active"
+                );
 
-    };
+        };
 
 }
-
 
 // =========================================
 // SOCKET RECEIVE MESSAGE
 // =========================================
 
-socket.off("message received");
+socket.off(
+    "message received"
+);
 
 socket.on(
     "message received",
     (message) => {
 
-        // =========================================
-        // CURRENTLY OPEN CHAT
-        // =========================================
-
         if (
+
             selectedChat &&
+
             message.chat &&
+
             selectedChat._id ===
                 message.chat._id
+
         ) {
 
-            renderMessage(message);
+            renderMessage(
+                message
+            );
 
             scrollBottom();
 
         }
 
-        // =========================================
-        // REFRESH CHAT LIST
-        // =========================================
-
         refreshChats();
 
     }
 );
+
 // =========================================
 // SEND MESSAGE
 // =========================================
@@ -792,186 +1413,300 @@ socket.on(
 async function sendMessage() {
 
     if (!selectedChat) {
-        alert("Select a chat first");
+
+        alert(
+            "Select a chat first"
+        );
+
         return;
+
     }
 
-    const content = messageInput.value.trim();
+    const content =
+        messageInput.value.trim();
 
     if (!content) return;
 
-    socket.emit("stop typing", selectedChat._id);
+    socket.emit(
+        "stop typing",
+        selectedChat._id
+    );
 
     try {
-        const res = await fetch(API_URL + "/message", {
-            method: "POST",
 
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
-            },
+        const res =
+            await fetch(
+                API_URL + "/message",
+                {
 
-            body: JSON.stringify({
-                content: content,
-                chatId: selectedChat._id
-            })
-        });
+                    method:
+                        "POST",
 
-        const data = await res.json();
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " +
+                            token
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            {
+
+                                content:
+                                    content,
+
+                                chatId:
+                                    selectedChat._id
+
+                            }
+                        )
+
+                }
+            );
+
+        const data =
+            await res.json();
 
         if (!data.success) {
-            alert(data.message);
+
+            alert(
+                data.message
+            );
+
             return;
+
         }
 
-        // Clear input
-        messageInput.value = "";
+        messageInput.value =
+            "";
 
-        // Show sent message once
-        renderMessage(data.message);
+        renderMessage(
+            data.message
+        );
 
-        // Scroll to bottom
         scrollBottom();
 
-        // Refresh chat list
         refreshChats();
 
-    } catch (err) {
-        console.error("Send message error:", err);
     }
-}
 
+    catch (err) {
+
+        console.error(
+            "Send message error:",
+            err
+        );
+
+    }
+
+}
 
 // =========================================
 // SEND BUTTON
 // =========================================
 
-sendBtn.addEventListener("click", sendMessage);
+if (sendBtn) {
 
+    sendBtn.addEventListener(
+        "click",
+        sendMessage
+    );
+
+}
 
 // =========================================
 // ENTER TO SEND
 // =========================================
 
-messageInput.addEventListener("keydown", function (e) {
+if (messageInput) {
 
-    if (e.key === "Enter") {
+    messageInput.addEventListener(
+        "keydown",
+        function (e) {
 
-        e.preventDefault();
+            if (
+                e.key === "Enter"
+            ) {
 
-        sendMessage();
-    }
+                e.preventDefault();
 
-});
+                sendMessage();
+
+            }
+
+        }
+    );
+
+}
+
 // =========================================
 // TYPING
 // =========================================
 
-messageInput.addEventListener("input", () => {
+if (messageInput) {
 
-    if (!selectedChat) return;
+    messageInput.addEventListener(
+        "input",
+        () => {
 
-    if (!typing) {
+            if (!selectedChat)
+                return;
 
-        typing = true;
+            if (!typing) {
 
-        socket.emit("typing", selectedChat._id);
+                typing = true;
 
-    }
+                socket.emit(
+                    "typing",
+                    selectedChat._id
+                );
 
-    clearTimeout(typingTimeout);
+            }
 
-    typingTimeout = setTimeout(() => {
+            clearTimeout(
+                typingTimeout
+            );
 
-        socket.emit("stop typing", selectedChat._id);
+            typingTimeout =
+                setTimeout(
+                    () => {
 
-        typing = false;
+                        socket.emit(
+                            "stop typing",
+                            selectedChat._id
+                        );
 
-    }, 1500);
+                        typing = false;
 
-});
+                    },
+                    1500
+                );
+
+        }
+    );
+
+}
 
 // =========================================
 // SHOW TYPING
 // =========================================
 
-socket.on("typing", () => {
+socket.on(
+    "typing",
+    () => {
 
-    const indicator = document.getElementById("typingIndicator");
+        const indicator =
+            document.getElementById(
+                "typingIndicator"
+            );
 
-    if (indicator) {
+        if (indicator) {
 
-        indicator.style.display = "block";
+            indicator.style.display =
+                "block";
 
-        indicator.innerText = "Typing...";
+            indicator.innerText =
+                "Typing...";
+
+        }
 
     }
-
-});
+);
 
 // =========================================
 // STOP TYPING
 // =========================================
 
-socket.on("stop typing", () => {
+socket.on(
+    "stop typing",
+    () => {
 
-    const indicator = document.getElementById("typingIndicator");
+        const indicator =
+            document.getElementById(
+                "typingIndicator"
+            );
 
-    if (indicator) {
+        if (indicator) {
 
-        indicator.style.display = "none";
+            indicator.style.display =
+                "none";
+
+        }
 
     }
-
-});
+);
 
 // =========================================
 // MESSAGE DELIVERED
 // =========================================
 
-socket.on("message delivered", () => {
+socket.on(
+    "message delivered",
+    () => {
 
-    if (selectedChat) {
+        if (selectedChat) {
 
-        loadMessages(selectedChat._id);
+            loadMessages(
+                selectedChat._id
+            );
+
+        }
 
     }
-
-});
+);
 
 // =========================================
 // MESSAGE SEEN
 // =========================================
 
-socket.on("message seen", () => {
+socket.on(
+    "message seen",
+    () => {
 
-    if (selectedChat) {
+        if (selectedChat) {
 
-        loadMessages(selectedChat._id);
+            loadMessages(
+                selectedChat._id
+            );
+
+        }
 
     }
-
-});
+);
 
 // =========================================
 // AUTO MARK SEEN
 // =========================================
 
-async function markMessagesSeen(messageId) {
+async function markMessagesSeen(
+    messageId
+) {
 
     try {
 
-        await fetch(API_URL + "/message/seen/" + messageId, {
+        await fetch(
+            API_URL +
+            "/message/seen/" +
+            messageId,
+            {
 
-            method: "PUT",
+                method: "PUT",
 
-            headers: {
+                headers: {
 
-                Authorization: "Bearer " + token
+                    Authorization:
+                        "Bearer " +
+                        token
+
+                }
 
             }
-
-        });
+        );
 
     }
 
@@ -982,127 +1717,176 @@ async function markMessagesSeen(messageId) {
     }
 
 }
+
 // =========================================
 // MESSAGE MENU
 // =========================================
 
-let selectedMessageId = null;
+let selectedMessageId =
+    null;
 
-messages.addEventListener("contextmenu", function (e) {
+messages.addEventListener(
+    "contextmenu",
+    function (e) {
 
-    const bubble = e.target.closest(".message.sent");
+        const bubble =
+            e.target.closest(
+                ".message.sent"
+            );
 
-    if (!bubble) return;
+        if (!bubble) return;
 
-    e.preventDefault();
+        e.preventDefault();
 
-    selectedMessageId = bubble.id.replace("msg-", "");
+        selectedMessageId =
+            bubble.id.replace(
+                "msg-",
+                ""
+            );
 
-    const menu = document.getElementById("messageContextMenu");
+        const menu =
+            document.getElementById(
+                "messageContextMenu"
+            );
 
-    menu.style.display = "block";
+        if (!menu) return;
 
-    menu.style.left = e.pageX + "px";
+        menu.style.display =
+            "block";
 
-    menu.style.top = e.pageY + "px";
+        menu.style.left =
+            e.pageX + "px";
 
-});
+        menu.style.top =
+            e.pageY + "px";
+
+    }
+);
 
 // =========================================
 // HIDE MENU
 // =========================================
 
-document.addEventListener("click", () => {
+document.addEventListener(
+    "click",
+    () => {
 
-    const menu = document.getElementById("messageContextMenu");
+        const menu =
+            document.getElementById(
+                "messageContextMenu"
+            );
 
-    if (menu) {
+        if (menu) {
 
-        menu.style.display = "none";
+            menu.style.display =
+                "none";
+
+        }
 
     }
-
-});
+);
 
 // =========================================
 // EDIT MESSAGE
 // =========================================
 
-const editBtn = document.getElementById("editMessageBtn");
+const editBtn =
+    document.getElementById(
+        "editMessageBtn"
+    );
 
 if (editBtn) {
 
-    editBtn.addEventListener("click", async () => {
+    editBtn.addEventListener(
+        "click",
+        async () => {
 
-        if (!selectedMessageId) return;
+            if (
+                !selectedMessageId
+            )
+                return;
 
-        const bubble = document.querySelector(
+            const bubble =
+                document.querySelector(
+                    "#msg-" +
+                    selectedMessageId +
+                    " .message-text"
+                );
 
-            "#msg-" + selectedMessageId + " .message-text"
+            if (!bubble) return;
 
-        );
+            const oldText =
+                bubble.innerText;
 
-        if (!bubble) return;
+            const newText =
+                prompt(
+                    "Edit Message",
+                    oldText
+                );
 
-        const oldText = bubble.innerText;
+            if (!newText) return;
 
-        const newText = prompt(
+            try {
 
-            "Edit Message",
+                const res =
+                    await fetch(
+                        API_URL +
+                        "/message/edit/" +
+                        selectedMessageId,
+                        {
 
-            oldText
+                            method:
+                                "PUT",
 
-        );
+                            headers: {
 
-        if (!newText) return;
+                                "Content-Type":
+                                    "application/json",
 
-        try {
+                                Authorization:
+                                    "Bearer " +
+                                    token
 
-            const res = await fetch(
+                            },
 
-                API_URL + "/message/edit/" + selectedMessageId,
+                            body:
+                                JSON.stringify(
+                                    {
 
-                {
+                                        content:
+                                            newText
 
-                    method: "PUT",
+                                    }
+                                )
 
-                    headers: {
+                        }
+                    );
 
-                        "Content-Type": "application/json",
+                const data =
+                    await res.json();
 
-                        Authorization: "Bearer " + token
+                if (
+                    !data.success
+                ) {
 
-                    },
+                    alert(
+                        data.message
+                    );
 
-                    body: JSON.stringify({
-
-                        content: newText
-
-                    })
+                    return;
 
                 }
 
-            );
+            }
 
-            const data = await res.json();
+            catch (err) {
 
-            if (!data.success) {
-
-                alert(data.message);
-
-                return;
+                console.log(err);
 
             }
 
         }
-
-        catch (err) {
-
-            console.log(err);
-
-        }
-
-    });
+    );
 
 }
 
@@ -1110,55 +1894,77 @@ if (editBtn) {
 // DELETE MESSAGE
 // =========================================
 
-const deleteBtn = document.getElementById("deleteMessageBtn");
+const deleteBtn =
+    document.getElementById(
+        "deleteMessageBtn"
+    );
 
 if (deleteBtn) {
 
-    deleteBtn.addEventListener("click", async () => {
+    deleteBtn.addEventListener(
+        "click",
+        async () => {
 
-        if (!selectedMessageId) return;
+            if (
+                !selectedMessageId
+            )
+                return;
 
-        if (!confirm("Delete this message?")) return;
+            if (
+                !confirm(
+                    "Delete this message?"
+                )
+            )
+                return;
 
-        try {
+            try {
 
-            const res = await fetch(
+                const res =
+                    await fetch(
+                        API_URL +
+                        "/message/delete/" +
+                        selectedMessageId,
+                        {
 
-                API_URL + "/message/delete/" + selectedMessageId,
+                            method:
+                                "PUT",
 
-                {
+                            headers: {
 
-                    method: "PUT",
+                                Authorization:
+                                    "Bearer " +
+                                    token
 
-                    headers: {
+                            }
 
-                        Authorization: "Bearer " + token
+                        }
+                    );
 
-                    }
+                const data =
+                    await res.json();
+
+                if (
+                    !data.success
+                ) {
+
+                    alert(
+                        data.message
+                    );
+
+                    return;
 
                 }
 
-            );
+            }
 
-            const data = await res.json();
+            catch (err) {
 
-            if (!data.success) {
-
-                alert(data.message);
-
-                return;
+                console.log(err);
 
             }
 
         }
-
-        catch (err) {
-
-            console.log(err);
-
-        }
-
-    });
+    );
 
 }
 
@@ -1166,142 +1972,216 @@ if (deleteBtn) {
 // SOCKET MESSAGE EDITED
 // =========================================
 
-socket.off("message edited");
+socket.off(
+    "message edited"
+);
 
-socket.on("message edited", (message) => {
+socket.on(
+    "message edited",
+    (message) => {
 
-    const div = document.getElementById(
+        const div =
+            document.getElementById(
+                "msg-" +
+                message._id
+            );
 
-        "msg-" + message._id
+        if (!div) return;
 
-    );
+        const messageText =
+            div.querySelector(
+                ".message-text"
+            );
 
-    if (!div) return;
+        if (messageText) {
 
-    div.querySelector(".message-text").innerHTML =
+            messageText.innerHTML =
+                message.content +
+                ' <small style="opacity:.6">(edited)</small>';
 
-        message.content +
+        }
 
-        ' <small style="opacity:.6">(edited)</small>';
-
-});
+    }
+);
 
 // =========================================
 // SOCKET MESSAGE DELETED
 // =========================================
 
-socket.off("message deleted");
+socket.off(
+    "message deleted"
+);
 
-socket.on("message deleted", (message) => {
+socket.on(
+    "message deleted",
+    (message) => {
 
-    const div = document.getElementById(
+        const div =
+            document.getElementById(
+                "msg-" +
+                message._id
+            );
 
-        "msg-" + message._id
+        if (!div) return;
 
-    );
+        const messageText =
+            div.querySelector(
+                ".message-text"
+            );
 
-    if (!div) return;
+        if (messageText) {
 
-    div.querySelector(".message-text").innerHTML =
+            messageText.innerHTML =
+                "<i>This message was deleted</i>";
 
-        "<i>This message was deleted</i>";
+        }
 
-});
+    }
+);
+
 // =========================================
 // ADD CONTACT
 // =========================================
 
 if (addContactBtn) {
 
-    addContactBtn.addEventListener("click", () => {
+    addContactBtn.addEventListener(
+        "click",
+        () => {
 
-        contactModal.classList.add("active");
+            contactModal.classList.add(
+                "active"
+            );
 
-    });
+        }
+    );
 
 }
 
 if (closeContactBtn) {
 
-    closeContactBtn.addEventListener("click", () => {
+    closeContactBtn.addEventListener(
+        "click",
+        () => {
 
-        contactModal.classList.remove("active");
+            contactModal.classList.remove(
+                "active"
+            );
 
-    });
+        }
+    );
 
 }
 
 if (saveContactBtn) {
 
-    saveContactBtn.addEventListener("click", async () => {
+    saveContactBtn.addEventListener(
+        "click",
+        async () => {
 
-        const name = document
-            .getElementById("contactName")
-            .value
-            .trim();
+            const name =
+                document
+                    .getElementById(
+                        "contactName"
+                    )
+                    .value
+                    .trim();
 
-        const phone = document
-            .getElementById("contactPhone")
-            .value
-            .trim();
+            const phone =
+                document
+                    .getElementById(
+                        "contactPhone"
+                    )
+                    .value
+                    .trim();
 
-        if (!name || !phone) {
+            if (
+                !name ||
+                !phone
+            ) {
 
-            alert("Enter Name & Phone");
+                alert(
+                    "Enter Name & Phone"
+                );
 
-            return;
+                return;
 
-        }
+            }
 
-        try {
+            try {
 
-            const res = await fetch(API_URL + "/users/contact", {
+                const res =
+                    await fetch(
+                        API_URL +
+                        "/users/contact",
+                        {
 
-                method: "POST",
+                            method:
+                                "POST",
 
-                headers: {
+                            headers: {
 
-                    "Content-Type": "application/json",
+                                "Content-Type":
+                                    "application/json",
 
-                    Authorization: "Bearer " + token
+                                Authorization:
+                                    "Bearer " +
+                                    token
 
-                },
+                            },
 
-                body: JSON.stringify({
+                            body:
+                                JSON.stringify(
+                                    {
 
-                    name,
+                                        name,
+                                        phone
 
-                    phone
+                                    }
+                                )
 
-                })
+                        }
+                    );
 
-            });
+                const data =
+                    await res.json();
 
-            const data = await res.json();
+                alert(
+                    data.message
+                );
 
-            alert(data.message);
+                if (data.success) {
 
-            if (data.success) {
+                    contactModal.classList.remove(
+                        "active"
+                    );
 
-                contactModal.classList.remove("active");
+                    document
+                        .getElementById(
+                            "contactName"
+                        )
+                        .value = "";
 
-                document.getElementById("contactName").value = "";
+                    document
+                        .getElementById(
+                            "contactPhone"
+                        )
+                        .value = "";
 
-                document.getElementById("contactPhone").value = "";
+                    loadChats();
 
-                loadChats();
+                }
+
+            }
+
+            catch (err) {
+
+                console.log(err);
 
             }
 
         }
-
-        catch (err) {
-
-            console.log(err);
-
-        }
-
-    });
+    );
 
 }
 
@@ -1311,107 +2191,130 @@ if (saveContactBtn) {
 
 if (profileBtn) {
 
-    profileBtn.onclick = () => {
+    profileBtn.onclick =
+        () => {
 
-        profileModal.classList.add("active");
+            profileModal.classList.add(
+                "active"
+            );
 
-    };
+        };
 
 }
 
 if (closeProfileBtn) {
 
-    closeProfileBtn.onclick = () => {
+    closeProfileBtn.onclick =
+        () => {
 
-        profileModal.classList.remove("active");
+            profileModal.classList.remove(
+                "active"
+            );
 
-    };
+        };
 
 }
 
 // =========================================
-// PROFILE PICTURE
+// PROFILE PICTURE UPDATE
 // =========================================
 
 if (changePhotoBtn) {
 
-    changePhotoBtn.onclick = () => {
+    changePhotoBtn.onclick =
+        () => {
 
-        profilePicInput.click();
+            profilePicInput.click();
 
-    };
+        };
 
 }
 
 if (profilePicInput) {
 
-    profilePicInput.onchange = async function () {
+    profilePicInput.onchange =
+        async function () {
 
-        const file = this.files[0];
+            const file =
+                this.files[0];
 
-        if (!file) return;
+            if (!file) return;
 
-        const formData = new FormData();
+            const formData =
+                new FormData();
 
-        formData.append("profilePic", file);
+            formData.append(
+                "profilePic",
+                file
+            );
 
-        try {
+            try {
 
-            const res = await fetch(
+                const res =
+                    await fetch(
+                        API_URL +
+                        "/users/profile-picture",
+                        {
 
-                API_URL + "/users/profile-picture",
+                            method:
+                                "PUT",
 
-                {
+                            headers: {
 
-                    method: "PUT",
+                                Authorization:
+                                    "Bearer " +
+                                    token
 
-                    headers: {
+                            },
 
-                        Authorization: "Bearer " + token
+                            body:
+                                formData
 
-                    },
+                        }
+                    );
 
-                    body: formData
+                const data =
+                    await res.json();
+
+                if (
+                    !data.success
+                ) {
+
+                    alert(
+                        data.message
+                    );
+
+                    return;
 
                 }
 
-            );
+                currentUser.profilePic =
+                    data.user.profilePic;
 
-            const data = await res.json();
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(
+                        currentUser
+                    )
+                );
 
-            if (!data.success) {
+                loadCurrentUser();
 
-                alert(data.message);
+                loadChats();
 
-                return;
+                alert(
+                    "Profile Updated"
+                );
 
             }
 
-            currentUser.profilePic = data.user.profilePic;
+            catch (err) {
 
-            localStorage.setItem(
+                console.log(err);
 
-                "user",
+            }
 
-                JSON.stringify(currentUser)
-
-            );
-
-            loadCurrentUser();
-
-            loadChats();
-
-            alert("Profile Updated");
-
-        }
-
-        catch (err) {
-
-            console.log(err);
-
-        }
-
-    };
+        };
 
 }
 
@@ -1421,17 +2324,28 @@ if (profilePicInput) {
 
 if (logoutBtn) {
 
-    logoutBtn.onclick = () => {
+    logoutBtn.onclick =
+        () => {
 
-        if (!confirm("Logout?")) return;
+            if (
+                !confirm(
+                    "Logout?"
+                )
+            )
+                return;
 
-        localStorage.removeItem("token");
+            localStorage.removeItem(
+                "token"
+            );
 
-        localStorage.removeItem("user");
+            localStorage.removeItem(
+                "user"
+            );
 
-        window.location.href = "/index.html";
+            window.location.href =
+                "/index.html";
 
-    };
+        };
 
 }
 
@@ -1439,92 +2353,144 @@ if (logoutBtn) {
 // CLOSE MODAL
 // =========================================
 
-window.addEventListener("click", (e) => {
+window.addEventListener(
+    "click",
+    (e) => {
 
-    if (e.target === contactModal) {
+        if (
+            e.target ===
+            contactModal
+        ) {
 
-        contactModal.classList.remove("active");
+            contactModal.classList.remove(
+                "active"
+            );
+
+        }
+
+        if (
+            e.target ===
+            profileModal
+        ) {
+
+            profileModal.classList.remove(
+                "active"
+            );
+
+        }
 
     }
-
-    if (e.target === profileModal) {
-
-        profileModal.classList.remove("active");
-
-    }
-
-});
+);
 
 // =========================================
 // PAGE LOAD
 // =========================================
 
-window.addEventListener("load", () => {
+window.addEventListener(
+    "load",
+    () => {
 
-    loadCurrentUser();
+        loadCurrentUser();
 
-    loadChats();
+        loadChats();
 
-});
+    }
+);
 
 // =========================================
 // SOCKET RECONNECT
 // =========================================
 
-socket.on("connect", () => {
+socket.on(
+    "connect",
+    () => {
 
-    socket.emit("setup", currentUser);
+        socket.emit(
+            "setup",
+            currentUser
+        );
 
-});
+    }
+);
+
 // =========================================
 // EMOJI PICKER
 // =========================================
 
-// Open Emoji Picker
+if (
+    emojiBtn &&
+    emojiContainer &&
+    emojiPicker
+) {
 
-emojiBtn.addEventListener("click", (e) => {
+    emojiBtn.addEventListener(
+        "click",
+        (e) => {
 
-    e.stopPropagation();
+            e.stopPropagation();
 
-    emojiContainer.classList.toggle("active");
+            emojiContainer.classList.toggle(
+                "active"
+            );
 
-});
+        }
+    );
 
-// Select Emoji
+    emojiPicker.addEventListener(
+        "emoji-click",
+        (event) => {
 
-emojiPicker.addEventListener("emoji-click", (event) => {
+            messageInput.value +=
+                event.detail.unicode;
 
-    messageInput.value += event.detail.unicode;
+            messageInput.focus();
 
-    messageInput.focus();
+        }
+    );
 
-});
+    document.addEventListener(
+        "click",
+        (e) => {
 
-// Close Picker Outside
+            if (
 
-document.addEventListener("click", (e) => {
+                !emojiContainer.contains(
+                    e.target
+                ) &&
 
-    if (
+                !emojiBtn.contains(
+                    e.target
+                )
 
-        !emojiContainer.contains(e.target) &&
+            ) {
 
-        !emojiBtn.contains(e.target)
+                emojiContainer.classList.remove(
+                    "active"
+                );
 
-    ) {
+            }
 
-        emojiContainer.classList.remove("active");
+        }
+    );
 
-    }
+}
 
-});
 // =========================================
 // ATTACHMENT
 // =========================================
 
-// Open File Picker
+if (
+    attachmentBtn &&
+    fileInput
+) {
 
-attachmentBtn.addEventListener("click", () => {
+    attachmentBtn.addEventListener(
+        "click",
+        () => {
 
-    fileInput.click();
+            fileInput.click();
 
-});
+        }
+    );
+
+}
