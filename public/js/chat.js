@@ -3,10 +3,20 @@
 // =========================================
 
 const API_URL =
-    "https://whatsapp-clone-backend-b5o7.onrender.com/api";
+   "https://whatsapp-clone-backend-b5o7.onrender.com/api";
 
 const SOCKET_URL =
     "https://whatsapp-clone-backend-b5o7.onrender.com";
+
+    // =========================================
+// API CONFIG
+// =========================================
+
+// const API_URL =
+//     "http://localhost:5000/api";
+
+// const SOCKET_URL =
+//     "http://localhost:5000";
 
 // =========================================
 // AUTH
@@ -2491,6 +2501,1288 @@ if (
             fileInput.click();
 
         }
+    );
+
+}
+// =========================================
+// VOICE CALL - WEBRTC
+// =========================================
+
+const voiceCallBtn =
+    document.getElementById("voiceCallBtn");
+
+const incomingCallModal =
+    document.getElementById("incomingCallModal");
+
+const incomingCallAvatar =
+    document.getElementById("incomingCallAvatar");
+
+const incomingCallName =
+    document.getElementById("incomingCallName");
+
+const acceptCallBtn =
+    document.getElementById("acceptCallBtn");
+
+const rejectCallBtn =
+    document.getElementById("rejectCallBtn");
+
+const activeCallModal =
+    document.getElementById("activeCallModal");
+
+const activeCallAvatar =
+    document.getElementById("activeCallAvatar");
+
+const activeCallName =
+    document.getElementById("activeCallName");
+
+const activeCallStatus =
+    document.getElementById("activeCallStatus");
+
+const muteCallBtn =
+    document.getElementById("muteCallBtn");
+
+const endCallBtn =
+    document.getElementById("endCallBtn");
+
+const remoteAudio =
+    document.getElementById("remoteAudio");
+
+
+// =========================================
+// CALL VARIABLES
+// =========================================
+
+let peerConnection = null;
+
+let localStream = null;
+
+let remoteUserId = null;
+
+let incomingOffer = null;
+
+let isMuted = false;
+
+
+// =========================================
+// WEBRTC CONFIG
+// =========================================
+
+const rtcConfiguration = {
+
+    iceServers: [
+
+        {
+            urls:
+                "stun:stun.l.google.com:19302"
+        }
+
+    ]
+
+};
+
+
+// =========================================
+// CREATE PEER CONNECTION
+// =========================================
+
+function createPeerConnection() {
+
+    if (peerConnection) {
+
+        peerConnection.close();
+
+    }
+
+    peerConnection =
+        new RTCPeerConnection(
+            rtcConfiguration
+        );
+
+
+    // =====================================
+    // REMOTE AUDIO
+    // =====================================
+
+    peerConnection.ontrack =
+        (event) => {
+
+            if (
+                remoteAudio &&
+                event.streams &&
+                event.streams[0]
+            ) {
+
+                remoteAudio.srcObject =
+                    event.streams[0];
+
+                remoteAudio
+                    .play()
+                    .catch(() => {});
+
+            }
+
+        };
+
+
+    // =====================================
+    // ICE CANDIDATE
+    // =====================================
+
+    peerConnection.onicecandidate =
+        (event) => {
+
+            if (
+                event.candidate &&
+                remoteUserId
+            ) {
+
+                socket.emit(
+                    "call:ice-candidate",
+                    {
+
+                        to:
+                            remoteUserId,
+
+                        candidate:
+                            event.candidate
+
+                    }
+                );
+
+            }
+
+        };
+
+
+    // =====================================
+    // CONNECTION STATE
+    // =====================================
+
+    peerConnection.onconnectionstatechange =
+        () => {
+
+            if (!peerConnection) {
+                return;
+            }
+
+            const state =
+                peerConnection
+                    .connectionState;
+
+            console.log(
+                "📞 Call connection:",
+                state
+            );
+
+
+            if (
+                state ===
+                "connected"
+            ) {
+
+                if (
+                    activeCallStatus
+                ) {
+
+                    activeCallStatus.innerText =
+                        "Connected";
+
+                }
+
+            }
+
+
+            if (
+                state ===
+                "disconnected" ||
+                state ===
+                "failed" ||
+                state ===
+                "closed"
+            ) {
+
+                cleanupCall();
+
+            }
+
+        };
+
+
+    return peerConnection;
+
+}
+
+
+// =========================================
+// GET MICROPHONE
+// =========================================
+
+async function getMicrophone() {
+
+    try {
+
+        localStream =
+            await navigator
+                .mediaDevices
+                .getUserMedia({
+
+                    audio: true,
+
+                    video: false
+
+                });
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Microphone Error:",
+            error
+        );
+
+        alert(
+            "Microphone permission is required for voice calls."
+        );
+
+        return false;
+
+    }
+
+}
+
+
+// =========================================
+// ADD LOCAL AUDIO TRACK
+// =========================================
+
+function addLocalTracks() {
+
+    if (
+        !peerConnection ||
+        !localStream
+    ) {
+
+        return;
+
+    }
+
+    localStream
+        .getTracks()
+        .forEach(
+            track => {
+
+                peerConnection.addTrack(
+                    track,
+                    localStream
+                );
+
+            }
+        );
+
+}
+
+
+// =========================================
+// SHOW ACTIVE CALL
+// =========================================
+
+function showActiveCall(
+    user,
+    status = "Calling..."
+) {
+
+    if (!activeCallModal) {
+        return;
+    }
+
+    const name =
+        user?.name ||
+        "User";
+
+    const image =
+        getUserProfileImage(
+            user || {
+                name: "User"
+            }
+        );
+
+
+    activeCallName.innerText =
+        name;
+
+    activeCallStatus.innerText =
+        status;
+
+
+    if (image) {
+
+        activeCallAvatar.innerHTML = `
+
+            <img
+                src="${image}"
+                alt="${name}"
+            >
+
+        `;
+
+    }
+
+
+    activeCallModal.classList.add(
+        "active"
+    );
+
+}
+
+
+// =========================================
+// HIDE INCOMING CALL
+// =========================================
+
+function hideIncomingCall() {
+
+    if (
+        incomingCallModal
+    ) {
+
+        incomingCallModal.classList.remove(
+            "active"
+        );
+
+    }
+
+}
+
+
+// =========================================
+// SHOW INCOMING CALL
+// =========================================
+
+function showIncomingCall(
+    callerName,
+    callerId
+) {
+
+    // =========================================
+    // SET REMOTE USER
+    // =========================================
+
+    remoteUserId =
+        callerId;
+
+
+    // =========================================
+    // SET CALLER NAME
+    // =========================================
+
+    if (incomingCallName) {
+
+        incomingCallName.innerText =
+            callerName ||
+            "User";
+
+    }
+
+
+    // =========================================
+    // SET CALLER AVATAR
+    // =========================================
+
+    if (incomingCallAvatar) {
+
+        const image =
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                callerName || "User"
+            )}&background=38BDF8&color=ffffff`;
+
+
+        incomingCallAvatar.innerHTML = `
+
+            <img
+                src="${image}"
+                alt="${callerName || "User"}"
+            >
+
+        `;
+
+    }
+
+
+    // =========================================
+    // SHOW INCOMING CALL MODAL
+    // =========================================
+
+    if (incomingCallModal) {
+
+        incomingCallModal.classList.add(
+            "active"
+        );
+
+        console.log(
+            "📞 Incoming Call Modal Shown"
+        );
+
+    }
+
+    else {
+
+        console.error(
+            "❌ incomingCallModal not found"
+        );
+
+    }
+
+}
+
+
+// =========================================
+// START VOICE CALL
+// =========================================
+
+async function startVoiceCall() {
+
+    // =========================================
+    // CHECK SELECTED CHAT
+    // =========================================
+
+    if (!selectedChat) {
+
+        alert(
+            "Select a contact first."
+        );
+
+        return;
+
+    }
+
+
+    // =========================================
+    // FIND RECEIVER
+    // =========================================
+
+    const receiver =
+        selectedChat.users.find(
+            user =>
+                user._id.toString() !==
+                currentUser._id.toString()
+        );
+
+
+    if (!receiver) {
+
+        alert(
+            "Unable to find contact."
+        );
+
+        return;
+
+    }
+
+
+    // =========================================
+    // CHECK ACTIVE CALL
+    // =========================================
+
+    if (peerConnection) {
+
+        alert(
+            "A call is already active."
+        );
+
+        return;
+
+    }
+
+
+    // =========================================
+    // SET REMOTE USER
+    // =========================================
+
+    remoteUserId =
+        receiver._id;
+
+
+    // =========================================
+    // GET MICROPHONE
+    // =========================================
+
+    const microphoneReady =
+        await getMicrophone();
+
+
+    if (!microphoneReady) {
+
+        return;
+
+    }
+
+
+    // =========================================
+    // CREATE PEER CONNECTION
+    // =========================================
+
+    createPeerConnection();
+
+    addLocalTracks();
+
+
+    // =========================================
+    // SHOW CALL UI
+    // =========================================
+
+    showActiveCall(
+        receiver,
+        "Calling..."
+    );
+
+
+    // =========================================
+    // SOCKET DEBUG
+    // =========================================
+
+    console.log(
+        "📡 SOCKET STATUS:",
+        socket.connected
+    );
+
+    console.log(
+        "📡 SOCKET ID:",
+        socket.id
+    );
+
+    console.log(
+        "📡 CALL DATA:",
+        {
+            to:
+                receiver._id,
+
+            from:
+                currentUser._id,
+
+            callerName:
+                currentUser.name
+        }
+    );
+
+
+    // =========================================
+    // SEND CALL SIGNAL
+    // =========================================
+
+    socket.emit(
+        "call:user",
+        {
+            to:
+                receiver._id,
+
+            from:
+                currentUser._id,
+
+            callerName:
+                currentUser.name
+        }
+    );
+
+
+    // =========================================
+    // LOG
+    // =========================================
+
+    console.log(
+        "📞 Calling:",
+        receiver.name
+    );
+
+}
+
+
+// =========================================
+// INCOMING CALL
+// =========================================
+
+socket.on(
+    "call:incoming",
+    async (data) => {
+
+        console.log(
+            "📲 call:incoming received:",
+            data
+        );
+
+
+        if (!data) {
+
+            console.error(
+                "❌ Incoming call data missing"
+            );
+
+            return;
+
+        }
+
+
+        // =========================================
+        // SET REMOTE USER
+        // =========================================
+
+        remoteUserId =
+            data.from;
+
+
+        // =========================================
+        // SHOW INCOMING CALL
+        // =========================================
+
+        showIncomingCall(
+            data.callerName,
+            data.from
+        );
+
+
+        // =========================================
+        // LOG
+        // =========================================
+
+        console.log(
+            "📞 Incoming call from:",
+            data.callerName
+        );
+
+    }
+);
+
+
+// =========================================
+// ACCEPT CALL
+// =========================================
+
+if (acceptCallBtn) {
+
+    acceptCallBtn.addEventListener(
+        "click",
+        async () => {
+
+            if (!remoteUserId) {
+
+                return;
+
+            }
+
+
+            hideIncomingCall();
+
+
+            const microphoneReady =
+                await getMicrophone();
+
+            if (!microphoneReady) {
+
+                socket.emit(
+                    "call:rejected",
+                    {
+
+                        to:
+                            remoteUserId,
+
+                        from:
+                            currentUser._id
+
+                    }
+                );
+
+                return;
+
+            }
+
+
+            createPeerConnection();
+
+            addLocalTracks();
+
+
+            showActiveCall(
+                {
+                    name:
+                        incomingCallName
+                            ?.innerText ||
+                        "User"
+                },
+                "Connecting..."
+            );
+
+
+            socket.emit(
+                "call:accepted",
+                {
+
+                    to:
+                        remoteUserId,
+
+                    from:
+                        currentUser._id
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// REJECT CALL
+// =========================================
+
+if (rejectCallBtn) {
+
+    rejectCallBtn.addEventListener(
+        "click",
+        () => {
+
+            if (remoteUserId) {
+
+                socket.emit(
+                    "call:rejected",
+                    {
+
+                        to:
+                            remoteUserId,
+
+                        from:
+                            currentUser._id
+
+                    }
+                );
+
+            }
+
+
+            hideIncomingCall();
+
+            remoteUserId =
+                null;
+
+            incomingOffer =
+                null;
+
+        }
+    );
+
+}
+
+
+// =========================================
+// CALL ACCEPTED BY RECEIVER
+// =========================================
+
+socket.on(
+    "call:accepted",
+    async () => {
+
+        if (
+            !peerConnection ||
+            !remoteUserId
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            activeCallStatus.innerText =
+                "Connecting...";
+
+
+            const offer =
+                await peerConnection
+                    .createOffer();
+
+
+            await peerConnection
+                .setLocalDescription(
+                    offer
+                );
+
+
+            socket.emit(
+                "call:offer",
+                {
+
+                    to:
+                        remoteUserId,
+
+                    offer:
+                        offer
+
+                }
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Call Offer Error:",
+                error
+            );
+
+            cleanupCall();
+
+        }
+
+    }
+);
+
+
+// =========================================
+// RECEIVE OFFER
+// =========================================
+
+socket.on(
+    "call:offer",
+    async (data) => {
+
+        if (!data || !data.offer) {
+
+            return;
+
+        }
+
+
+        try {
+
+            if (
+                !peerConnection
+            ) {
+
+                createPeerConnection();
+
+            }
+
+
+            if (!localStream) {
+
+                const microphoneReady =
+                    await getMicrophone();
+
+                if (!microphoneReady) {
+
+                    return;
+
+                }
+
+                addLocalTracks();
+
+            }
+
+
+            await peerConnection
+                .setRemoteDescription(
+                    new RTCSessionDescription(
+                        data.offer
+                    )
+                );
+
+
+            const answer =
+                await peerConnection
+                    .createAnswer();
+
+
+            await peerConnection
+                .setLocalDescription(
+                    answer
+                );
+
+
+            socket.emit(
+                "call:answer",
+                {
+
+                    to:
+                        data.from,
+
+                    answer:
+                        answer
+
+                }
+            );
+
+
+            if (
+                activeCallStatus
+            ) {
+
+                activeCallStatus.innerText =
+                    "Connecting...";
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Call Answer Error:",
+                error
+            );
+
+            cleanupCall();
+
+        }
+
+    }
+);
+
+
+// =========================================
+// RECEIVE ANSWER
+// =========================================
+
+socket.on(
+    "call:answer",
+    async (data) => {
+
+        if (
+            !peerConnection ||
+            !data ||
+            !data.answer
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            await peerConnection
+                .setRemoteDescription(
+                    new RTCSessionDescription(
+                        data.answer
+                    )
+                );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Remote Answer Error:",
+                error
+            );
+
+        }
+
+    }
+);
+
+
+// =========================================
+// RECEIVE ICE CANDIDATE
+// =========================================
+
+socket.on(
+    "call:ice-candidate",
+    async (data) => {
+
+        if (
+            !peerConnection ||
+            !data ||
+            !data.candidate
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            await peerConnection
+                .addIceCandidate(
+                    new RTCIceCandidate(
+                        data.candidate
+                    )
+                );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "ICE Candidate Error:",
+                error
+            );
+
+        }
+
+    }
+);
+
+
+// =========================================
+// CALL REJECTED
+// =========================================
+
+socket.on(
+    "call:rejected",
+    () => {
+
+        alert(
+            "Call rejected."
+        );
+
+        cleanupCall();
+
+    }
+);
+
+
+// =========================================
+// END CALL
+// =========================================
+
+if (endCallBtn) {
+
+    endCallBtn.addEventListener(
+        "click",
+        () => {
+
+            if (remoteUserId) {
+
+                socket.emit(
+                    "call:ended",
+                    {
+
+                        to:
+                            remoteUserId,
+
+                        from:
+                            currentUser._id
+
+                    }
+                );
+
+            }
+
+
+            cleanupCall();
+
+        }
+    );
+
+}
+
+
+// =========================================
+// CALL ENDED
+// =========================================
+
+socket.on(
+    "call:ended",
+    () => {
+
+        cleanupCall();
+
+    }
+);
+
+
+// =========================================
+// MUTE / UNMUTE
+// =========================================
+
+if (muteCallBtn) {
+
+    muteCallBtn.addEventListener(
+        "click",
+        () => {
+
+            if (!localStream) {
+                return;
+            }
+
+
+            const audioTracks =
+                localStream.getAudioTracks();
+
+
+            if (
+                audioTracks.length === 0
+            ) {
+
+                return;
+
+            }
+
+
+            isMuted =
+                !isMuted;
+
+
+            audioTracks.forEach(
+                track => {
+
+                    track.enabled =
+                        !isMuted;
+
+                }
+            );
+
+
+            if (isMuted) {
+
+                muteCallBtn.innerHTML =
+                    '<i class="fas fa-microphone-slash"></i>';
+
+                muteCallBtn.title =
+                    "Unmute";
+
+            }
+
+            else {
+
+                muteCallBtn.innerHTML =
+                    '<i class="fas fa-microphone"></i>';
+
+                muteCallBtn.title =
+                    "Mute";
+
+            }
+
+        }
+    );
+
+}
+
+
+// =========================================
+// CLEANUP CALL
+// =========================================
+
+function cleanupCall() {
+
+    // =====================================
+    // STOP LOCAL AUDIO
+    // =====================================
+
+    if (localStream) {
+
+        localStream
+            .getTracks()
+            .forEach(
+                track => {
+
+                    track.stop();
+
+                }
+            );
+
+        localStream =
+            null;
+
+    }
+
+
+    // =====================================
+    // CLOSE PEER CONNECTION
+    // =====================================
+
+    if (peerConnection) {
+
+        peerConnection.close();
+
+        peerConnection =
+            null;
+
+    }
+
+
+    // =====================================
+    // CLEAR REMOTE AUDIO
+    // =====================================
+
+    if (remoteAudio) {
+
+        remoteAudio.srcObject =
+            null;
+
+    }
+
+
+    // =====================================
+    // HIDE MODALS
+    // =====================================
+
+    if (
+        incomingCallModal
+    ) {
+
+        incomingCallModal.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    if (
+        activeCallModal
+    ) {
+
+        activeCallModal.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    // =====================================
+    // RESET VARIABLES
+    // =====================================
+
+    remoteUserId =
+        null;
+
+    incomingOffer =
+        null;
+
+    isMuted =
+        false;
+
+
+    if (muteCallBtn) {
+
+        muteCallBtn.innerHTML =
+            '<i class="fas fa-microphone"></i>';
+
+        muteCallBtn.title =
+            "Mute";
+
+    }
+
+    console.log(
+        "📴 Voice call cleaned up"
+    );
+
+}
+
+
+// =========================================
+// VOICE CALL BUTTON
+// =========================================
+
+if (voiceCallBtn) {
+
+    voiceCallBtn.addEventListener(
+        "click",
+        startVoiceCall
     );
 
 }

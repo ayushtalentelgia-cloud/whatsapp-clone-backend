@@ -300,56 +300,187 @@ title="Menu"
 </div>
 
 <!-- =========================================
-     MESSAGE AREA
+     MESSAGES
 ========================================= -->
 
 <div
-
-id="messages"
-
-class="messages"
-
+    id="messages"
+    class="messages"
 >
 
-<div class="empty-chat">
+    Welcome to VibeChat
 
-<i class="fas fa-comments"></i>
+    <br>
 
-<h2>
-
-Welcome to VibeChat
-
-</h2>
-
-<p>
-
-Select any contact from the left sidebar
-to start chatting.
-
-</p>
+    Select any contact from the left sidebar
+    to start chatting.
 
 </div>
 
-</div>
 
 <!-- =========================================
-     TYPING AREA
+     TYPING INDICATOR
 ========================================= -->
 
 <div
+    id="typingIndicator"
+    class="typing-indicator"
+    style="display:none"
+>
+    Typing...
+</div>
 
-id="typingIndicator"
 
-class="typing-indicator"
+<!-- =========================================
+     INCOMING VOICE CALL
+     GLOBAL MODAL
+========================================= -->
 
-style="display:none"
-
+<div
+    id="incomingCallModal"
+    class="call-modal"
+    aria-hidden="true"
 >
 
-Typing...
+    <div
+        class="call-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="incomingCallName"
+    >
+
+        <!-- CALLER AVATAR -->
+
+        <div
+            class="call-avatar"
+            id="incomingCallAvatar"
+        >
+            👤
+        </div>
+
+
+        <!-- CALLER NAME -->
+
+        <h2 id="incomingCallName">
+            Incoming Call
+        </h2>
+
+
+        <!-- CALL STATUS -->
+
+        <p id="incomingCallStatus">
+            Incoming voice call...
+        </p>
+
+
+        <!-- CALL BUTTONS -->
+
+        <div class="call-buttons">
+
+            <!-- REJECT -->
+
+            <button
+                id="rejectCallBtn"
+                class="call-reject-btn"
+                type="button"
+                title="Reject Call"
+                aria-label="Reject Call"
+            >
+
+                <i
+                    class="fas fa-phone-slash"
+                ></i>
+
+            </button>
+
+
+            <!-- ACCEPT -->
+
+            <button
+                id="acceptCallBtn"
+                class="call-accept-btn"
+                type="button"
+                title="Accept Call"
+                aria-label="Accept Call"
+            >
+
+                <i
+                    class="fas fa-phone"
+                ></i>
+
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
+
+<!-- =========================================
+     ACTIVE VOICE CALL
+========================================= -->
+
+<div
+    id="activeCallModal"
+    class="call-modal"
+>
+
+    <div class="call-modal-content">
+
+        <div
+            class="call-avatar"
+            id="activeCallAvatar"
+        >
+            👤
+        </div>
+
+        <h2 id="activeCallName">
+            Calling...
+        </h2>
+
+        <p id="activeCallStatus">
+            Calling...
+        </p>
+
+        <div class="active-call-buttons">
+
+            <button
+                id="muteCallBtn"
+                type="button"
+                title="Mute"
+            >
+
+                <i class="fas fa-microphone"></i>
+
+            </button>
+
+            <button
+                id="endCallBtn"
+                class="end-call-btn"
+                type="button"
+                title="End Call"
+            >
+
+                <i class="fas fa-phone-slash"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     REMOTE AUDIO
+========================================= -->
+
+<audio
+    id="remoteAudio"
+    autoplay
+></audio>
 <!-- =========================================
      MESSAGE INPUT
 ========================================= -->

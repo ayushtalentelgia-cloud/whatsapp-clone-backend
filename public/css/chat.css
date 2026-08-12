@@ -2423,3 +2423,326 @@ input{
     cursor:pointer;
 
 }
+/* =========================================
+   VOICE CALL MODAL
+========================================= */
+
+.call-modal {
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.78);
+
+    backdrop-filter: blur(5px);
+
+    z-index: 99990;
+
+    padding: 20px;
+}
+
+
+.call-modal.active {
+    display: flex;
+}
+
+
+/* =========================================
+   CALL CONTENT
+========================================= */
+
+.call-modal-content {
+    width: min(360px, 90vw);
+
+    padding: 30px 24px;
+
+    border-radius: 24px;
+
+    background: #111111;
+
+    border: 1px solid #2f2f2f;
+
+    text-align: center;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, 0.65);
+
+    animation:
+        callPopupIn 0.2s ease;
+}
+
+
+@keyframes callPopupIn {
+
+    from {
+
+        opacity: 0;
+
+        transform: scale(0.9);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
+
+
+/* =========================================
+   CALL AVATAR
+========================================= */
+
+.call-avatar {
+    width: 90px;
+
+    height: 90px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    background: #222222;
+
+    border: 2px solid #3a3a3a;
+
+    color: #ffffff;
+
+    font-size: 36px;
+
+    font-weight: 600;
+}
+
+
+.call-avatar img {
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+}
+
+
+/* =========================================
+   CALL NAME
+========================================= */
+
+.call-modal-content h2 {
+    margin: 0;
+
+    font-size: 22px;
+
+    color: #ffffff;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.call-modal-content p {
+    margin: 8px 0 24px;
+
+    font-size: 14px;
+
+    color: #a1a1aa;
+}
+
+
+/* =========================================
+   INCOMING CALL BUTTONS
+========================================= */
+
+.call-buttons {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 30px;
+}
+
+
+.call-buttons button {
+    width: 58px;
+
+    height: 58px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.call-reject-btn {
+    background: #dc2626;
+}
+
+
+.call-accept-btn {
+    background: #16a34a;
+}
+
+
+.call-buttons button:hover {
+    transform: scale(1.06);
+
+    opacity: 0.9;
+}
+
+
+/* =========================================
+   ACTIVE CALL BUTTONS
+========================================= */
+
+.active-call-buttons {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 22px;
+}
+
+
+.active-call-buttons button {
+    width: 56px;
+
+    height: 56px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #252525;
+
+    border: 1px solid #3a3a3a;
+
+    color: #ffffff;
+
+    font-size: 19px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.active-call-buttons .end-call-btn {
+    background: #dc2626;
+
+    color: #ffffff;
+
+    border: none;
+}
+
+
+.active-call-buttons button:hover {
+    transform: scale(1.06);
+}
+
+
+/* =========================================
+   MOBILE CALL UI
+========================================= */
+
+@media screen and (max-width: 600px) {
+
+    .call-modal {
+
+        padding: 15px;
+
+    }
+
+
+    .call-modal-content {
+
+        width: 90vw;
+
+        max-width: 340px;
+
+        padding: 26px 20px;
+
+        border-radius: 22px;
+
+    }
+
+
+    .call-avatar {
+
+        width: 80px;
+
+        height: 80px;
+
+        font-size: 32px;
+
+    }
+
+
+    .call-modal-content h2 {
+
+        font-size: 20px;
+
+    }
+
+
+    .call-buttons button {
+
+        width: 54px;
+
+        height: 54px;
+
+    }
+
+}
