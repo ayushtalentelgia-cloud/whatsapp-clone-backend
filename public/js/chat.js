@@ -3535,10 +3535,6 @@ socket.on(
     "call:rejected",
     () => {
 
-        alert(
-            "Call rejected."
-        );
-
         cleanupCall();
 
     }
