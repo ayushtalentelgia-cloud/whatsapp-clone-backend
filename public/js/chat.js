@@ -1277,36 +1277,6 @@ function renderChats(chats) {
     );
 
 
-
-            // =================================
-            // CHAT ITEM CLICK
-            // =================================
-
-            div.addEventListener(
-                "click",
-                () => {
-
-                    document
-                        .querySelectorAll(
-                            ".chat-item"
-                        )
-                        .forEach(
-                            item =>
-                                item.classList
-                                    .remove(
-                                        "active"
-                                    )
-                        );
-
-                    div.classList.add(
-                        "active"
-                    );
-
-                    openChat(chat);
-
-                }
-            );
-
             // =================================
             // CHAT LIST IMAGE CLICK
             // =================================
