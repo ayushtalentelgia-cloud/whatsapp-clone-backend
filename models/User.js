@@ -67,7 +67,7 @@ const userSchema = new mongoose.Schema(
 
         about: {
             type: String,
-            default: "Hey there! I am using WhatsApp Clone.",
+            default: "Hey there! I am using VibeChat.",
         },
 
         contacts: [contactSchema],
@@ -96,4 +96,8 @@ const userSchema = new mongoose.Schema(
 // EXPORT
 // =========================================
 
-module.exports = mongoose.model("User", userSchema);
+module.exports =
+    mongoose.model(
+        "User",
+        userSchema
+    );

@@ -208,6 +208,11 @@ const myProfilePic =
 const myName =
     document.getElementById("myName");
 
+const myAbout =
+    document.getElementById(
+        "myAbout"
+    );    
+
 const profilePreview =
     document.getElementById(
         "profilePreview"
@@ -633,6 +638,14 @@ function loadCurrentUser() {
 
     }
 
+    if (myAbout) {
+
+    myAbout.innerText =
+        currentUser.about ||
+        "Welcome";
+
+}
+
     if (profileName) {
 
         profileName.innerText =
@@ -676,6 +689,198 @@ function loadCurrentUser() {
                     );
 
             };
+
+// =========================================
+// EDIT ABOUT
+// =========================================
+
+const aboutModal =
+    document.getElementById("aboutModal");
+
+const aboutInput =
+    document.getElementById("aboutInput");
+
+const saveAboutBtn =
+    document.getElementById("saveAboutBtn");
+
+const closeAboutBtn =
+    document.getElementById("closeAboutBtn");
+
+
+// =========================================
+// OPEN ABOUT MODAL
+// =========================================
+
+if (myAbout) {
+
+    myAbout.addEventListener(
+        "click",
+        () => {
+
+            if (!aboutModal) return;
+
+            aboutInput.value =
+                currentUser.about ||
+                "";
+
+            aboutModal.classList.add(
+                "active"
+            );
+
+            aboutInput.focus();
+
+        }
+    );
+
+}
+
+
+// =========================================
+// CLOSE ABOUT MODAL
+// =========================================
+
+if (closeAboutBtn) {
+
+    closeAboutBtn.addEventListener(
+        "click",
+        () => {
+
+            aboutModal.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// SAVE ABOUT
+// =========================================
+
+if (saveAboutBtn) {
+
+    saveAboutBtn.addEventListener(
+        "click",
+        async () => {
+
+            const about =
+                aboutInput.value.trim();
+
+            if (!about) {
+
+                alert(
+                    "Please enter something."
+                );
+
+                return;
+
+            }
+
+            try {
+
+                saveAboutBtn.disabled =
+                    true;
+
+                const response =
+                    await fetch(
+                        API_URL +
+                        "/users/profile",
+                        {
+
+                            method: "PUT",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                Authorization:
+                                    "Bearer " +
+                                    token
+
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    about
+                                })
+
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to update About."
+                    );
+
+                }
+
+
+                // =================================
+                // UPDATE UI
+                // =================================
+
+                myAbout.innerText =
+                    data.user.about;
+
+
+                // =================================
+                // UPDATE CURRENT USER
+                // =================================
+
+                currentUser.about =
+                    data.user.about;
+
+
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(
+                        currentUser
+                    )
+                );
+
+
+                // =================================
+                // CLOSE MODAL
+                // =================================
+
+                aboutModal.classList.remove(
+                    "active"
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "About Update Error:",
+                    error
+                );
+
+                alert(
+                    error.message
+                );
+
+            }
+
+            finally {
+
+                saveAboutBtn.disabled =
+                    false;
+
+            }
+
+        }
+    );
+
+}            
 
         // =================================
         // OPEN MY PROFILE IMAGE
@@ -1255,12 +1460,69 @@ async function loadMessages(
 }
 
 // =========================================
+// GET MESSAGE STATUS
+// =========================================
+
+function getMessageStatus(message) {
+
+    // Received message par ticks nahi
+    if (
+        !message ||
+        !message.sender ||
+        message.sender._id.toString() !==
+        currentUser._id.toString()
+    ) {
+
+        return "";
+
+    }
+
+    // Seen = Blue Double Tick
+    if (message.seen) {
+
+        return `
+            <span
+                class="message-status seen"
+                title="Seen"
+            >
+                ✓✓
+            </span>
+        `;
+
+    }
+
+    // Delivered = Double Tick
+    if (message.delivered) {
+
+        return `
+            <span
+                class="message-status delivered"
+                title="Delivered"
+            >
+                ✓✓
+            </span>
+        `;
+
+    }
+
+    // Sent = Single Tick
+    return `
+        <span
+            class="message-status sent"
+            title="Sent"
+        >
+            ✓
+        </span>
+    `;
+
+}
+
+
+// =========================================
 // RENDER MESSAGE
 // =========================================
 
-function renderMessage(
-    message
-) {
+function renderMessage(message) {
 
     if (
         !message ||
@@ -1271,11 +1533,17 @@ function renderMessage(
 
     }
 
+
+    // =====================================
+    // PREVENT DUPLICATE MESSAGE
+    // =====================================
+
     const existingMessage =
         document.getElementById(
             "msg-" +
             message._id
         );
+
 
     if (existingMessage) {
 
@@ -1283,26 +1551,39 @@ function renderMessage(
 
     }
 
+
+    // =====================================
+    // CREATE MESSAGE
+    // =====================================
+
     const div =
         document.createElement(
             "div"
         );
 
+
     div.id =
         "msg-" +
         message._id;
 
+
+    const isSent =
+        message.sender &&
+        message.sender._id.toString() ===
+        currentUser._id.toString();
+
+
     div.className =
-        message.sender._id ===
-            currentUser._id
-
+        isSent
             ?
-
             "message sent"
-
             :
-
             "message received";
+
+
+    // =====================================
+    // TIME
+    // =====================================
 
     const time =
         new Date(
@@ -1310,13 +1591,30 @@ function renderMessage(
         ).toLocaleTimeString(
             [],
             {
+
                 hour:
                     "2-digit",
 
                 minute:
                     "2-digit"
+
             }
         );
+
+
+    // =====================================
+    // STATUS
+    // =====================================
+
+    const status =
+        getMessageStatus(
+            message
+        );
+
+
+    // =====================================
+    // MESSAGE HTML
+    // =====================================
 
     div.innerHTML = `
 
@@ -1326,13 +1624,20 @@ function renderMessage(
 
         </div>
 
-        <span class="message-time">
+        <div class="message-meta">
 
-            ${time}
+            <span class="message-time">
 
-        </span>
+                ${time}
+
+            </span>
+
+            ${status}
+
+        </div>
 
     `;
+
 
     messages.appendChild(
         div
@@ -1392,24 +1697,89 @@ socket.on(
     "message received",
     (message) => {
 
-        if (
+        // =====================================
+        // CHECK MESSAGE
+        // =====================================
 
-            selectedChat &&
+        if (!message || !message._id) {
 
-            message.chat &&
-
-            selectedChat._id ===
-                message.chat._id
-
-        ) {
-
-            renderMessage(
-                message
-            );
-
-            scrollBottom();
+            return;
 
         }
+
+
+        // =====================================
+        // MARK RECEIVED MESSAGE AS DELIVERED
+        // =====================================
+
+        if (
+            message.sender &&
+            message.sender._id.toString() !==
+                currentUser._id.toString()
+        ) {
+
+            markMessageDelivered(
+                message._id
+            );
+
+        }
+
+
+        // =====================================
+        // SHOW MESSAGE IN OPEN CHAT
+        // =====================================
+
+        if (
+            selectedChat &&
+            message.chat
+        ) {
+
+            const messageChatId =
+                message.chat._id.toString();
+
+            const selectedChatId =
+                selectedChat._id.toString();
+
+
+            if (
+                selectedChatId ===
+                messageChatId
+            ) {
+
+                renderMessage(
+                    message
+                );
+
+                scrollBottom();
+
+            }
+
+        }
+
+        // =====================================
+// MARK MESSAGE AS SEEN
+// =====================================
+
+if (
+    selectedChat &&
+    message.sender &&
+    message.sender._id.toString() !==
+        currentUser._id.toString() &&
+    message.chat &&
+    selectedChat._id.toString() ===
+        message.chat._id.toString()
+) {
+
+    markMessagesSeen(
+        message._id
+    );
+
+}
+
+
+        // =====================================
+        // REFRESH CHAT LIST
+        // =====================================
 
         refreshChats();
 
@@ -1689,6 +2059,53 @@ socket.on(
     }
 );
 
+// =========================================
+// MARK MESSAGE DELIVERED
+// =========================================
+
+async function markMessageDelivered(
+    messageId
+) {
+
+    if (!messageId) {
+
+        return;
+
+    }
+
+    try {
+
+        await fetch(
+            API_URL +
+            "/message/delivered/" +
+            messageId,
+            {
+
+                method: "PUT",
+
+                headers: {
+
+                    Authorization:
+                        "Bearer " +
+                        token
+
+                }
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "Delivered Error:",
+            error
+        );
+
+    }
+
+}
 // =========================================
 // AUTO MARK SEEN
 // =========================================

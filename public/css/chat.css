@@ -2746,3 +2746,48 @@ input{
     }
 
 }
+/* =========================================
+   MESSAGE STATUS TICKS
+========================================= */
+
+.message-meta {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 5px;
+
+    margin-top: 3px;
+
+}
+
+.message-status {
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+}
+
+.message-status.sent {
+
+    color: #9ca3af;
+
+}
+
+.message-status.delivered {
+
+    color: #9ca3af;
+
+}
+
+.message-status.seen {
+
+    color: #0d2ed6;
+
+}

@@ -56,10 +56,11 @@ Loading...
 
 </h2>
 
-<span>
-
-Welcome
-
+<span
+    id="myAbout"
+    title="Click to edit"
+>
+    Welcome
 </span>
 
 </div>
@@ -707,6 +708,54 @@ title="Menu"
 
 </div>
 
+<!-- =========================================
+     EDIT ABOUT MODAL
+========================================= -->
+
+<div
+    id="aboutModal"
+    class="modal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                Edit About
+            </h2>
+
+            <button
+                id="closeAboutBtn"
+                type="button"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <input
+                type="text"
+                id="aboutInput"
+                maxlength="100"
+                placeholder="Write something about yourself..."
+            >
+
+            <button
+                id="saveAboutBtn"
+                type="button"
+            >
+                <i class="fas fa-save"></i>
+                Save
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 <!-- =========================================
      LOGOUT MENU
 ========================================= -->
