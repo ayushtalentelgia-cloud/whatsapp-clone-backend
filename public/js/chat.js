@@ -1067,6 +1067,7 @@ function renderChats(chats) {
 
     }
 
+
     chats.forEach(
         chat => {
 
@@ -1078,6 +1079,11 @@ function renderChats(chats) {
                 );
 
             if (!otherUser) return;
+
+
+            // =====================================
+            // PROFILE IMAGE
+            // =====================================
 
             const profilePic =
                 otherUser.profilePic
@@ -1096,6 +1102,11 @@ function renderChats(chats) {
                     .charAt(0)
                     .toUpperCase();
 
+
+            // =====================================
+            // LAST MESSAGE
+            // =====================================
+
             const lastMessage =
                 chat.latestMessage
                     ?
@@ -1103,11 +1114,14 @@ function renderChats(chats) {
                     :
                     "Start Conversation";
 
+
+            // =====================================
+            // TIME
+            // =====================================
+
             const time =
                 chat.updatedAt
-
                     ?
-
                     new Date(
                         chat.updatedAt
                     ).toLocaleTimeString(
@@ -1120,18 +1134,43 @@ function renderChats(chats) {
                                 "2-digit"
                         }
                     )
-
                     :
-
                     "";
+
+
+            // =====================================
+            // UNREAD COUNT
+            // =====================================
+
+            const unreadData =
+                chat.unreadCounts?.find(
+                    item =>
+                        item.user?.toString() ===
+                        currentUser._id.toString()
+                );
+
+
+            const unreadCount =
+                unreadData?.count || 0;
+
+
+            // =====================================
+            // CREATE CHAT ITEM
+            // =====================================
 
             const div =
                 document.createElement(
                     "div"
                 );
 
+
             div.className =
                 "chat-item";
+
+
+            // =====================================
+            // CHAT HTML
+            // =====================================
 
             div.innerHTML = `
 
@@ -1140,6 +1179,7 @@ function renderChats(chats) {
                     ${profilePic}
 
                 </div>
+
 
                 <div class="chat-details">
 
@@ -1155,6 +1195,7 @@ function renderChats(chats) {
 
                     </div>
 
+
                     <div class="chat-message">
 
                         ${lastMessage}
@@ -1163,7 +1204,79 @@ function renderChats(chats) {
 
                 </div>
 
+
+                ${
+                    unreadCount > 0
+                        ?
+                        `
+                        <div
+                            class="unread-indicator"
+                            title="${unreadCount} unread message${unreadCount > 1 ? "s" : ""}"
+                        >
+
+                            ${
+                                unreadCount > 99
+                                    ?
+                                    "99+"
+                                    :
+                                    unreadCount
+                            }
+
+                        </div>
+                        `
+                        :
+                        ""
+                }
+
             `;
+
+
+            // =====================================
+            // CHAT ITEM CLICK
+            // =====================================
+
+            div.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(
+                            ".chat-item"
+                        )
+                        .forEach(
+                            item =>
+                                item.classList
+                                    .remove(
+                                        "active"
+                                    )
+                        );
+
+
+                    div.classList.add(
+                        "active"
+                    );
+
+
+                    openChat(
+                        chat
+                    );
+
+                }
+            );
+
+
+            // =====================================
+            // ADD CHAT TO LIST
+            // =====================================
+
+            chatList.appendChild(
+                div
+            );
+
+        }
+    );
+
+
 
             // =================================
             // CHAT ITEM CLICK
@@ -1225,11 +1338,7 @@ function renderChats(chats) {
             chatList.appendChild(
                 div
             );
-
         }
-    );
-
-}
 
 // =========================================
 // SEARCH CHAT
@@ -1364,7 +1473,68 @@ async function openChat(chat) {
     await loadMessages(
         chat._id
     );
+// =====================================
+// MARK UNREAD MESSAGES AS SEEN
+// =====================================
 
+try {
+
+    const messagesRes =
+        await fetch(
+            API_URL +
+            "/message/" +
+            chat._id,
+            {
+
+                headers: {
+
+                    Authorization:
+                        "Bearer " +
+                        token
+
+                }
+
+            }
+        );
+
+    const messagesData =
+        await messagesRes.json();
+
+    if (
+        messagesData.success &&
+        messagesData.messages
+    ) {
+
+        const unreadMessages =
+            messagesData.messages.filter(
+                message =>
+                    message.sender &&
+                    message.sender._id.toString() !==
+                        currentUser._id.toString() &&
+                    !message.seen
+            );
+
+        for (
+            const message of unreadMessages
+        ) {
+
+            await markMessagesSeen(
+                message._id
+            );
+
+        }
+
+    }
+
+}
+catch (error) {
+
+    console.error(
+        "Mark unread messages seen error:",
+        error
+    );
+
+}
     // =====================================
     // MOBILE VIEW
     // =====================================

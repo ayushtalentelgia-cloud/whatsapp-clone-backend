@@ -72,6 +72,10 @@ const chatSchema = new mongoose.Schema(
 
         },
 
+        // =========================================
+        // OLD UNREAD COUNT
+        // =========================================
+
         unreadCount: {
 
             type: Number,
@@ -79,6 +83,35 @@ const chatSchema = new mongoose.Schema(
             default: 0,
 
         },
+
+        // =========================================
+        // PER USER UNREAD COUNT
+        // =========================================
+
+        unreadCounts: [
+
+            {
+
+                user: {
+
+                    type:
+                        mongoose.Schema.Types.ObjectId,
+
+                    ref: "User",
+
+                },
+
+                count: {
+
+                    type: Number,
+
+                    default: 0,
+
+                },
+
+            }
+
+        ],
 
         isMuted: {
 

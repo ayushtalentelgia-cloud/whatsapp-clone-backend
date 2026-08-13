@@ -208,7 +208,16 @@ const fetchChats = async (req, res) => {
             updatedAt: -1
 
         });
-
+// console.log(
+//     "CHAT UNREAD DATA:",
+//     chats.map(
+//         chat => ({
+//             id: chat._id,
+//             unreadCounts:
+//                 chat.unreadCounts
+//         })
+//     )
+// );
         return res.status(200).json({
 
             success: true,

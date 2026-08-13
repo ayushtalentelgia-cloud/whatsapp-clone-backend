@@ -100,14 +100,63 @@ const sendMessage = async (req, res) => {
 
             });
 
-        // ================= UPDATE LATEST MESSAGE =================
+        // ================= UPDATE CHAT =================
 
-        await Chat.findByIdAndUpdate(chatId, {
+const chat = await Chat.findById(chatId);
 
-            latestMessage: message._id,
+if (chat) {
 
-        });
+    chat.latestMessage =
+        message._id;
 
+    // =====================================
+    // INCREASE UNREAD COUNT
+    // FOR ALL USERS EXCEPT SENDER
+    // =====================================
+
+    chat.users.forEach(
+        userId => {
+
+            if (
+                userId.toString() !==
+                req.user._id.toString()
+            ) {
+
+                const existing =
+                    chat.unreadCounts.find(
+                        item =>
+                            item.user.toString() ===
+                            userId.toString()
+                    );
+
+                if (existing) {
+
+                    existing.count += 1;
+
+                }
+
+                else {
+
+                    chat.unreadCounts.push({
+
+                        user:
+                            userId,
+
+                        count:
+                            1
+
+                    });
+
+                }
+
+            }
+
+        }
+    );
+
+    await chat.save();
+
+}
         // ================= SOCKET =================
 
         const io = getIO();
@@ -267,7 +316,32 @@ const markMessageAsSeen = async (req, res) => {
             await message.save();
 
         }
+// =========================================
+// RESET UNREAD COUNT
+// =========================================
 
+const chat = await Chat.findById(
+    message.chat
+);
+
+if (chat) {
+
+    const unreadEntry =
+        chat.unreadCounts.find(
+            item =>
+                item.user.toString() ===
+                req.user._id.toString()
+        );
+
+    if (unreadEntry) {
+
+        unreadEntry.count = 0;
+
+        await chat.save();
+
+    }
+
+}
         message = await Message.findById(message._id)
             .populate("sender", "name email phone profilePic")
             .populate({
