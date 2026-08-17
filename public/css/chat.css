@@ -2834,3 +2834,493 @@ input{
     flex-shrink: 0;
 
 }
+
+/* =========================================
+   STATUS SECTION
+========================================= */
+
+#statusSection {
+    width: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
+    padding: 15px;
+    min-height: 500px;
+}
+
+
+/* =========================================
+   STATUS HEADER
+========================================= */
+
+.status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0 15px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+.status-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111111;
+}
+
+
+/* =========================================
+   ADD STATUS BUTTON
+========================================= */
+
+#addStatusBtn {
+    border: none;
+    border-radius: 20px;
+    padding: 9px 16px;
+    background: #000000;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+
+#addStatusBtn:hover {
+    opacity: 0.85;
+}
+
+
+/* =========================================
+   STATUS LIST
+========================================= */
+
+#statusList {
+    padding-top: 15px;
+}
+
+
+/* =========================================
+   EMPTY STATUS
+========================================= */
+
+.status-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: #777777;
+    font-size: 14px;
+}
+/* =========================================
+   STATUS ITEMS
+========================================= */
+
+.status-item {
+    margin-bottom: 18px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.status-user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.status-user strong {
+    font-size: 15px;
+    color: #111;
+}
+
+.status-user small {
+    font-size: 11px;
+    color: #888;
+}
+
+.status-media {
+    display: block;
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.status-caption {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #444;
+}
+
+/* =========================================
+   WHATSAPP STYLE STATUS UI
+========================================= */
+
+#statusSection {
+    width: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
+    padding: 12px 15px;
+}
+
+
+/* =========================================
+   STATUS TOP HEADER
+========================================= */
+
+.status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 4px 0 14px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+.status-header h3 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #111111;
+}
+
+
+/* =========================================
+   ADD STATUS BUTTON
+========================================= */
+
+#addStatusBtn {
+    border: none;
+
+    border-radius: 20px;
+
+    padding: 9px 15px;
+
+    background: #000000;
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+#addStatusBtn:hover {
+    opacity: 0.85;
+}
+
+
+/* =========================================
+   STATUS LIST
+========================================= */
+
+#statusList {
+    padding-top: 4px;
+}
+
+
+/* =========================================
+   STATUS ITEM
+========================================= */
+
+.status-item {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    padding: 11px 0;
+
+    box-sizing: border-box;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+/* =========================================
+   STATUS AVATAR
+========================================= */
+
+.status-avatar-wrapper {
+    position: relative;
+
+    width: 54px;
+    height: 54px;
+
+    min-width: 54px;
+
+    padding: 3px;
+
+    box-sizing: border-box;
+
+    border-radius: 50%;
+
+    border: 3px solid #22c55e;
+
+    background: #ffffff;
+
+    overflow: hidden;
+}
+
+
+.status-thumbnail {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+}
+
+
+/* =========================================
+   VIDEO PLAY ICON
+========================================= */
+
+.status-video-icon {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(
+        -50%,
+        -50%
+    );
+
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(
+        0,
+        0,
+        0,
+        0.65
+    );
+
+    color: #ffffff;
+
+    font-size: 9px;
+}
+
+
+/* =========================================
+   STATUS INFORMATION
+========================================= */
+
+.status-info {
+    flex: 1;
+
+    min-width: 0;
+
+    margin-left: 13px;
+}
+
+
+.status-name {
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #111111;
+
+    line-height: 20px;
+}
+
+
+.status-time {
+    margin-top: 3px;
+
+    font-size: 12px;
+
+    color: #777777;
+}
+
+
+/* =========================================
+   STATUS TIME
+========================================= */
+
+.status-created {
+    margin-left: 8px;
+
+    padding-right: 2px;
+
+    font-size: 11px;
+
+    color: #888888;
+}
+
+
+/* =========================================
+   STATUS EMPTY
+========================================= */
+
+.status-empty {
+    text-align: center;
+
+    padding: 50px 20px;
+
+    color: #777777;
+
+    font-size: 14px;
+}
+
+/* =========================================
+   STATUS VIEWER
+========================================= */
+
+.status-viewer {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.95);
+
+    padding: 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   CLOSE BUTTON
+========================================= */
+
+.status-viewer-close {
+    position: absolute;
+
+    top: 18px;
+    right: 22px;
+
+    width: 40px;
+    height: 40px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.15);
+
+    color: #ffffff;
+
+    font-size: 28px;
+
+    line-height: 40px;
+
+    cursor: pointer;
+
+    z-index: 10001;
+}
+
+
+.status-viewer-close:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+
+/* =========================================
+   VIEWER CONTENT
+========================================= */
+
+.status-viewer-content {
+    width: 100%;
+
+    max-width: 500px;
+
+    max-height: 85vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+/* =========================================
+   IMAGE
+========================================= */
+
+.status-viewer-content img {
+    max-width: 100%;
+
+    max-height: 85vh;
+
+    object-fit: contain;
+
+    border-radius: 10px;
+}
+
+
+/* =========================================
+   VIDEO
+========================================= */
+
+.status-viewer-content video {
+    width: 100%;
+
+    max-height: 85vh;
+
+    object-fit: contain;
+
+    border-radius: 10px;
+}
+
+
+/* =========================================
+   CAPTION
+========================================= */
+
+.status-viewer-caption {
+    position: absolute;
+
+    bottom: 30px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 90%;
+
+    max-width: 500px;
+
+    text-align: center;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    padding: 10px 15px;
+
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    border-radius: 8px;
+}

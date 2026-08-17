@@ -14,6 +14,7 @@ const cloudinary = require("cloudinary").v2;
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const statusRoutes = require("./routes/statusRoutes");
 
 // Socket
 const socketHandler = require("./socket/socket");
@@ -100,6 +101,18 @@ app.use(
 
                 ],
 
+                // =====================================
+                // ALLOW CLOUDINARY VIDEO / AUDIO
+                // =====================================
+
+                mediaSrc: [
+
+                    "'self'",
+
+                    "https://res.cloudinary.com"
+
+                ],
+
                 scriptSrc: [
 
                     "'self'",
@@ -154,9 +167,10 @@ app.use(cors({
     credentials: true,
 
 }));
+
 ///app.use(limiter);
 
-///app.use(mongoSanitize());
+//app.use(mongoSanitize());
 
 app.use(hpp());
 
@@ -221,6 +235,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 
 app.use("/api/message", messageRoutes);
+
+app.use("/api/status", statusRoutes);
 
 // =========================================
 // START SERVER

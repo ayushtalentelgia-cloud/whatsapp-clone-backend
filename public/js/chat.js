@@ -3,12 +3,12 @@
 // =========================================
 
 const API_URL =
-   "https://whatsapp-clone-backend-b5o7.onrender.com/api";
+    "https://whatsapp-clone-backend-b5o7.onrender.com/api";
 
 const SOCKET_URL =
     "https://whatsapp-clone-backend-b5o7.onrender.com";
 
-    // =========================================
+// =========================================
 // API CONFIG
 // =========================================
 
@@ -73,6 +73,33 @@ const chatList =
 const searchUser =
     document.getElementById("searchUser");
 
+const statusBtn =
+    document.getElementById("statusBtn");
+
+const statusSection =
+    document.getElementById("statusSection");
+
+const addStatusBtn =
+    document.getElementById("addStatusBtn");
+
+const statusFileInput =
+    document.getElementById("statusFileInput");
+
+const statusList =
+    document.getElementById("statusList");
+
+const statusViewer =
+    document.getElementById("statusViewer");
+
+const closeStatusViewer =
+    document.getElementById("closeStatusViewer");
+
+const statusViewerContent =
+    document.getElementById("statusViewerContent");
+
+const statusViewerCaption =
+    document.getElementById("statusViewerCaption");
+
 const logoutBtn =
     document.getElementById("logoutBtn");
 
@@ -82,6 +109,719 @@ const menuBtn =
 const menuDropdown =
     document.getElementById("menuDropdown");
 
+// =========================================
+// FILTER BUTTONS
+// =========================================
+
+const allChatsBtn =
+    document.getElementById("allChatsBtn");
+
+const unreadBtn =
+    document.getElementById("unreadBtn");
+
+const groupBtn =
+    document.getElementById("groupBtn");
+
+
+function showChats() {
+
+    if (chatList) {
+        chatList.style.display = "block";
+    }
+
+    if (statusSection) {
+        statusSection.style.display = "none";
+    }
+
+}
+
+
+function showStatus() {
+
+    if (chatList) {
+        chatList.style.display = "none";
+    }
+
+    if (statusSection) {
+        statusSection.style.display = "block";
+    }
+
+    loadStatuses();
+
+}
+// =========================================
+// LOAD STATUSES
+// =========================================
+
+async function loadStatuses() {
+
+    if (!statusList) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                "http://localhost:5000/api/status",
+                {
+                    method: "GET",
+
+                    headers: {
+                        Authorization:
+                            "Bearer " + token
+                    }
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            console.log(
+                "Load Status Error:",
+                data
+            );
+
+            return;
+        }
+console.log(
+    "STATUS DATA:",
+    data.statuses
+);
+        renderStatuses(
+            data.statuses || []
+        );
+
+    }
+    catch (error) {
+
+        console.log(
+            "Load Status Error:",
+            error
+        );
+
+    }
+
+}
+// =========================================
+// RENDER STATUSES
+// =========================================
+
+function renderStatuses(statuses) {
+
+    if (!statusList) {
+        return;
+    }
+
+    statusList.innerHTML = "";
+
+    if (!statuses || statuses.length === 0) {
+
+        statusList.innerHTML = `
+            <div class="status-empty">
+                No statuses available
+            </div>
+        `;
+
+        return;
+    }
+
+
+    // =========================================
+    // MY STATUS FIRST
+    // =========================================
+
+    const sortedStatuses = [...statuses].sort(
+        (a, b) => {
+
+            const aMine =
+                a.user?._id === currentUser._id;
+
+            const bMine =
+                b.user?._id === currentUser._id;
+
+            if (aMine && !bMine) {
+                return -1;
+            }
+
+            if (!aMine && bMine) {
+                return 1;
+            }
+
+            return (
+                new Date(b.createdAt) -
+                new Date(a.createdAt)
+            );
+
+        }
+    );
+
+
+   // =========================================
+// RENDER STATUS ITEMS
+// =========================================
+
+sortedStatuses.forEach(
+    status => {
+
+        const isMine =
+            status.user?._id ===
+            currentUser._id;
+
+
+        const name =
+            isMine
+                ? "My status"
+                : (
+                    status.user?.name ||
+                    "Unknown User"
+                );
+
+
+        // =========================================
+        // VIEWER COUNT
+        // =========================================
+
+        const viewerCount =
+            Array.isArray(status.viewers)
+                ? status.viewers.length
+                : 0;
+
+
+        const about =
+            isMine
+                ? `${viewerCount} view${viewerCount !== 1 ? "s" : ""}`
+                : "Tap to view status";
+
+
+        const time =
+            new Date(
+                status.createdAt
+            ).toLocaleTimeString(
+                [],
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "status-item";
+
+
+        // =========================================
+        // STATUS ID
+        // =========================================
+
+        item.dataset.statusId =
+            status._id;
+
+
+            // =====================================
+            // THUMBNAIL
+            // =====================================
+
+            let mediaHTML = "";
+
+
+            if (
+                status.mediaType === "video"
+            ) {
+
+                mediaHTML = `
+                    <video
+                        src="${status.mediaUrl}"
+                        class="status-thumbnail"
+                        muted
+                        playsinline
+                        preload="metadata"
+                    ></video>
+
+                    <span class="status-video-icon">
+                        ▶
+                    </span>
+                `;
+
+            } else {
+
+                mediaHTML = `
+                    <img
+                        src="${status.mediaUrl}"
+                        class="status-thumbnail"
+                        alt="Status"
+                    >
+                `;
+
+            }
+
+
+            // =====================================
+            // STATUS HTML
+            // =====================================
+
+            item.innerHTML = `
+
+                <div class="status-avatar-wrapper">
+
+                    ${mediaHTML}
+
+                </div>
+
+
+                <div class="status-info">
+
+                    <div class="status-name">
+                        ${name}
+                    </div>
+
+                    <div class="status-time">
+                        ${about}
+                    </div>
+
+                </div>
+
+
+                <div class="status-created">
+                    ${time}
+                </div>
+
+            `;
+
+
+            // =====================================
+            // OPEN STATUS VIEWER
+            // =====================================
+
+            item.addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        !statusViewer ||
+                        !statusViewerContent
+                    ) {
+                        return;
+                    }
+
+
+                    statusViewerContent.innerHTML =
+                        "";
+
+
+                    // =================================
+                    // VIDEO
+                    // =================================
+
+                    if (
+    status.mediaType === "video"
+) {
+
+    const video =
+        document.createElement("video");
+
+    video.src =
+        status.mediaUrl;
+
+    video.controls = true;
+
+    video.playsInline = true;
+
+    video.preload = "auto";
+
+    video.style.width = "100%";
+    video.style.maxHeight = "85vh";
+
+    statusViewerContent.appendChild(
+        video
+    );
+
+
+    video.addEventListener(
+        "loadedmetadata",
+        () => {
+
+            console.log(
+                "Video metadata loaded:",
+                video.duration
+            );
+
+        }
+    );
+
+
+    video.addEventListener(
+        "error",
+        () => {
+
+            console.log(
+                "VIDEO ERROR:",
+                video.error
+            );
+
+            console.log(
+                "VIDEO URL:",
+                video.src
+            );
+
+        }
+    );
+
+
+    // Try normal playback after viewer opens
+    setTimeout(
+        () => {
+
+            video.play()
+                .then(
+                    () => {
+
+                        console.log(
+                            "Video playing successfully"
+                        );
+
+                    }
+                )
+                .catch(
+                    error => {
+
+                        console.log(
+                            "Video play failed:",
+                            error
+                        );
+
+                    }
+                );
+
+        },
+        300
+    );
+
+}
+
+
+                    // =================================
+                    // IMAGE
+                    // =================================
+
+                    else {
+
+                        const image =
+                            document.createElement(
+                                "img"
+                            );
+
+                        image.src =
+                            status.mediaUrl;
+
+                        image.alt =
+                            "Status";
+
+                        statusViewerContent.appendChild(
+                            image
+                        );
+
+                    }
+
+
+                    // =================================
+                    // CAPTION
+                    // =================================
+
+                    if (
+                        statusViewerCaption
+                    ) {
+
+                        statusViewerCaption.innerText =
+                            status.caption || "";
+
+                    }
+
+
+                    // =================================
+                    // SHOW VIEWER
+                    // =================================
+
+                    statusViewer.style.display =
+                        "flex";
+
+                }
+            );
+
+
+            statusList.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+// =========================================
+// CLOSE STATUS VIEWER
+// =========================================
+
+if (closeStatusViewer) {
+
+    closeStatusViewer.addEventListener(
+        "click",
+        () => {
+
+            if (statusViewer) {
+
+                statusViewer.style.display =
+                    "none";
+
+            }
+
+
+            if (statusViewerContent) {
+
+                statusViewerContent.innerHTML =
+                    "";
+
+            }
+
+
+            if (statusViewerCaption) {
+
+                statusViewerCaption.innerText =
+                    "";
+
+            }
+
+        }
+    );
+
+}
+// =========================================
+// ALL BUTTON
+// =========================================
+
+if (allChatsBtn) {
+
+    allChatsBtn.addEventListener(
+        "click",
+        () => {
+
+            showChats();
+
+            document
+                .querySelectorAll(".filters button")
+                .forEach(
+                    button =>
+                        button.classList.remove(
+                            "active"
+                        )
+                );
+
+            allChatsBtn.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// STATUS BUTTON
+// =========================================
+
+if (statusBtn) {
+
+    statusBtn.addEventListener(
+        "click",
+        () => {
+
+            showStatus();
+
+            document
+                .querySelectorAll(".filters button")
+                .forEach(
+                    button =>
+                        button.classList.remove(
+                            "active"
+                        )
+                );
+
+            statusBtn.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// ADD STATUS
+// =========================================
+
+if (
+    addStatusBtn &&
+    statusFileInput
+) {
+
+    addStatusBtn.addEventListener(
+        "click",
+        () => {
+
+            statusFileInput.click();
+
+        }
+    );
+
+
+    statusFileInput.addEventListener(
+        "change",
+        async () => {
+
+            const file =
+                statusFileInput.files[0];
+
+            if (!file) {
+                return;
+            }
+
+
+            // ===============================
+            // CHECK FILE TYPE
+            // ===============================
+
+            if (
+                !file.type.startsWith("image/") &&
+                !file.type.startsWith("video/")
+            ) {
+
+                alert(
+                    "Please select an image or video."
+                );
+
+                statusFileInput.value = "";
+
+                return;
+
+            }
+
+
+            // ===============================
+            // CREATE FORM DATA
+            // ===============================
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                "status",
+                file
+            );
+
+
+            // ===============================
+            // UPLOAD STATUS
+            // ===============================
+
+            try {
+
+                addStatusBtn.innerText =
+                    "Uploading...";
+
+                addStatusBtn.disabled =
+                    true;
+
+
+                const response =
+                    await fetch(
+                        "http://localhost:5000/api/status",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                Authorization:
+                                    "Bearer " + token
+
+                            },
+
+                            body: formData
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    console.log(
+                        "Status Upload Error:",
+                        data
+                    );
+
+                    alert(
+                        data.message ||
+                        "Status upload failed."
+                    );
+
+                    return;
+
+                }
+
+
+                console.log(
+                    "Status uploaded:",
+                    data
+                );
+
+
+                alert(
+                    "Status uploaded successfully!"
+                );
+
+
+                // Clear selected file
+                statusFileInput.value = "";
+
+
+            }
+            catch (error) {
+
+                console.log(
+                    "Status Upload Error:",
+                    error
+                );
+
+                alert(
+                    "Unable to upload status."
+                );
+
+            }
+            finally {
+
+                addStatusBtn.innerText =
+                    "+ Add Status";
+
+                addStatusBtn.disabled =
+                    false;
+
+            }
+
+        }
+    );
+
+}
 // =========================================
 // LOGOUT
 // =========================================
@@ -211,7 +951,7 @@ const myName =
 const myAbout =
     document.getElementById(
         "myAbout"
-    );    
+    );
 
 const profilePreview =
     document.getElementById(
@@ -617,8 +1357,8 @@ function getUserProfileImage(
     return `
         https://ui-avatars.com/api/
         ?name=${encodeURIComponent(
-            user?.name || "User"
-        )}
+        user?.name || "User"
+    )}
         &background=38BDF8
         &color=ffffff
     `.replace(/\s/g, "");
@@ -640,11 +1380,11 @@ function loadCurrentUser() {
 
     if (myAbout) {
 
-    myAbout.innerText =
-        currentUser.about ||
-        "Welcome";
+        myAbout.innerText =
+            currentUser.about ||
+            "Welcome";
 
-}
+    }
 
     if (profileName) {
 
@@ -690,197 +1430,197 @@ function loadCurrentUser() {
 
             };
 
-// =========================================
-// EDIT ABOUT
-// =========================================
+        // =========================================
+        // EDIT ABOUT
+        // =========================================
 
-const aboutModal =
-    document.getElementById("aboutModal");
+        const aboutModal =
+            document.getElementById("aboutModal");
 
-const aboutInput =
-    document.getElementById("aboutInput");
+        const aboutInput =
+            document.getElementById("aboutInput");
 
-const saveAboutBtn =
-    document.getElementById("saveAboutBtn");
+        const saveAboutBtn =
+            document.getElementById("saveAboutBtn");
 
-const closeAboutBtn =
-    document.getElementById("closeAboutBtn");
-
-
-// =========================================
-// OPEN ABOUT MODAL
-// =========================================
-
-if (myAbout) {
-
-    myAbout.addEventListener(
-        "click",
-        () => {
-
-            if (!aboutModal) return;
-
-            aboutInput.value =
-                currentUser.about ||
-                "";
-
-            aboutModal.classList.add(
-                "active"
-            );
-
-            aboutInput.focus();
-
-        }
-    );
-
-}
+        const closeAboutBtn =
+            document.getElementById("closeAboutBtn");
 
 
-// =========================================
-// CLOSE ABOUT MODAL
-// =========================================
+        // =========================================
+        // OPEN ABOUT MODAL
+        // =========================================
 
-if (closeAboutBtn) {
+        if (myAbout) {
 
-    closeAboutBtn.addEventListener(
-        "click",
-        () => {
+            myAbout.addEventListener(
+                "click",
+                () => {
 
-            aboutModal.classList.remove(
-                "active"
-            );
+                    if (!aboutModal) return;
 
-        }
-    );
+                    aboutInput.value =
+                        currentUser.about ||
+                        "";
 
-}
-
-
-// =========================================
-// SAVE ABOUT
-// =========================================
-
-if (saveAboutBtn) {
-
-    saveAboutBtn.addEventListener(
-        "click",
-        async () => {
-
-            const about =
-                aboutInput.value.trim();
-
-            if (!about) {
-
-                alert(
-                    "Please enter something."
-                );
-
-                return;
-
-            }
-
-            try {
-
-                saveAboutBtn.disabled =
-                    true;
-
-                const response =
-                    await fetch(
-                        API_URL +
-                        "/users/profile",
-                        {
-
-                            method: "PUT",
-
-                            headers: {
-
-                                "Content-Type":
-                                    "application/json",
-
-                                Authorization:
-                                    "Bearer " +
-                                    token
-
-                            },
-
-                            body:
-                                JSON.stringify({
-                                    about
-                                })
-
-                        }
+                    aboutModal.classList.add(
+                        "active"
                     );
 
-                const data =
-                    await response.json();
+                    aboutInput.focus();
 
-                if (!response.ok) {
+                }
+            );
 
-                    throw new Error(
-                        data.message ||
-                        "Failed to update About."
+        }
+
+
+        // =========================================
+        // CLOSE ABOUT MODAL
+        // =========================================
+
+        if (closeAboutBtn) {
+
+            closeAboutBtn.addEventListener(
+                "click",
+                () => {
+
+                    aboutModal.classList.remove(
+                        "active"
                     );
 
                 }
-
-
-                // =================================
-                // UPDATE UI
-                // =================================
-
-                myAbout.innerText =
-                    data.user.about;
-
-
-                // =================================
-                // UPDATE CURRENT USER
-                // =================================
-
-                currentUser.about =
-                    data.user.about;
-
-
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(
-                        currentUser
-                    )
-                );
-
-
-                // =================================
-                // CLOSE MODAL
-                // =================================
-
-                aboutModal.classList.remove(
-                    "active"
-                );
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    "About Update Error:",
-                    error
-                );
-
-                alert(
-                    error.message
-                );
-
-            }
-
-            finally {
-
-                saveAboutBtn.disabled =
-                    false;
-
-            }
+            );
 
         }
-    );
 
-}            
+
+        // =========================================
+        // SAVE ABOUT
+        // =========================================
+
+        if (saveAboutBtn) {
+
+            saveAboutBtn.addEventListener(
+                "click",
+                async () => {
+
+                    const about =
+                        aboutInput.value.trim();
+
+                    if (!about) {
+
+                        alert(
+                            "Please enter something."
+                        );
+
+                        return;
+
+                    }
+
+                    try {
+
+                        saveAboutBtn.disabled =
+                            true;
+
+                        const response =
+                            await fetch(
+                                API_URL +
+                                "/users/profile",
+                                {
+
+                                    method: "PUT",
+
+                                    headers: {
+
+                                        "Content-Type":
+                                            "application/json",
+
+                                        Authorization:
+                                            "Bearer " +
+                                            token
+
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+                                            about
+                                        })
+
+                                }
+                            );
+
+                        const data =
+                            await response.json();
+
+                        if (!response.ok) {
+
+                            throw new Error(
+                                data.message ||
+                                "Failed to update About."
+                            );
+
+                        }
+
+
+                        // =================================
+                        // UPDATE UI
+                        // =================================
+
+                        myAbout.innerText =
+                            data.user.about;
+
+
+                        // =================================
+                        // UPDATE CURRENT USER
+                        // =================================
+
+                        currentUser.about =
+                            data.user.about;
+
+
+                        localStorage.setItem(
+                            "user",
+                            JSON.stringify(
+                                currentUser
+                            )
+                        );
+
+
+                        // =================================
+                        // CLOSE MODAL
+                        // =================================
+
+                        aboutModal.classList.remove(
+                            "active"
+                        );
+
+                    }
+
+                    catch (error) {
+
+                        console.error(
+                            "About Update Error:",
+                            error
+                        );
+
+                        alert(
+                            error.message
+                        );
+
+                    }
+
+                    finally {
+
+                        saveAboutBtn.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+        }
 
         // =================================
         // OPEN MY PROFILE IMAGE
@@ -945,7 +1685,7 @@ socket.on(
             selectedUser &&
 
             selectedUser._id ===
-                user._id
+            user._id
 
         ) {
 
@@ -969,7 +1709,7 @@ socket.on(
             selectedUser &&
 
             selectedUser._id ===
-                user._id
+            user._id
 
         ) {
 
@@ -1088,19 +1828,19 @@ function renderChats(chats) {
             const profilePic =
                 otherUser.profilePic
 
-                ?
+                    ?
 
-                `<img
+                    `<img
                     src="${otherUser.profilePic}"
                     class="avatar-img"
                     alt="${otherUser.name}"
                 >`
 
-                :
+                    :
 
-                otherUser.name
-                    .charAt(0)
-                    .toUpperCase();
+                    otherUser.name
+                        .charAt(0)
+                        .toUpperCase();
 
 
             // =====================================
@@ -1205,27 +1945,25 @@ function renderChats(chats) {
                 </div>
 
 
-                ${
-                    unreadCount > 0
-                        ?
-                        `
+                ${unreadCount > 0
+                    ?
+                    `
                         <div
                             class="unread-indicator"
                             title="${unreadCount} unread message${unreadCount > 1 ? "s" : ""}"
                         >
 
-                            ${
-                                unreadCount > 99
-                                    ?
-                                    "99+"
-                                    :
-                                    unreadCount
-                            }
+                            ${unreadCount > 99
+                        ?
+                        "99+"
+                        :
+                        unreadCount
+                    }
 
                         </div>
                         `
-                        :
-                        ""
+                    :
+                    ""
                 }
 
             `;
@@ -1277,38 +2015,38 @@ function renderChats(chats) {
     );
 
 
-            // =================================
-            // CHAT LIST IMAGE CLICK
-            // =================================
+    // =================================
+    // CHAT LIST IMAGE CLICK
+    // =================================
 
-            const chatAvatar =
-                div.querySelector(
-                    ".chat-avatar"
-                );
+    const chatAvatar =
+        div.querySelector(
+            ".chat-avatar"
+        );
 
-            if (chatAvatar) {
+    if (chatAvatar) {
 
-                chatAvatar.addEventListener(
-                    "click",
-                    (event) => {
+        chatAvatar.addEventListener(
+            "click",
+            (event) => {
 
-                        event.stopPropagation();
+                event.stopPropagation();
 
-                        openProfileImage(
-                            getUserProfileImage(
-                                otherUser
-                            )
-                        );
-
-                    }
+                openProfileImage(
+                    getUserProfileImage(
+                        otherUser
+                    )
                 );
 
             }
+        );
 
-            chatList.appendChild(
-                div
-            );
-        }
+    }
+
+    chatList.appendChild(
+        div
+    );
+}
 
 // =========================================
 // SEARCH CHAT
@@ -1443,68 +2181,68 @@ async function openChat(chat) {
     await loadMessages(
         chat._id
     );
-// =====================================
-// MARK UNREAD MESSAGES AS SEEN
-// =====================================
+    // =====================================
+    // MARK UNREAD MESSAGES AS SEEN
+    // =====================================
 
-try {
+    try {
 
-    const messagesRes =
-        await fetch(
-            API_URL +
-            "/message/" +
-            chat._id,
-            {
+        const messagesRes =
+            await fetch(
+                API_URL +
+                "/message/" +
+                chat._id,
+                {
 
-                headers: {
+                    headers: {
 
-                    Authorization:
-                        "Bearer " +
-                        token
+                        Authorization:
+                            "Bearer " +
+                            token
+
+                    }
 
                 }
-
-            }
-        );
-
-    const messagesData =
-        await messagesRes.json();
-
-    if (
-        messagesData.success &&
-        messagesData.messages
-    ) {
-
-        const unreadMessages =
-            messagesData.messages.filter(
-                message =>
-                    message.sender &&
-                    message.sender._id.toString() !==
-                        currentUser._id.toString() &&
-                    !message.seen
             );
 
-        for (
-            const message of unreadMessages
+        const messagesData =
+            await messagesRes.json();
+
+        if (
+            messagesData.success &&
+            messagesData.messages
         ) {
 
-            await markMessagesSeen(
-                message._id
-            );
+            const unreadMessages =
+                messagesData.messages.filter(
+                    message =>
+                        message.sender &&
+                        message.sender._id.toString() !==
+                        currentUser._id.toString() &&
+                        !message.seen
+                );
+
+            for (
+                const message of unreadMessages
+            ) {
+
+                await markMessagesSeen(
+                    message._id
+                );
+
+            }
 
         }
 
     }
+    catch (error) {
 
-}
-catch (error) {
+        console.error(
+            "Mark unread messages seen error:",
+            error
+        );
 
-    console.error(
-        "Mark unread messages seen error:",
-        error
-    );
-
-}
+    }
     // =====================================
     // MOBILE VIEW
     // =====================================
@@ -1855,7 +2593,7 @@ socket.on(
         if (
             message.sender &&
             message.sender._id.toString() !==
-                currentUser._id.toString()
+            currentUser._id.toString()
         ) {
 
             markMessageDelivered(
@@ -1897,24 +2635,24 @@ socket.on(
         }
 
         // =====================================
-// MARK MESSAGE AS SEEN
-// =====================================
+        // MARK MESSAGE AS SEEN
+        // =====================================
 
-if (
-    selectedChat &&
-    message.sender &&
-    message.sender._id.toString() !==
-        currentUser._id.toString() &&
-    message.chat &&
-    selectedChat._id.toString() ===
-        message.chat._id.toString()
-) {
+        if (
+            selectedChat &&
+            message.sender &&
+            message.sender._id.toString() !==
+            currentUser._id.toString() &&
+            message.chat &&
+            selectedChat._id.toString() ===
+            message.chat._id.toString()
+        ) {
 
-    markMessagesSeen(
-        message._id
-    );
+            markMessagesSeen(
+                message._id
+            );
 
-}
+        }
 
 
         // =====================================
@@ -3174,7 +3912,7 @@ function createPeerConnection() {
 
                 remoteAudio
                     .play()
-                    .catch(() => {});
+                    .catch(() => { });
 
             }
 

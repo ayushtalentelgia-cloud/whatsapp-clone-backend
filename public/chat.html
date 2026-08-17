@@ -174,13 +174,15 @@ Unread
 </button>
 
 <button
-
 id="groupBtn"
-
 >
-
 Groups
+</button>
 
+<button
+id="statusBtn"
+>
+Status
 </button>
 
 </div>
@@ -190,16 +192,89 @@ Groups
 ========================================= -->
 
 <div
-
 id="chatList"
-
 class="chat-list"
-
 >
 
 <!-- Dynamic Chats -->
 
 </div>
+
+
+<!-- =========================================
+     STATUS SECTION
+========================================= -->
+
+<div
+id="statusSection"
+style="display:none;"
+>
+
+<div class="status-header">
+
+<h3>Status</h3>
+
+<button
+id="addStatusBtn"
+>
++ Add Status
+</button>
+
+<input
+type="file"
+id="statusFileInput"
+accept="image/*,video/*"
+style="display:none;"
+>
+
+</div>
+
+<div
+id="statusList"
+>
+
+<!-- Status items will appear here -->
+
+</div>
+
+</div>
+
+<!-- =========================================
+     STATUS VIEWER
+========================================= -->
+
+<div
+    id="statusViewer"
+    class="status-viewer"
+    style="display:none;"
+>
+
+    <button
+        id="closeStatusViewer"
+        class="status-viewer-close"
+    >
+        ×
+    </button>
+
+
+    <div
+        id="statusViewerContent"
+        class="status-viewer-content"
+    >
+        <!-- Image / Video will appear here -->
+    </div>
+
+
+    <div
+        id="statusViewerCaption"
+        class="status-viewer-caption"
+    >
+    </div>
+
+</div>
+<!-- =========================================
+     SIDEBAR CLOSE
+========================================= -->
 
 </div>
 <!-- =========================================
