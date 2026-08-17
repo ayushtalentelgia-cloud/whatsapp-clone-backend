@@ -50,8 +50,6 @@ router.put(
 );
 
 
-module.exports = router;
-
 // =========================================
 // DELETE STATUS
 // =========================================
@@ -61,3 +59,10 @@ router.delete(
     protect,
     deleteStatus
 );
+
+
+// =========================================
+// EXPORT ROUTER
+// =========================================
+
+module.exports = router;
