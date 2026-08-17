@@ -11,7 +11,8 @@ const upload =
 const {
     createStatus,
     getStatuses,
-    markStatusViewed
+    markStatusViewed,
+    deleteStatus
 } = require("../controllers/statusController");
 
 
@@ -50,3 +51,13 @@ router.put(
 
 
 module.exports = router;
+
+// =========================================
+// DELETE STATUS
+// =========================================
+
+router.delete(
+    "/:statusId",
+    protect,
+    deleteStatus
+);

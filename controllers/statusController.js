@@ -89,14 +89,14 @@ const getStatuses = async (req, res) => {
             })
 
             .populate(
-    "user",
-    "name profilePic"
-)
+                "user",
+                "name profilePic"
+            )
 
-.populate(
-    "viewers",
-    "name profilePic"
-)
+            .populate(
+                "viewers",
+                "name profilePic"
+            )
 
             .sort({
                 createdAt: -1
@@ -244,12 +244,112 @@ const markStatusViewed = async (
 };
 
 
+// =========================================
+// DELETE STATUS
+// =========================================
+
+const deleteStatus = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const status =
+            await Status.findById(
+                req.params.statusId
+            );
+
+
+        // =====================================
+        // STATUS NOT FOUND
+        // =====================================
+
+        if (!status) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Status not found"
+
+            });
+
+        }
+
+
+        // =====================================
+        // ONLY OWNER CAN DELETE
+        // =====================================
+
+        if (
+            status.user.toString() !==
+            req.user._id.toString()
+        ) {
+
+            return res.status(403).json({
+
+                success: false,
+
+                message:
+                    "You can only delete your own status"
+
+            });
+
+        }
+
+
+        // =====================================
+        // DELETE STATUS
+        // =====================================
+
+        await Status.findByIdAndDelete(
+            req.params.statusId
+        );
+
+
+        res.json({
+
+            success: true,
+
+            message: "Status deleted successfully"
+
+        });
+
+    }
+    catch (error) {
+
+        console.log(
+            "Delete Status Error:",
+            error
+        );
+
+        res.status(500).json({
+
+            success: false,
+
+            message:
+                "Failed to delete status"
+
+        });
+
+    }
+
+};
+
+
+// =========================================
+// EXPORT
+// =========================================
+
 module.exports = {
 
     createStatus,
 
     getStatuses,
 
-    markStatusViewed
+    markStatusViewed,
+
+    deleteStatus
 
 };

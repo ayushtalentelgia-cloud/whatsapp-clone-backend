@@ -361,38 +361,180 @@ sortedStatuses.forEach(
             }
 
 
-            // =====================================
-            // STATUS HTML
-            // =====================================
+            // =========================================
+// STATUS HTML
+// =========================================
 
-            item.innerHTML = `
+item.innerHTML = `
 
-                <div class="status-avatar-wrapper">
+    <div class="status-avatar-wrapper">
 
-                    ${mediaHTML}
+        ${mediaHTML}
 
-                </div>
-
-
-                <div class="status-info">
-
-                    <div class="status-name">
-                        ${name}
-                    </div>
-
-                    <div class="status-time">
-                        ${about}
-                    </div>
-
-                </div>
+    </div>
 
 
-                <div class="status-created">
-                    ${time}
-                </div>
+    <div class="status-info">
 
-            `;
+        <div class="status-name">
+            ${name}
+        </div>
 
+        <div class="status-time">
+            ${about}
+        </div>
+
+    </div>
+
+
+    <div class="status-created">
+        ${time}
+    </div>
+
+
+    ${
+        isMine
+            ? `
+                <button
+                    type="button"
+                    class="status-delete-btn"
+                    title="Delete status"
+                >
+                    <i class="fas fa-trash"></i>
+                </button>
+              `
+            : ""
+    }
+
+`;
+// =========================================
+// DELETE STATUS
+// =========================================
+
+if (isMine) {
+
+    const deleteBtn =
+        item.querySelector(
+            ".status-delete-btn"
+        );
+
+
+    if (deleteBtn) {
+
+        deleteBtn.addEventListener(
+            "click",
+            async (event) => {
+
+                // Prevent opening status viewer
+                event.stopPropagation();
+
+
+                const confirmDelete =
+                    confirm(
+                        "Are you sure you want to delete this status?"
+                    );
+
+
+                if (!confirmDelete) {
+                    return;
+                }
+
+
+                try {
+
+                    deleteBtn.disabled =
+                        true;
+
+
+                    deleteBtn.innerHTML =
+                        `<i class="fas fa-spinner fa-spin"></i>`;
+
+
+                    const response =
+                        await fetch(
+                            API_URL +
+                            "/status/" +
+                            status._id,
+                            {
+
+                                method:
+                                    "DELETE",
+
+                                headers: {
+
+                                    Authorization:
+                                        "Bearer " +
+                                        token
+
+                                }
+
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        alert(
+                            data.message ||
+                            "Failed to delete status."
+                        );
+
+                        deleteBtn.disabled =
+                            false;
+
+                        deleteBtn.innerHTML =
+                            `<i class="fas fa-trash"></i>`;
+
+                        return;
+
+                    }
+
+
+                    // =================================
+                    // REMOVE FROM UI
+                    // =================================
+
+                    item.remove();
+
+
+                    // =================================
+                    // RELOAD STATUS LIST
+                    // =================================
+
+                    loadStatuses();
+
+                }
+                catch (error) {
+
+                    console.log(
+                        "Delete Status Error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to delete status."
+                    );
+
+
+                    deleteBtn.disabled =
+                        false;
+
+                    deleteBtn.innerHTML =
+                        `<i class="fas fa-trash"></i>`;
+
+                }
+
+            }
+        );
+
+    }
+
+}
 
             // =====================================
             // OPEN STATUS VIEWER
