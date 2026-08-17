@@ -163,7 +163,7 @@ async function loadStatuses() {
 
         const response =
             await fetch(
-                "http://localhost:5000/api/status",
+    API_URL + "/status",
                 {
                     method: "GET",
 
@@ -741,7 +741,7 @@ if (
 
                 const response =
                     await fetch(
-                        "http://localhost:5000/api/status",
+    API_URL + "/status",
                         {
 
                             method: "POST",
