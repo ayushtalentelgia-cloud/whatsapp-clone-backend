@@ -151,39 +151,36 @@ placeholder="Search contacts..."
 
 <div class="filters">
 
-<button
+    <button
+        class="active"
+        id="allChatsBtn"
+    >
+        All
+    </button>
 
-class="active"
+    <button
+        id="unreadBtn"
+    >
+        Unread
+    </button>
 
-id="allChatsBtn"
+    <button
+        id="groupBtn"
+    >
+        Groups
+    </button>
 
->
+    <button
+        id="statusBtn"
+    >
+        Status
+    </button>
 
-All
-
-</button>
-
-<button
-
-id="unreadBtn"
-
->
-
-Unread
-
-</button>
-
-<button
-id="groupBtn"
->
-Groups
-</button>
-
-<button
-id="statusBtn"
->
-Status
-</button>
+    <button
+        id="postsBtn"
+    >
+        Posts
+    </button>
 
 </div>
 
@@ -236,6 +233,58 @@ id="statusList"
 <!-- Status items will appear here -->
 
 </div>
+
+</div>
+
+<!-- =========================================
+     POSTS SECTION
+========================================= -->
+
+<div
+    id="postsSection"
+    style="display:none;"
+>
+
+    <div class="posts-header">
+
+        <h3>Posts</h3>
+
+        <button
+            id="createPostBtn"
+            class="create-post-btn"
+        >
+            + Create Post
+        </button>
+
+    </div>
+
+
+    <!-- =====================================
+         CREATE POST INPUT
+    ====================================== -->
+
+    <input
+        type="file"
+        id="postFileInput"
+        accept="image/*,video/*"
+        style="display:none;"
+    >
+
+
+    <!-- =====================================
+         POST LIST
+    ====================================== -->
+
+    <div
+        id="postList"
+        class="post-list"
+    >
+
+        <div class="post-empty">
+            No posts available
+        </div>
+
+    </div>
 
 </div>
 

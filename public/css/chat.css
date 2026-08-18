@@ -3364,3 +3364,285 @@ input{
 
     cursor: not-allowed;
 }
+/* =========================================
+   POSTS SECTION
+========================================= */
+
+#postsSection {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   POSTS HEADER
+========================================= */
+
+.posts-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 12px 15px;
+
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.posts-header h3 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.create-post-btn {
+    border: none;
+
+    padding: 8px 13px;
+
+    border-radius: 20px;
+
+    background: #128c7e;
+
+    color: white;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+.create-post-btn:hover {
+    opacity: 0.9;
+}
+
+
+/* =========================================
+   POST LIST
+========================================= */
+
+.post-list {
+    width: 100%;
+
+    padding: 10px 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   POST ITEM
+========================================= */
+
+.post-item {
+    width: 100%;
+
+    background: #fff;
+
+    border-bottom: 1px solid #e5e5e5;
+
+    padding-bottom: 12px;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================================
+   POST HEADER
+========================================= */
+
+.post-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 10px 14px;
+}
+
+.post-user {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.post-profile-pic,
+.post-profile-placeholder {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+}
+
+.post-profile-placeholder {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #128c7e;
+
+    color: white;
+
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.post-user-name {
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+.post-time {
+    margin-top: 2px;
+
+    font-size: 11px;
+
+    color: #777;
+}
+
+
+/* =========================================
+   DELETE POST
+========================================= */
+
+.post-delete-btn {
+    width: 34px;
+    height: 34px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: #777;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.post-delete-btn:hover {
+    background: #f3f3f3;
+
+    color: #e11d48;
+}
+
+
+/* =========================================
+   POST CAPTION
+========================================= */
+
+.post-caption {
+    padding: 4px 14px 10px;
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+    word-break: break-word;
+}
+
+
+/* =========================================
+   POST MEDIA
+========================================= */
+
+.post-media-wrapper {
+    width: 100%;
+
+    background: #000;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.post-media {
+    display: block;
+
+    width: 100%;
+
+    max-height: 500px;
+
+    object-fit: contain;
+}
+
+.post-media video {
+    background: #000;
+}
+
+
+/* =========================================
+   POST ACTIONS
+========================================= */
+
+.post-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 8px 10px 0;
+}
+
+.post-actions button {
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 7px 9px;
+
+    border-radius: 18px;
+
+    font-size: 13px;
+
+    color: #555;
+}
+
+.post-actions button:hover {
+    background: #f3f3f3;
+}
+
+.post-like-btn.liked {
+    color: #e11d48;
+}
+
+.post-share-btn {
+    margin-left: auto;
+}
+
+
+/* =========================================
+   EMPTY / LOADING
+========================================= */
+
+.post-empty,
+.post-loading {
+    text-align: center;
+
+    padding: 35px 15px;
+
+    color: #777;
+
+    font-size: 14px;
+}

@@ -79,6 +79,25 @@ const statusBtn =
 const statusSection =
     document.getElementById("statusSection");
 
+// =========================================
+// POSTS ELEMENTS
+// =========================================
+
+const postsBtn =
+    document.getElementById("postsBtn");
+
+const postsSection =
+    document.getElementById("postsSection");
+
+const createPostBtn =
+    document.getElementById("createPostBtn");
+
+const postFileInput =
+    document.getElementById("postFileInput");
+
+const postList =
+    document.getElementById("postList");    
+
 const addStatusBtn =
     document.getElementById("addStatusBtn");
 
@@ -133,20 +152,433 @@ function showChats() {
         statusSection.style.display = "none";
     }
 
+    if (postsSection) {
+    postsSection.style.display = "none";
+}
+
 }
 
 
+// =========================================
+// SHOW STATUS
+// =========================================
+
 function showStatus() {
 
+    // Hide chat list
     if (chatList) {
-        chatList.style.display = "none";
+
+        chatList.style.display =
+            "none";
+
     }
 
+
+    // Show status section
     if (statusSection) {
-        statusSection.style.display = "block";
+
+        statusSection.style.display =
+            "block";
+
     }
 
+
+    // Hide posts section
+    if (postsSection) {
+
+        postsSection.style.display =
+            "none";
+
+    }
+
+
+    // Load latest statuses
     loadStatuses();
+
+}
+
+// =========================================
+// SHOW POSTS
+// =========================================
+
+function showPosts() {
+
+    // Hide chat list
+    if (chatList) {
+
+        chatList.style.display =
+            "none";
+
+    }
+
+
+    // Hide status section
+    if (statusSection) {
+
+        statusSection.style.display =
+            "none";
+
+    }
+
+
+    // Show posts section
+    if (postsSection) {
+
+        postsSection.style.display =
+            "block";
+
+    }
+
+
+    // Load posts
+    loadPosts();
+
+}
+
+// =========================================
+// LOAD POSTS
+// =========================================
+
+async function loadPosts() {
+
+    if (!postList) {
+        return;
+    }
+
+
+    try {
+
+        postList.innerHTML = `
+            <div class="post-loading">
+                Loading posts...
+            </div>
+        `;
+
+
+        const response =
+            await fetch(
+                API_URL + "/posts",
+                {
+
+                    headers: {
+
+                        Authorization:
+                            "Bearer " + token
+
+                    }
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            postList.innerHTML = `
+                <div class="post-empty">
+                    Unable to load posts
+                </div>
+            `;
+
+            console.log(
+                "Load Posts Error:",
+                data.message
+            );
+
+            return;
+
+        }
+
+
+        renderPosts(
+            data.posts || []
+        );
+
+    }
+    catch (error) {
+
+        console.log(
+            "Load Posts Error:",
+            error
+        );
+
+
+        postList.innerHTML = `
+            <div class="post-empty">
+                Unable to load posts
+            </div>
+        `;
+
+    }
+
+}
+// =========================================
+// RENDER POSTS
+// =========================================
+
+function renderPosts(posts) {
+
+    if (!postList) {
+        return;
+    }
+
+
+    postList.innerHTML = "";
+
+
+    if (
+        !posts ||
+        posts.length === 0
+    ) {
+
+        postList.innerHTML = `
+            <div class="post-empty">
+                No posts available
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    posts.forEach(
+        post => {
+
+            const isMine =
+                post.user?._id ===
+                currentUser._id;
+
+
+            const name =
+                post.user?.name ||
+                "Unknown User";
+
+
+            const time =
+                new Date(
+                    post.createdAt
+                ).toLocaleString(
+                    [],
+                    {
+                        day: "2-digit",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                );
+
+
+            // =====================================
+            // MEDIA
+            // =====================================
+
+            let mediaHTML = "";
+
+
+            if (
+                post.mediaType ===
+                "video"
+            ) {
+
+                mediaHTML = `
+                    <video
+                        src="${post.mediaUrl}"
+                        class="post-media"
+                        controls
+                        playsinline
+                    ></video>
+                `;
+
+            }
+            else {
+
+                mediaHTML = `
+                    <img
+                        src="${post.mediaUrl}"
+                        class="post-media"
+                        alt="Post"
+                    >
+                `;
+
+            }
+
+
+            // =====================================
+            // LIKE STATE
+            // =====================================
+
+            const liked =
+                Array.isArray(post.likes) &&
+                post.likes.some(
+                    user =>
+                        user?._id ===
+                        currentUser._id
+                );
+
+
+            const likeCount =
+                Array.isArray(post.likes)
+                    ? post.likes.length
+                    : 0;
+
+
+            const commentCount =
+                Array.isArray(post.comments)
+                    ? post.comments.length
+                    : 0;
+
+
+            // =====================================
+            // POST ITEM
+            // =====================================
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+            item.className =
+                "post-item";
+
+
+            item.dataset.postId =
+                post._id;
+
+
+            item.innerHTML = `
+
+                <div class="post-header">
+
+                    <div class="post-user">
+
+                        ${
+                            post.user?.profilePic
+                                ? `
+                                    <img
+                                        src="${post.user.profilePic}"
+                                        class="post-profile-pic"
+                                        alt="${name}"
+                                    >
+                                  `
+                                : `
+                                    <div class="post-profile-placeholder">
+                                        ${name.charAt(0).toUpperCase()}
+                                    </div>
+                                  `
+                        }
+
+                        <div>
+
+                            <div class="post-user-name">
+                                ${name}
+                            </div>
+
+                            <div class="post-time">
+                                ${time}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    ${
+                        isMine
+                            ? `
+                                <button
+                                    class="post-delete-btn"
+                                    type="button"
+                                    title="Delete post"
+                                >
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                              `
+                            : ""
+                    }
+
+                </div>
+
+
+                ${
+                    post.caption
+                        ? `
+                            <div class="post-caption">
+                                ${post.caption}
+                            </div>
+                          `
+                        : ""
+                }
+
+
+                <div class="post-media-wrapper">
+
+                    ${mediaHTML}
+
+                </div>
+
+
+                <div class="post-actions">
+
+                    <button
+                        class="post-like-btn ${
+                            liked
+                                ? "liked"
+                                : ""
+                        }"
+                        type="button"
+                    >
+
+                        <i class="fas fa-heart"></i>
+
+                        <span>
+                            ${likeCount}
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="post-comment-btn"
+                        type="button"
+                    >
+
+                        <i class="fas fa-comment"></i>
+
+                        <span>
+                            ${commentCount}
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="post-share-btn"
+                        type="button"
+                    >
+
+                        <i class="fas fa-share"></i>
+
+                        <span>
+                            Share
+                        </span>
+
+                    </button>
+
+                </div>
+
+            `;
+
+
+            postList.appendChild(
+                item
+            );
+
+        }
+    );
 
 }
 // =========================================
@@ -844,6 +1276,43 @@ if (statusBtn) {
 
 }
 
+// =========================================
+// POSTS BUTTON
+// =========================================
+
+if (postsBtn) {
+
+    postsBtn.addEventListener(
+        "click",
+        () => {
+
+            showPosts();
+
+
+            document
+                .querySelectorAll(
+                    ".filters button"
+                )
+                .forEach(
+                    button => {
+
+                        button.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+
+            postsBtn.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+
 
 // =========================================
 // ADD STATUS
@@ -998,6 +1467,187 @@ if (
 
                 addStatusBtn.disabled =
                     false;
+
+            }
+
+        }
+    );
+
+}
+
+// =========================================
+// CREATE POST
+// =========================================
+
+if (
+    createPostBtn &&
+    postFileInput
+) {
+
+    createPostBtn.addEventListener(
+        "click",
+        () => {
+
+            postFileInput.click();
+
+        }
+    );
+
+
+    postFileInput.addEventListener(
+        "change",
+        async () => {
+
+            const file =
+                postFileInput.files[0];
+
+
+            if (!file) {
+                return;
+            }
+
+
+            // =====================================
+            // CHECK FILE TYPE
+            // =====================================
+
+            if (
+                !file.type.startsWith("image/") &&
+                !file.type.startsWith("video/")
+            ) {
+
+                alert(
+                    "Please select an image or video."
+                );
+
+                postFileInput.value = "";
+
+                return;
+
+            }
+
+
+            // =====================================
+            // CREATE FORM DATA
+            // =====================================
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                "post",
+                file
+            );
+
+
+            // =====================================
+            // OPTIONAL CAPTION
+            // =====================================
+
+            const caption =
+                prompt(
+                    "Enter caption (optional):"
+                );
+
+
+            if (caption !== null) {
+
+                formData.append(
+                    "caption",
+                    caption
+                );
+
+            }
+
+
+            try {
+
+                createPostBtn.disabled =
+                    true;
+
+                createPostBtn.innerText =
+                    "Uploading...";
+
+
+                const response =
+                    await fetch(
+                        API_URL + "/posts",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                Authorization:
+                                    "Bearer " +
+                                    token
+
+                            },
+
+                            body:
+                                formData
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    alert(
+                        data.message ||
+                        "Unable to create post."
+                    );
+
+                    return;
+
+                }
+
+
+                // =====================================
+                // SHOW POSTS SECTION
+                // =====================================
+
+                showPosts();
+
+
+                // =====================================
+                // RELOAD POSTS
+                // =====================================
+
+                loadPosts();
+
+
+            }
+            catch (error) {
+
+                console.log(
+                    "Create Post Error:",
+                    error
+                );
+
+
+                alert(
+                    "Unable to upload post."
+                );
+
+            }
+            finally {
+
+                createPostBtn.disabled =
+                    false;
+
+                createPostBtn.innerText =
+                    "+ Create Post";
+
+                postFileInput.value =
+                    "";
 
             }
 

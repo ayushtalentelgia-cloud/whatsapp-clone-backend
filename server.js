@@ -15,6 +15,7 @@ const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const statusRoutes = require("./routes/statusRoutes");
+const postRoutes = require("./routes/postRoutes");
 
 // Socket
 const socketHandler = require("./socket/socket");
@@ -230,22 +231,46 @@ socketHandler(io);
 // ROUTES
 // =========================================
 
-app.use("/api/users", userRoutes);
+app.use(
+    "/api/users",
+    userRoutes
+);
 
-app.use("/api/chat", chatRoutes);
+app.use(
+    "/api/chat",
+    chatRoutes
+);
 
-app.use("/api/message", messageRoutes);
+app.use(
+    "/api/message",
+    messageRoutes
+);
 
-app.use("/api/status", statusRoutes);
+app.use(
+    "/api/status",
+    statusRoutes
+);
+
+app.use(
+    "/api/posts",
+    postRoutes
+);
+
 
 // =========================================
 // START SERVER
 // =========================================
 
-const PORT = process.env.PORT || 5000;
+const PORT =
+    process.env.PORT || 5000;
 
-server.listen(PORT, () => {
+server.listen(
+    PORT,
+    () => {
 
-    console.log(`🚀 Server running on port ${PORT}`);
+        console.log(
+            `🚀 Server running on port ${PORT}`
+        );
 
-});
+    }
+);
