@@ -571,7 +571,261 @@ function renderPosts(posts) {
                 </div>
 
             `;
+// =========================================
+// LIKE / UNLIKE POST
+// =========================================
 
+const likeBtn =
+    item.querySelector(
+        ".post-like-btn"
+    );
+
+
+if (likeBtn) {
+
+    likeBtn.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                likeBtn.disabled =
+                    true;
+
+
+                const response =
+                    await fetch(
+                        API_URL +
+                        "/posts/like/" +
+                        post._id,
+                        {
+
+                            method: "PUT",
+
+                            headers: {
+
+                                Authorization:
+                                    "Bearer " +
+                                    token
+
+                            }
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    console.log(
+                        "Like Error:",
+                        data.message
+                    );
+
+                    return;
+
+                }
+
+
+                // =================================
+                // UPDATE LIKE COUNT
+                // =================================
+
+                const count =
+                    likeBtn.querySelector(
+                        "span"
+                    );
+
+
+                if (count) {
+
+                    count.innerText =
+                        data.likeCount;
+
+                }
+
+
+                // =================================
+                // UPDATE LIKE STATE
+                // =================================
+
+                if (data.liked) {
+
+                    likeBtn.classList.add(
+                        "liked"
+                    );
+
+                }
+                else {
+
+                    likeBtn.classList.remove(
+                        "liked"
+                    );
+
+                }
+
+            }
+            catch (error) {
+
+                console.log(
+                    "Like Error:",
+                    error
+                );
+
+            }
+            finally {
+
+                likeBtn.disabled =
+                    false;
+
+            }
+
+        }
+    );
+
+}
+// =========================================
+// ADD COMMENT
+// =========================================
+
+const commentBtn =
+    item.querySelector(
+        ".post-comment-btn"
+    );
+
+
+if (commentBtn) {
+
+    commentBtn.addEventListener(
+        "click",
+        async () => {
+
+            const text =
+                prompt(
+                    "Write your comment:"
+                );
+
+
+            if (
+                text === null ||
+                !text.trim()
+            ) {
+
+                return;
+            }
+
+
+            try {
+
+                commentBtn.disabled =
+                    true;
+
+
+                const response =
+                    await fetch(
+                        API_URL +
+                        "/posts/comment/" +
+                        post._id,
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                Authorization:
+                                    "Bearer " +
+                                    token
+
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    text:
+                                        text.trim()
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    alert(
+                        data.message ||
+                        "Unable to add comment."
+                    );
+
+                    return;
+                }
+
+
+                // =================================
+                // UPDATE COMMENT COUNT
+                // =================================
+
+                const count =
+                    commentBtn.querySelector(
+                        "span"
+                    );
+
+
+                if (count) {
+
+                    count.innerText =
+                        Number(
+                            count.innerText || 0
+                        ) + 1;
+
+                }
+
+
+                // =================================
+                // RELOAD POSTS
+                // =================================
+
+                loadPosts();
+
+            }
+            catch (error) {
+
+                console.log(
+                    "Comment Error:",
+                    error
+                );
+
+
+                alert(
+                    "Unable to add comment."
+                );
+
+            }
+            finally {
+
+                commentBtn.disabled =
+                    false;
+
+            }
+
+        }
+    );
+
+}
 
             postList.appendChild(
                 item
