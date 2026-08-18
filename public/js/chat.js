@@ -542,7 +542,7 @@ if (isMine) {
 
             item.addEventListener(
                 "click",
-                () => {
+               async () => {
 
                     if (
                         !statusViewer ||
@@ -550,6 +550,47 @@ if (isMine) {
                     ) {
                         return;
                     }
+
+                // =========================================
+// MARK STATUS AS VIEWED
+// =========================================
+
+if (!isMine) {
+
+    try {
+
+        const token =
+            localStorage.getItem("token");
+
+        await fetch(
+            API_URL +
+            "/status/view/" +
+            status._id,
+            {
+
+                method: "PUT",
+
+                headers: {
+
+                    Authorization:
+                        "Bearer " + token
+
+                }
+
+            }
+        );
+
+    }
+    catch (error) {
+
+        console.log(
+            "Mark Status Viewed Error:",
+            error
+        );
+
+    }
+
+}    
 
 
                     statusViewerContent.innerHTML =
