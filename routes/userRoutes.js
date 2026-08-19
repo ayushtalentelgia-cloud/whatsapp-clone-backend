@@ -9,6 +9,7 @@ const upload =
     require("../middleware/uploadMiddleware");
 
 const {
+    registerUser,
 
     startRegistration,
 
@@ -33,7 +34,6 @@ const {
     logoutUser,
 
 } = require("../controllers/userController");
-
 
 // =========================================
 // AUTH
