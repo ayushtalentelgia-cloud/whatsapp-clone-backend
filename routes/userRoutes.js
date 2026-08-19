@@ -39,7 +39,15 @@ const {
 // AUTH
 // =========================================
 
+// =========================================
+// DIRECT REGISTRATION
+// OTP DISABLED
+// =========================================
 
+router.post(
+    "/register",
+    registerUser
+);
 // =========================================
 // START REGISTRATION
 // Send Email OTP
