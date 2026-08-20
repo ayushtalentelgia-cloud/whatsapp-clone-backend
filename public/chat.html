@@ -247,16 +247,58 @@ id="statusList"
 
     <div class="posts-header">
 
-        <h3>Posts</h3>
+    <div class="posts-title-wrapper">
 
         <button
-            id="createPostBtn"
-            class="create-post-btn"
+            type="button"
+            id="postsTypeBtn"
+            class="posts-type-btn"
         >
-            + Create Post
+            <span id="postsTypeLabel">
+                My Posts
+            </span>
+
+            <i class="fas fa-chevron-down"></i>
         </button>
 
+
+        <div
+            id="postsTypeDropdown"
+            class="posts-type-dropdown"
+        >
+
+            <button
+                type="button"
+                class="posts-type-option active"
+                data-post-type="my"
+            >
+                <i class="fas fa-user"></i>
+                My Posts
+            </button>
+
+
+            <button
+                type="button"
+                class="posts-type-option"
+                data-post-type="public"
+            >
+                <i class="fas fa-globe"></i>
+                Public Posts
+            </button>
+
+        </div>
+
     </div>
+
+
+    <button
+        id="createPostBtn"
+        class="create-post-btn"
+    >
+        + Create Post
+    </button>
+
+</div>
 
 
     <!-- =====================================

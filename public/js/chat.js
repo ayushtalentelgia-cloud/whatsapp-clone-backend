@@ -89,6 +89,21 @@ const postsBtn =
 const postsSection =
     document.getElementById("postsSection");
 
+const postsTypeBtn =
+    document.getElementById("postsTypeBtn");
+
+const postsTypeLabel =
+    document.getElementById("postsTypeLabel");
+
+const postsTypeDropdown =
+    document.getElementById("postsTypeDropdown");
+
+const postsTitleWrapper =
+    document.querySelector(".posts-title-wrapper");
+
+const postsTypeOptions =
+    document.querySelectorAll(".posts-type-option");
+
 const createPostBtn =
     document.getElementById("createPostBtn");
 
@@ -100,6 +115,153 @@ const myPostList =
 
 const publicPostList =
     document.getElementById("publicPostList");
+
+// =========================================
+// POSTS TYPE DROPDOWN
+// =========================================
+
+if (
+    postsTypeBtn &&
+    postsTitleWrapper
+) {
+
+    postsTypeBtn.addEventListener(
+        "click",
+        (event) => {
+
+            event.stopPropagation();
+
+            postsTitleWrapper.classList.toggle(
+                "open"
+            );
+
+        }
+    );
+
+
+    postsTypeOptions.forEach(
+        option => {
+
+            option.addEventListener(
+                "click",
+                () => {
+
+                    const type =
+                        option.dataset.postType;
+
+
+                    // =====================================
+                    // UPDATE LABEL
+                    // =====================================
+
+                    if (type === "my") {
+
+                        postsTypeLabel.innerText =
+                            "My Posts";
+
+                    }
+                    else {
+
+                        postsTypeLabel.innerText =
+                            "Public Posts";
+
+                    }
+
+
+                    // =====================================
+                    // ACTIVE OPTION
+                    // =====================================
+
+                    postsTypeOptions.forEach(
+                        item => {
+
+                            item.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    option.classList.add(
+                        "active"
+                    );
+
+
+                    // =====================================
+                    // SHOW / HIDE POSTS
+                    // =====================================
+
+                   const myPostsGroup =
+    myPostList.closest(".posts-group");
+
+const publicPostsGroup =
+    publicPostList.closest(".posts-group");
+
+
+if (type === "my") {
+
+    myPostsGroup.style.display =
+        "block";
+
+    publicPostsGroup.style.display =
+        "none";
+
+}
+else {
+
+    myPostsGroup.style.display =
+        "none";
+
+    publicPostsGroup.style.display =
+        "block";
+
+}
+
+
+                    // =====================================
+                    // CLOSE DROPDOWN
+                    // =====================================
+
+                    postsTitleWrapper.classList.remove(
+                        "open"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    // =========================================
+    // CLICK OUTSIDE
+    // =========================================
+
+    document.addEventListener(
+        "click",
+        () => {
+
+            postsTitleWrapper.classList.remove(
+                "open"
+            );
+
+        }
+    );
+
+}
+if (
+    myPostList &&
+    publicPostList
+) {
+
+    myPostList.closest(".posts-group").style.display =
+        "block";
+
+    publicPostList.closest(".posts-group").style.display =
+        "none";
+
+}
 
 const addStatusBtn =
     document.getElementById("addStatusBtn");
