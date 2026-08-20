@@ -149,6 +149,11 @@ if (
                     const type =
                         option.dataset.postType;
 
+                        localStorage.setItem(
+    "vibechatPostType",
+    type
+);
+
 
                     // =====================================
                     // UPDATE LABEL
@@ -308,6 +313,10 @@ const groupBtn =
 
 
 function showChats() {
+    localStorage.setItem(
+    "vibechatActiveSection",
+    "chats"
+);
 
     if (chatList) {
         chatList.style.display = "block";
@@ -329,6 +338,10 @@ function showChats() {
 // =========================================
 
 function showStatus() {
+    localStorage.setItem(
+    "vibechatActiveSection",
+    "status"
+);
 
     // Hide chat list
     if (chatList) {
@@ -367,6 +380,10 @@ function showStatus() {
 // =========================================
 
 function showPosts() {
+    localStorage.setItem(
+    "vibechatActiveSection",
+    "posts"
+);
 
     // Hide chat list
     if (chatList) {
@@ -400,6 +417,95 @@ function showPosts() {
 
 }
 
+// =========================================
+// RESTORE ACTIVE SECTION
+// =========================================
+
+function restoreActiveSection() {
+
+    const section =
+        localStorage.getItem(
+            "vibechatActiveSection"
+        );
+
+
+    // =====================================
+    // RESTORE POSTS
+    // =====================================
+
+    if (section === "posts") {
+
+        showPosts();
+
+        if (postsBtn) {
+
+            document
+                .querySelectorAll(
+                    ".filters button"
+                )
+                .forEach(
+                    button => {
+
+                        button.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+            postsBtn.classList.add(
+                "active"
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    // =====================================
+    // RESTORE STATUS
+    // =====================================
+
+    if (section === "status") {
+
+        showStatus();
+
+        if (statusBtn) {
+
+            document
+                .querySelectorAll(
+                    ".filters button"
+                )
+                .forEach(
+                    button => {
+
+                        button.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+            statusBtn.classList.add(
+                "active"
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    // =====================================
+    // DEFAULT → CHATS
+    // =====================================
+
+    showChats();
+
+}
 // =========================================
 // LOAD POSTS
 // =========================================
@@ -1506,27 +1612,41 @@ if (commentBtn) {
                 "post-comment-box";
 
 
-            commentBox.innerHTML = `
+       commentBox.innerHTML = `
 
-                <input
-                    type="text"
-                    class="post-comment-input"
-                    placeholder="Write a comment..."
-                    autocomplete="off"
-                >
+    <button
+        type="button"
+        class="post-comment-emoji"
+        title="Add emoji"
+    >
+        😊
+    </button>
 
-                <button
-                    type="button"
-                    class="post-comment-send"
-                >
+    <input
+        type="text"
+        class="post-comment-input"
+        placeholder="Write a comment..."
+        autocomplete="off"
+    >
 
-                    <i
-                        class="fas fa-paper-plane"
-                    ></i>
+    <button
+        type="button"
+        class="post-comment-send"
+    >
 
-                </button>
+        <i
+            class="fas fa-paper-plane"
+        ></i>
 
-            `;
+    </button>
+
+    <div
+        class="post-comment-emoji-picker"
+    >
+        <emoji-picker></emoji-picker>
+    </div>
+
+`;
 
 
             // =====================================
@@ -1548,6 +1668,91 @@ if (commentBtn) {
                 commentBox.querySelector(
                     ".post-comment-send"
                 );
+
+            // =====================================
+// COMMENT EMOJI PICKER
+// =====================================
+
+const commentEmojiBtn =
+    commentBox.querySelector(
+        ".post-comment-emoji"
+    );
+
+const commentEmojiPicker =
+    commentBox.querySelector(
+        ".post-comment-emoji-picker"
+    );
+
+
+if (
+    commentEmojiBtn &&
+    commentEmojiPicker
+) {
+
+    commentEmojiBtn.addEventListener(
+        "click",
+        (event) => {
+
+            event.stopPropagation();
+
+            commentEmojiPicker.classList.toggle(
+                "show"
+            );
+
+        }
+    );
+
+
+    const picker =
+        commentEmojiPicker.querySelector(
+            "emoji-picker"
+        );
+
+
+    if (picker) {
+
+        picker.addEventListener(
+            "emoji-click",
+            (event) => {
+
+                const emoji =
+                    event.detail.unicode;
+
+                const start =
+                    input.selectionStart ??
+                    input.value.length;
+
+                const end =
+                    input.selectionEnd ??
+                    input.value.length;
+
+
+                input.value =
+                    input.value.slice(
+                        0,
+                        start
+                    ) +
+                    emoji +
+                    input.value.slice(
+                        end
+                    );
+
+
+                input.focus();
+
+
+                input.selectionStart =
+                    start + emoji.length;
+
+                input.selectionEnd =
+                    start + emoji.length;
+
+            }
+        );
+
+    }
+
+}
 
 
             // =====================================
@@ -2624,7 +2829,7 @@ if (!isMine) {
 
     }
 
-}    
+}
 
 
                     statusViewerContent.innerHTML =
@@ -3335,6 +3540,17 @@ const userAvatar =
 
 const messages =
     document.getElementById("messages");
+
+const welcomeShareScreen =
+    document.getElementById(
+        "welcomeShareScreen"
+    );
+
+const chatHeader =
+    document.getElementById("chatHeader");
+
+const messageInputArea =
+    document.getElementById("messageInputArea");
 
 const messageInput =
     document.getElementById("messageInput");
@@ -4169,6 +4385,7 @@ createImageViewer();
 
 loadCurrentUser();
 
+
 // =========================================
 // LOAD CHATS
 // =========================================
@@ -4545,7 +4762,25 @@ function refreshChats() {
 // INITIAL CHAT LOAD
 // =========================================
 
+if (!selectedUser) {
+
+    if (chatHeader) {
+        chatHeader.style.display = "none";
+    }
+
+    if (messageInputArea) {
+        messageInputArea.style.display = "none";
+    }
+
+    if (welcomeShareScreen) {
+        welcomeShareScreen.style.display = "flex";
+    }
+
+}
+
 loadChats();
+
+restoreActiveSection();
 
 // =========================================
 // OPEN CHAT
@@ -4563,6 +4798,21 @@ async function openChat(chat) {
                 currentUser._id
         );
 
+        // =====================================
+// SHOW CHAT UI
+// =====================================
+
+if (chatHeader) {
+    chatHeader.style.display = "";
+}
+
+if (messageInputArea) {
+    messageInputArea.style.display = "";
+}
+
+if (welcomeShareScreen) {
+    welcomeShareScreen.style.display = "none";
+}
     socket.emit(
         "join chat",
         chat._id
@@ -7814,4 +8064,4 @@ function openCaptionModal() {
         }
     );
 
-}       
+}

@@ -462,7 +462,10 @@ id="statusList"
      CHAT HEADER
 ========================================= -->
 
-<div class="chat-header">
+<div
+    class="chat-header"
+    id="chatHeader"
+>
 
 <button
 
@@ -559,13 +562,302 @@ title="Menu"
     class="messages"
 >
 
-    Welcome to VibeChat
+    <div
+    id="welcomeShareScreen"
+    class="welcome-share-screen"
+>
 
-    <br>
+    <!-- Decorative floating elements -->
 
-    Select any contact from the left sidebar
-    to start chatting.
+    <div class="welcome-float float-1">
+        <i class="fas fa-paper-plane"></i>
+    </div>
 
+    <div class="welcome-float float-2">
+        <i class="fas fa-file-lines"></i>
+    </div>
+
+    <div class="welcome-float float-3">
+        <i class="fas fa-link"></i>
+    </div>
+
+
+    <!-- =====================================
+         WELCOME HEADER
+    ====================================== -->
+
+    <div class="welcome-heading">
+
+        <h1>
+            Welcome to
+            <span>VibeChat</span>
+            👋
+        </h1>
+
+        <p>
+            Connect, share and chat with your people.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================
+         CHAT ILLUSTRATION
+    ====================================== -->
+
+    <div class="welcome-illustration">
+
+        <div class="chat-bubble bubble-purple">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="chat-bubble bubble-blue">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="illustration-shadow"></div>
+
+    </div>
+
+
+    <!-- =====================================
+         MAIN SHARE CARDS
+    ====================================== -->
+
+    <div class="welcome-main-options">
+
+
+        <!-- SHARE FILE -->
+
+        <button
+            type="button"
+            class="welcome-main-card file-card"
+            id="welcomeFileBtn"
+        >
+
+            <div class="main-card-icon">
+                <i class="fas fa-file-lines"></i>
+            </div>
+
+            <div class="main-card-content">
+
+                <h3>
+                    Share a File
+                </h3>
+
+                <p>
+                    Share images, videos,
+                    documents and more
+                </p>
+
+            </div>
+
+            <div class="main-card-arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+
+        </button>
+
+
+        <!-- SHARE LINK -->
+
+        <button
+            type="button"
+            class="welcome-main-card link-card"
+            id="welcomeLinkBtn"
+        >
+
+            <div class="main-card-icon">
+                <i class="fas fa-link"></i>
+            </div>
+
+            <div class="main-card-content">
+
+                <h3>
+                    Share a Link
+                </h3>
+
+                <p>
+                    Share any link with
+                    your contacts
+                </p>
+
+            </div>
+
+            <div class="main-card-arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+
+        </button>
+
+
+        <!-- SEND MESSAGE -->
+
+        <button
+            type="button"
+            class="welcome-main-card message-card"
+            id="welcomeMessageBtn"
+        >
+
+            <div class="main-card-icon">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+
+            <div class="main-card-content">
+
+                <h3>
+                    Send a Message
+                </h3>
+
+                <p>
+                    Send a quick message
+                    to anyone
+                </p>
+
+            </div>
+
+            <div class="main-card-arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================
+         QUICK ACTIONS
+    ====================================== -->
+
+    <div class="quick-actions-heading">
+
+        <span></span>
+
+        <h2>
+            Quick Actions
+        </h2>
+
+        <span></span>
+
+    </div>
+
+
+    <div class="welcome-quick-actions">
+
+
+        <button
+            type="button"
+            id="quickPhotoBtn"
+            class="quick-action photo-action"
+        >
+
+            <div class="quick-icon">
+                <i class="fas fa-camera"></i>
+            </div>
+
+            <div>
+                <strong>
+                    Photo
+                </strong>
+
+                <small>
+                    Share photos instantly
+                </small>
+            </div>
+
+        </button>
+
+
+        <button
+            type="button"
+            id="quickFileBtn"
+            class="quick-action file-action"
+        >
+
+            <div class="quick-icon">
+                <i class="fas fa-file"></i>
+            </div>
+
+            <div>
+                <strong>
+                    File
+                </strong>
+
+                <small>
+                    Share documents and files
+                </small>
+            </div>
+
+        </button>
+
+
+        <button
+            type="button"
+            id="quickLinkBtn"
+            class="quick-action link-action"
+        >
+
+            <div class="quick-icon">
+                <i class="fas fa-link"></i>
+            </div>
+
+            <div>
+                <strong>
+                    Link
+                </strong>
+
+                <small>
+                    Share links easily
+                </small>
+            </div>
+
+        </button>
+
+
+        <button
+            type="button"
+            id="quickMessageBtn"
+            class="quick-action message-action"
+        >
+
+            <div class="quick-icon">
+                <i class="fas fa-comment"></i>
+            </div>
+
+            <div>
+                <strong>
+                    Message
+                </strong>
+
+                <small>
+                    Send messages quickly
+                </small>
+            </div>
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================
+         CONTACT HINT
+    ====================================== -->
+
+    <div class="welcome-contact-hint">
+
+        <i class="fas fa-user-group"></i>
+
+        <span>
+            Select a contact from the left sidebar to continue
+        </span>
+
+    </div>
+
+</div>
 </div>
 
 
@@ -736,7 +1028,10 @@ title="Menu"
      MESSAGE INPUT
 ========================================= -->
 
-<div class="message-input">
+<div
+    class="message-input"
+    id="messageInputArea"
+>
 
     <!-- Emoji -->
 
