@@ -514,14 +514,109 @@ function renderPosts(posts) {
                 }
 
 
-                <div class="post-media-wrapper">
+       <div
+    class="post-media-wrapper"
+    data-post-id="${post._id}"
+>
 
-                    ${mediaHTML}
+    ${mediaHTML}
 
-                </div>
+</div>
 
 
-                <div class="post-actions">
+<!-- =========================================
+     COMMENTS
+========================================= -->
+
+<div class="post-comments">
+
+    ${
+        Array.isArray(post.comments) &&
+        post.comments.length > 0
+
+            ? post.comments.map(
+                comment => {
+
+                    const commentTime =
+                        comment.createdAt
+                            ? new Date(
+                                comment.createdAt
+                            ).toLocaleTimeString(
+                                [],
+                                {
+                                    hour: "2-digit",
+                                    minute: "2-digit"
+                                }
+                            )
+                            : "";
+
+                    return `
+
+                        <div class="post-comment">
+
+                            <div class="comment-avatar">
+
+                                ${
+                                    comment.user?.profilePic
+
+                                        ? `
+                                            <img
+                                                src="${comment.user.profilePic}"
+                                                alt="Profile"
+                                            >
+                                          `
+
+                                        : `
+                                            <div class="comment-avatar-placeholder">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                          `
+                                }
+
+                            </div>
+
+
+                            <div class="comment-content">
+
+                                <div class="comment-line">
+
+                                    <strong class="comment-user">
+                                        ${
+                                            comment.user?.name ||
+                                            "Unknown User"
+                                        }
+                                    </strong>
+
+                                    <span class="comment-text">
+                                        ${
+                                            comment.text ||
+                                            ""
+                                        }
+                                    </span>
+
+                                </div>
+
+
+                                <div class="comment-time">
+                                    ${commentTime}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            ).join("")
+
+            : ""
+    }
+
+</div>
+
+
+<div class="post-actions">
 
                     <button
                         class="post-like-btn ${
@@ -571,6 +666,451 @@ function renderPosts(posts) {
                 </div>
 
             `;
+
+// =========================================
+// OPEN POST MEDIA
+// =========================================
+
+const postMedia =
+    item.querySelector(
+        ".post-media-wrapper"
+    );
+
+
+if (postMedia) {
+
+    postMedia.addEventListener(
+        "click",
+        (event) => {
+
+            // Button/action par click hone par
+            // media viewer open na kare
+            if (
+                event.target.closest(
+                    ".post-actions"
+                )
+            ) {
+                return;
+            }
+
+
+            const media =
+                postMedia.querySelector(
+                    "img, video"
+                );
+
+
+            if (!media) {
+                return;
+            }
+
+
+            // =====================================
+            // CREATE MEDIA VIEWER
+            // =====================================
+
+            const viewer =
+                document.createElement(
+                    "div"
+                );
+
+
+            viewer.className =
+                "post-media-viewer";
+
+
+            viewer.innerHTML = `
+
+                <button
+                    type="button"
+                    class="post-media-close"
+                    aria-label="Close"
+                >
+                    <i class="fas fa-xmark"></i>
+                </button>
+
+
+                <div
+                    class="post-media-viewer-content"
+                >
+
+                    ${
+                        media.tagName.toLowerCase() ===
+                        "video"
+
+                            ? `
+                                <video
+                                    src="${media.src}"
+                                    controls
+                                    autoplay
+                                ></video>
+                              `
+
+                            : `
+                                <img
+                                    src="${media.src}"
+                                    alt="Post"
+                                >
+                              `
+                    }
+
+                </div>
+
+            `;
+
+
+            document.body.appendChild(
+                viewer
+            );
+
+
+            // =====================================
+            // CLOSE BUTTON
+            // =====================================
+
+            const closeBtn =
+                viewer.querySelector(
+                    ".post-media-close"
+                );
+
+
+            closeBtn.addEventListener(
+                "click",
+                () => {
+
+                    viewer.remove();
+
+                }
+            );
+
+
+            // =====================================
+            // BACKGROUND CLICK
+            // =====================================
+
+            viewer.addEventListener(
+                "click",
+                (event) => {
+
+                    if (
+                        event.target ===
+                        viewer
+                    ) {
+
+                        viewer.remove();
+
+                    }
+
+                }
+            );
+
+
+            // =====================================
+            // ESC KEY
+            // =====================================
+
+            const escapeHandler =
+                (event) => {
+
+                    if (
+                        event.key ===
+                        "Escape"
+                    ) {
+
+                        viewer.remove();
+
+                        document.removeEventListener(
+                            "keydown",
+                            escapeHandler
+                        );
+
+                    }
+
+                };
+
+
+            document.addEventListener(
+                "keydown",
+                escapeHandler
+            );
+
+        }
+    );
+
+}
+// =========================================
+// SHARE POST
+// =========================================
+
+const shareBtn =
+    item.querySelector(
+        ".post-share-btn"
+    );
+
+
+if (shareBtn) {
+
+    shareBtn.addEventListener(
+        "click",
+        async () => {
+
+            // =====================================
+            // CREATE SHARE MENU
+            // =====================================
+
+            const existingMenu =
+                document.querySelector(
+                    ".post-share-menu"
+                );
+
+
+            if (existingMenu) {
+
+                existingMenu.remove();
+
+                return;
+
+            }
+
+
+            const shareMenu =
+                document.createElement(
+                    "div"
+                );
+
+
+            shareMenu.className =
+                "post-share-menu";
+
+
+            shareMenu.innerHTML = `
+
+                <button
+                    type="button"
+                    class="share-status-option"
+                >
+
+                    <i class="fas fa-circle-notch"></i>
+
+                    <span>
+                        Share to Status
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="share-chat-option"
+                >
+
+                    <i class="fas fa-comment"></i>
+
+                    <span>
+                        Share to Chat
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="share-copy-option"
+                >
+
+                    <i class="fas fa-link"></i>
+
+                    <span>
+                        Copy Link
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="share-system-option"
+                >
+
+                    <i class="fas fa-share-nodes"></i>
+
+                    <span>
+                        More
+                    </span>
+
+                </button>
+
+            `;
+
+
+            const postActions =
+    item.querySelector(
+        ".post-actions"
+    );
+
+
+if (postActions) {
+
+    postActions.appendChild(
+        shareMenu
+    );
+
+}
+
+
+            // =====================================
+            // SHARE TO STATUS
+            // =====================================
+
+            const statusOption =
+                shareMenu.querySelector(
+                    ".share-status-option"
+                );
+
+
+            statusOption.addEventListener(
+                "click",
+                () => {
+
+                    shareMenu.remove();
+
+                    alert(
+                        "Share to Status will be added next."
+                    );
+
+                }
+            );
+
+
+            // =====================================
+            // SHARE TO CHAT
+            // =====================================
+
+            const chatOption =
+                shareMenu.querySelector(
+                    ".share-chat-option"
+                );
+
+
+            chatOption.addEventListener(
+                "click",
+                () => {
+
+                    shareMenu.remove();
+
+                    alert(
+                        "Share to Chat will be added next."
+                    );
+
+                }
+            );
+
+
+            // =====================================
+            // COPY LINK
+            // =====================================
+
+            const copyOption =
+                shareMenu.querySelector(
+                    ".share-copy-option"
+                );
+
+
+            copyOption.addEventListener(
+                "click",
+                async () => {
+
+                    try {
+
+                        await navigator.clipboard.writeText(
+                            post.mediaUrl
+                        );
+
+
+                        shareMenu.remove();
+
+
+                        alert(
+                            "Post link copied."
+                        );
+
+                    }
+                    catch (error) {
+
+                        console.log(
+                            "Copy Link Error:",
+                            error
+                        );
+
+                    }
+
+                }
+            );
+
+
+            // =====================================
+            // SYSTEM SHARE
+            // =====================================
+
+            const systemOption =
+                shareMenu.querySelector(
+                    ".share-system-option"
+                );
+
+
+            systemOption.addEventListener(
+                "click",
+                async () => {
+
+                    try {
+
+                        if (
+                            navigator.share
+                        ) {
+
+                            await navigator.share({
+
+                                title:
+                                    "VibeChat Post",
+
+                                text:
+                                    post.caption ||
+                                    "Check out this post",
+
+                                url:
+                                    post.mediaUrl
+
+                            });
+
+                        }
+                        else {
+
+                            alert(
+                                "System sharing is not supported on this device."
+                            );
+
+                        }
+
+                    }
+                    catch (error) {
+
+                        console.log(
+                            "Share Error:",
+                            error
+                        );
+
+                    }
+
+
+                    shareMenu.remove();
+
+                }
+            );
+
+        }
+    );
+
+}
 // =========================================
 // LIKE / UNLIKE POST
 // =========================================
@@ -704,54 +1244,346 @@ if (commentBtn) {
 
     commentBtn.addEventListener(
         "click",
-        async () => {
+        () => {
 
-            const text =
-                prompt(
-                    "Write your comment:"
+            // =====================================
+            // CHECK IF COMMENT BOX ALREADY EXISTS
+            // =====================================
+
+            const existingBox =
+                item.querySelector(
+                    ".post-comment-box"
                 );
 
 
-            if (
-                text === null ||
-                !text.trim()
-            ) {
+            if (existingBox) {
+
+                const existingInput =
+                    existingBox.querySelector(
+                        ".post-comment-input"
+                    );
+
+
+                if (existingInput) {
+
+                    existingInput.focus();
+
+                }
 
                 return;
+
+            }
+
+
+            // =====================================
+            // CREATE COMMENT BOX
+            // =====================================
+
+            const commentBox =
+                document.createElement(
+                    "div"
+                );
+
+
+            commentBox.className =
+                "post-comment-box";
+
+
+            commentBox.innerHTML = `
+
+                <input
+                    type="text"
+                    class="post-comment-input"
+                    placeholder="Write a comment..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="button"
+                    class="post-comment-send"
+                >
+
+                    <i
+                        class="fas fa-paper-plane"
+                    ></i>
+
+                </button>
+
+            `;
+
+
+            // =====================================
+            // ADD COMMENT BOX TO POST
+            // =====================================
+
+            item.appendChild(
+                commentBox
+            );
+
+
+            const input =
+                commentBox.querySelector(
+                    ".post-comment-input"
+                );
+
+
+            const sendBtn =
+                commentBox.querySelector(
+                    ".post-comment-send"
+                );
+
+
+            // =====================================
+            // AUTO FOCUS
+            // =====================================
+
+            setTimeout(
+                () => {
+
+                    if (input) {
+
+                        input.focus();
+
+                    }
+
+                },
+                100
+            );
+
+
+            // =====================================
+            // SEND COMMENT FUNCTION
+            // =====================================
+
+            const sendComment =
+                async () => {
+
+                    const text =
+                        input.value.trim();
+
+
+                    if (!text) {
+
+                        input.focus();
+
+                        return;
+
+                    }
+
+
+                    try {
+
+                        sendBtn.disabled =
+                            true;
+
+
+                        const response =
+                            await fetch(
+                                API_URL +
+                                "/posts/comment/" +
+                                post._id,
+                                {
+
+                                    method:
+                                        "POST",
+
+                                    headers: {
+
+                                        "Content-Type":
+                                            "application/json",
+
+                                        Authorization:
+                                            "Bearer " +
+                                            token
+
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+                                            text:
+                                                text
+                                        })
+
+                                }
+                            );
+
+
+                        const data =
+                            await response.json();
+
+
+                        if (
+                            !response.ok ||
+                            !data.success
+                        ) {
+
+                            alert(
+                                data.message ||
+                                "Unable to add comment."
+                            );
+
+                            return;
+
+                        }
+
+
+                        // =================================
+                        // UPDATE COMMENT COUNT
+                        // =================================
+
+                        const count =
+                            commentBtn.querySelector(
+                                "span"
+                            );
+
+
+                        if (count) {
+
+                            count.innerText =
+                                Number(
+                                    count.innerText ||
+                                    0
+                                ) + 1;
+
+                        }
+
+
+                        // =================================
+                        // REMOVE COMMENT BOX
+                        // =================================
+
+                        commentBox.remove();
+
+                    }
+                    catch (error) {
+
+                        console.log(
+                            "Comment Error:",
+                            error
+                        );
+
+
+                        alert(
+                            "Unable to add comment."
+                        );
+
+                    }
+                    finally {
+
+                        sendBtn.disabled =
+                            false;
+
+                    }
+
+                };
+
+
+            // =====================================
+            // SEND BUTTON CLICK
+            // =====================================
+
+            sendBtn.addEventListener(
+                "click",
+                sendComment
+            );
+
+
+            // =====================================
+            // ENTER KEY
+            // =====================================
+
+            input.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key ===
+                        "Enter"
+                    ) {
+
+                        event.preventDefault();
+
+                        sendComment();
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+// =========================================
+// DELETE POST
+// =========================================
+
+const postDeleteBtn =
+    item.querySelector(
+        ".post-delete-btn"
+    );
+
+
+if (postDeleteBtn) {
+
+    postDeleteBtn.addEventListener(
+        "click",
+        async (event) => {
+
+            // Prevent post click
+            event.stopPropagation();
+
+
+            // =====================================
+            // VIBECHAT CONFIRM MODAL
+            // =====================================
+
+            const confirmDelete =
+                await showConfirmModal(
+                    "Delete Post",
+                    "Are you sure you want to delete this post?"
+                );
+
+
+            if (!confirmDelete) {
+
+                return;
+
             }
 
 
             try {
 
-                commentBtn.disabled =
+                postDeleteBtn.disabled =
                     true;
 
+
+                postDeleteBtn.innerHTML =
+                    `<i class="fas fa-spinner fa-spin"></i>`;
+
+
+                // =====================================
+                // DELETE POST API
+                // =====================================
 
                 const response =
                     await fetch(
                         API_URL +
-                        "/posts/comment/" +
+                        "/posts/" +
                         post._id,
                         {
 
-                            method: "POST",
+                            method:
+                                "DELETE",
 
                             headers: {
-
-                                "Content-Type":
-                                    "application/json",
 
                                 Authorization:
                                     "Bearer " +
                                     token
 
-                            },
-
-                            body:
-                                JSON.stringify({
-                                    text:
-                                        text.trim()
-                                })
+                            }
 
                         }
                     );
@@ -768,56 +1600,37 @@ if (commentBtn) {
 
                     alert(
                         data.message ||
-                        "Unable to add comment."
+                        "Failed to delete post."
                     );
 
                     return;
-                }
-
-
-                // =================================
-                // UPDATE COMMENT COUNT
-                // =================================
-
-                const count =
-                    commentBtn.querySelector(
-                        "span"
-                    );
-
-
-                if (count) {
-
-                    count.innerText =
-                        Number(
-                            count.innerText || 0
-                        ) + 1;
 
                 }
 
 
-                // =================================
-                // RELOAD POSTS
-                // =================================
+                // =====================================
+                // REMOVE POST FROM UI
+                // =====================================
 
-                loadPosts();
+                item.remove();
 
             }
             catch (error) {
 
                 console.log(
-                    "Comment Error:",
+                    "Delete Post Error:",
                     error
                 );
 
 
                 alert(
-                    "Unable to add comment."
+                    "Unable to delete post."
                 );
 
             }
             finally {
 
-                commentBtn.disabled =
+                postDeleteBtn.disabled =
                     false;
 
             }
@@ -827,14 +1640,19 @@ if (commentBtn) {
 
 }
 
-            postList.appendChild(
-                item
-            );
+// =========================================
+// APPEND POST
+// =========================================
 
-        }
-    );
+postList.appendChild(
+    item
+);
+
+    }
+);
 
 }
+
 // =========================================
 // LOAD STATUSES
 // =========================================
@@ -1094,6 +1912,156 @@ item.innerHTML = `
 
 `;
 // =========================================
+// VIBECHAT CONFIRM MODAL
+// =========================================
+
+function showConfirmModal(
+    title,
+    message
+) {
+
+    return new Promise(
+        (resolve) => {
+
+            const modal =
+                document.getElementById(
+                    "confirmModal"
+                );
+
+            const titleElement =
+                document.getElementById(
+                    "confirmModalTitle"
+                );
+
+            const messageElement =
+                document.getElementById(
+                    "confirmModalMessage"
+                );
+
+            const cancelBtn =
+                document.getElementById(
+                    "confirmModalCancel"
+                );
+
+            const confirmBtn =
+                document.getElementById(
+                    "confirmModalConfirm"
+                );
+
+
+            // =====================================
+            // MODAL NOT FOUND
+            // =====================================
+
+            if (
+                !modal ||
+                !titleElement ||
+                !messageElement ||
+                !cancelBtn ||
+                !confirmBtn
+            ) {
+
+                console.error(
+                    "VibeChat confirm modal not found."
+                );
+
+                resolve(false);
+
+                return;
+
+            }
+
+
+            // =====================================
+            // SET TEXT
+            // =====================================
+
+            titleElement.innerText =
+                title;
+
+            messageElement.innerText =
+                message;
+
+
+            // =====================================
+            // SHOW MODAL
+            // =====================================
+
+            modal.style.display =
+                "flex";
+
+
+            // =====================================
+            // CLOSE FUNCTION
+            // =====================================
+
+            const closeModal =
+                (result) => {
+
+                    modal.style.display =
+                        "none";
+
+                    cancelBtn.onclick =
+                        null;
+
+                    confirmBtn.onclick =
+                        null;
+
+                    modal.onclick =
+                        null;
+
+                    resolve(result);
+
+                };
+
+
+            // =====================================
+            // CANCEL
+            // =====================================
+
+            cancelBtn.onclick =
+                () => {
+
+                    closeModal(false);
+
+                };
+
+
+            // =====================================
+            // DELETE / CONFIRM
+            // =====================================
+
+            confirmBtn.onclick =
+                () => {
+
+                    closeModal(true);
+
+                };
+
+
+            // =====================================
+            // CLICK OUTSIDE
+            // =====================================
+
+            modal.onclick =
+                (event) => {
+
+                    if (
+                        event.target ===
+                        modal
+                    ) {
+
+                        closeModal(false);
+
+                    }
+
+                };
+
+        }
+    );
+
+}
+// =========================================
 // DELETE STATUS
 // =========================================
 
@@ -1116,9 +2084,10 @@ if (isMine) {
 
 
                 const confirmDelete =
-                    confirm(
-                        "Are you sure you want to delete this status?"
-                    );
+    await showConfirmModal(
+        "Delete Status",
+        "Are you sure you want to delete this status?"
+    );
 
 
                 if (!confirmDelete) {
@@ -1795,23 +2764,25 @@ if (
 
 
             // =====================================
-            // OPTIONAL CAPTION
-            // =====================================
+// OPTIONAL CAPTION
+// =====================================
 
-            const caption =
-                prompt(
-                    "Enter caption (optional):"
-                );
+const caption =
+    await openCaptionModal();
 
 
-            if (caption !== null) {
+// =====================================
+// ADD CAPTION
+// =====================================
 
-                formData.append(
-                    "caption",
-                    caption
-                );
+if (caption !== null) {
 
-            }
+    formData.append(
+        "caption",
+        caption.trim()
+    );
+
+}
 
 
             try {
@@ -6164,3 +7135,304 @@ if (voiceCallBtn) {
     );
 
 }
+// =========================================
+// CAPTION MODAL
+// =========================================
+
+function openCaptionModal() {
+
+    return new Promise(
+        resolve => {
+
+            // =====================================
+            // OVERLAY
+            // =====================================
+
+            const overlay =
+                document.createElement(
+                    "div"
+                );
+
+            overlay.className =
+                "caption-modal-overlay";
+
+
+            // =====================================
+            // MODAL
+            // =====================================
+
+            overlay.innerHTML = `
+
+                <div
+                    class="caption-modal"
+                    role="dialog"
+                    aria-modal="true"
+                >
+
+                    <div class="caption-modal-header">
+
+                        <div>
+
+                            <h3>
+                                Add Caption
+                            </h3>
+
+                            <p>
+                                Add something about your post
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="caption-close-btn"
+                            aria-label="Close"
+                        >
+
+                            <i class="fas fa-xmark"></i>
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="caption-modal-body">
+
+                        <textarea
+                            class="caption-input"
+                            placeholder="Write a caption..."
+                            maxlength="2000"
+                            autofocus
+                        ></textarea>
+
+
+                        <div class="caption-counter">
+
+                            <span>
+                                Optional
+                            </span>
+
+                            <span class="caption-count">
+                                0 / 2000
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="caption-modal-footer">
+
+                        <button
+                            type="button"
+                            class="caption-cancel-btn"
+                        >
+                            Cancel
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="caption-post-btn"
+                        >
+
+                            <i class="fas fa-paper-plane"></i>
+
+                            Post
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            document.body.appendChild(
+                overlay
+            );
+
+
+            // =====================================
+            // ELEMENTS
+            // =====================================
+
+            const textarea =
+                overlay.querySelector(
+                    ".caption-input"
+                );
+
+
+            const closeBtn =
+                overlay.querySelector(
+                    ".caption-close-btn"
+                );
+
+
+            const cancelBtn =
+                overlay.querySelector(
+                    ".caption-cancel-btn"
+                );
+
+
+            const postBtn =
+                overlay.querySelector(
+                    ".caption-post-btn"
+                );
+
+
+            const counter =
+                overlay.querySelector(
+                    ".caption-count"
+                );
+
+
+            // =====================================
+            // FOCUS
+            // =====================================
+
+            setTimeout(
+                () => {
+
+                    textarea.focus();
+
+                },
+                50
+            );
+
+
+            // =====================================
+            // CHARACTER COUNT
+            // =====================================
+
+            textarea.addEventListener(
+                "input",
+                () => {
+
+                    counter.innerText =
+                        `${textarea.value.length} / 2000`;
+
+                }
+            );
+
+
+            // =====================================
+            // CLOSE MODAL
+            // =====================================
+
+            const closeModal =
+                value => {
+
+                    overlay.remove();
+
+                    resolve(
+                        value
+                    );
+
+                };
+
+
+            // =====================================
+            // CANCEL
+            // =====================================
+
+            closeBtn.addEventListener(
+                "click",
+                () => {
+
+                    closeModal(
+                        null
+                    );
+
+                }
+            );
+
+
+            cancelBtn.addEventListener(
+                "click",
+                () => {
+
+                    closeModal(
+                        null
+                    );
+
+                }
+            );
+
+
+            // =====================================
+            // POST
+            // =====================================
+
+            postBtn.addEventListener(
+                "click",
+                () => {
+
+                    closeModal(
+                        textarea.value
+                    );
+
+                }
+            );
+
+
+            // =====================================
+            // BACKGROUND CLICK
+            // =====================================
+
+            overlay.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target ===
+                        overlay
+                    ) {
+
+                        closeModal(
+                            null
+                        );
+
+                    }
+
+                }
+            );
+
+
+            // =====================================
+            // ESC
+            // =====================================
+
+            const escapeHandler =
+                event => {
+
+                    if (
+                        event.key ===
+                        "Escape"
+                    ) {
+
+                        document.removeEventListener(
+                            "keydown",
+                            escapeHandler
+                        );
+
+                        closeModal(
+                            null
+                        );
+
+                    }
+
+                };
+
+
+            document.addEventListener(
+                "keydown",
+                escapeHandler
+            );
+
+        }
+    );
+
+}       

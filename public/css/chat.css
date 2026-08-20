@@ -3370,7 +3370,39 @@ input{
 
 #postsSection {
     width: 100%;
+
+    height: calc(100vh - 150px);
+
+    max-height: calc(100vh - 150px);
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    padding: 0;
+
+    margin: 0;
+
     box-sizing: border-box;
+
+    scrollbar-width: thin;
+}
+
+
+#postsSection::-webkit-scrollbar {
+    width: 6px;
+}
+
+
+#postsSection::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+
+    background: #cccccc;
+}
+
+
+#postsSection::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 
@@ -3420,10 +3452,20 @@ input{
    POST LIST
 ========================================= */
 
-.post-list {
+#postList {
     width: 100%;
 
-    padding: 10px 0;
+    height: auto;
+
+    max-height: none;
+
+    overflow-y: visible;
+
+    overflow-x: hidden;
+
+    padding: 0;
+
+    margin: 0;
 
     box-sizing: border-box;
 }
@@ -3434,15 +3476,18 @@ input{
 ========================================= */
 
 .post-item {
+
     width: 100%;
 
-    background: #fff;
+    background: #ffffff;
 
     border-bottom: 1px solid #e5e5e5;
 
-    padding-bottom: 12px;
+    padding: 0;
 
-    margin-bottom: 10px;
+    margin: 0;
+
+    box-sizing: border-box;
 }
 
 
@@ -3554,31 +3599,78 @@ input{
 
 
 /* =========================================
+   POST MEDIA - FEED SIZE
+========================================= */
+
+.post-media-wrapper {
+    width: 100%;
+
+    max-height: 320px;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #f5f5f5;
+
+    cursor: pointer;
+}
+
+
+.post-media-wrapper img,
+.post-media-wrapper video {
+
+    width: 100%;
+
+    max-height: 320px;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+/* =========================================
    POST MEDIA
 ========================================= */
 
 .post-media-wrapper {
     width: 100%;
 
-    background: #000;
+    max-height: 320px;
+
+    overflow: hidden;
 
     display: flex;
 
     align-items: center;
+
     justify-content: center;
+
+    background: #f5f5f5;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
 }
 
-.post-media {
-    display: block;
 
+.post-media-wrapper img,
+.post-media-wrapper video {
     width: 100%;
 
-    max-height: 500px;
+    height: auto;
+
+    max-height: 320px;
 
     object-fit: contain;
-}
 
-.post-media video {
+    display: block;
+
     background: #000;
 }
 
@@ -3588,16 +3680,35 @@ input{
 ========================================= */
 
 .post-actions {
+
+    position: relative;
+
     display: flex;
 
     align-items: center;
 
+    width: 100%;
+
     gap: 6px;
 
-    padding: 8px 10px 0;
+    padding: 7px 10px;
+
+    background: #ffffff;
+
+    border-top: 1px solid #eeeeee;
+
+    box-sizing: border-box;
+
+    z-index: 20;
 }
 
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
 .post-actions button {
+
     border: none;
 
     background: transparent;
@@ -3608,27 +3719,487 @@ input{
 
     align-items: center;
 
+    justify-content: center;
+
     gap: 5px;
 
-    padding: 7px 9px;
+    padding: 5px 7px;
 
-    border-radius: 18px;
+    border-radius: 16px;
 
     font-size: 13px;
 
-    color: #555;
+    color: #555555;
+
+    white-space: nowrap;
+
+    flex-shrink: 0;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
 }
 
+
+/* =========================================
+   HOVER
+========================================= */
+
 .post-actions button:hover {
+
     background: #f3f3f3;
+
 }
+
+
+/* =========================================
+   CLICK
+========================================= */
+
+.post-actions button:active {
+
+    transform: scale(0.95);
+
+}
+
+
+/* =========================================
+   ICON
+========================================= */
+
+.post-actions button i {
+
+    font-size: 15px;
+
+}
+
+
+/* =========================================
+   COUNT / TEXT
+========================================= */
+
+.post-actions button span {
+
+    font-size: 13px;
+
+    line-height: 1;
+
+}
+
+
+/* =========================================
+   LIKE
+========================================= */
+
+.post-like-btn.liked {
+
+    color: #e11d48;
+
+}
+
+
+/* =========================================
+   SHARE BUTTON
+========================================= */
+
+.post-share-btn {
+
+    margin-left: auto;
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .post-actions {
+
+        gap: 4px;
+
+        padding: 6px 8px;
+
+    }
+
+
+    .post-actions button {
+
+        padding: 5px 6px;
+
+        font-size: 13px;
+
+    }
+
+
+    .post-actions button i {
+
+        font-size: 15px;
+
+    }
+
+
+    .post-actions button span {
+
+        font-size: 12px;
+
+    }
+
+}
+
+
+/* =========================================
+   LIKED
+========================================= */
 
 .post-like-btn.liked {
     color: #e11d48;
 }
 
+
+/* =========================================
+   SHARE
+========================================= */
+
 .post-share-btn {
     margin-left: auto;
+}
+
+
+/* =========================================
+   POST COMMENT BOX
+========================================= */
+
+.post-comment-box {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    width: 100%;
+
+    margin: 0;
+
+    padding: 6px 10px;
+
+    background: #ffffff;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   COMMENT INPUT
+========================================= */
+
+.post-comment-input {
+
+    flex: 1;
+
+    min-width: 0;
+
+    width: 100%;
+
+    height: 38px;
+
+    margin: 0;
+
+    padding: 0 14px;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 20px;
+
+    outline: none;
+
+    background: #f7f7f7;
+
+    color: #222222;
+
+    font-size: 14px;
+
+    line-height: 38px;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.post-comment-input:focus {
+
+    border-color: #128c7e;
+
+    background: #ffffff;
+}
+
+
+.post-comment-input::placeholder {
+
+    color: #999999;
+}
+
+
+/* =========================================
+   SEND BUTTON
+========================================= */
+
+.post-comment-send {
+
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    margin: 0;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #128c7e;
+
+    color: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+
+.post-comment-send:hover {
+
+    transform: scale(1.05);
+}
+
+
+.post-comment-send:active {
+
+    transform: scale(0.95);
+}
+
+
+.post-comment-send:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .post-comment-box {
+
+        gap: 6px;
+
+        padding: 5px 8px;
+
+    }
+
+
+    .post-comment-input {
+
+        height: 38px;
+
+        font-size: 13px;
+
+    }
+
+
+    .post-comment-send {
+
+        width: 38px;
+
+        height: 38px;
+
+        min-width: 38px;
+
+    }
+
+}
+
+/* =========================================
+   POST COMMENTS
+========================================= */
+
+.post-comments {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 9px;
+
+    padding: 10px 12px 6px;
+
+    background: #ffffff;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   SINGLE COMMENT
+========================================= */
+
+.post-comment {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 9px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   COMMENT AVATAR
+========================================= */
+
+.comment-avatar {
+    width: 32px;
+
+    height: 32px;
+
+    min-width: 32px;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    background: #eeeeee;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.comment-avatar img {
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+.comment-avatar-placeholder {
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #777777;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   COMMENT CONTENT
+========================================= */
+
+.comment-content {
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+/* =========================================
+   NAME + COMMENT SAME LINE
+========================================= */
+
+.comment-line {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 7px;
+
+    line-height: 1.4;
+
+    flex-wrap: wrap;
+}
+
+
+.comment-user {
+    flex-shrink: 0;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #222222;
+
+    white-space: nowrap;
+}
+
+
+.comment-text {
+    flex: 1;
+
+    min-width: 0;
+
+    font-size: 14px;
+
+    color: #444444;
+
+    line-height: 1.4;
+
+    word-break: break-word;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================
+   COMMENT TIME
+========================================= */
+
+.comment-time {
+    margin-top: 2px;
+
+    font-size: 11px;
+
+    color: #999999;
 }
 
 
@@ -3642,7 +4213,859 @@ input{
 
     padding: 35px 15px;
 
-    color: #777;
+    color: #777777;
 
     font-size: 14px;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    /* POST MEDIA */
+
+    .post-media-wrapper {
+        max-height: 200px;
+    }
+
+
+    .post-media-wrapper img,
+    .post-media-wrapper video {
+        max-height: 200px;
+    }
+
+
+    /* ACTIONS */
+
+    .post-actions {
+        gap: 4px;
+
+        padding: 6px 8px;
+    }
+
+
+    .post-actions button {
+        padding: 5px 6px;
+
+        font-size: 13px;
+    }
+
+
+    .post-actions button i {
+        font-size: 15px;
+    }
+
+
+    .post-actions button span {
+        font-size: 12px;
+    }
+
+
+    .post-share-btn {
+        margin-left: auto;
+    }
+
+
+    /* COMMENT BOX */
+
+    .post-comment-box {
+        padding: 8px 10px;
+
+        gap: 7px;
+    }
+
+
+    .post-comment-input {
+        height: 40px;
+
+        font-size: 14px;
+    }
+
+
+    .post-comment-send {
+        width: 40px;
+
+        height: 40px;
+
+        min-width: 40px;
+    }
+
+
+    /* COMMENTS */
+
+    .post-comments {
+        padding: 9px 10px 5px;
+
+        gap: 8px;
+    }
+
+
+    .comment-avatar {
+        width: 30px;
+
+        height: 30px;
+
+        min-width: 30px;
+    }
+
+
+    .comment-user {
+        font-size: 13px;
+    }
+
+
+    .comment-text {
+        font-size: 13px;
+    }
+
+
+    .comment-time {
+        font-size: 10px;
+    }
+
+}
+/* =========================================
+   POST SHARE MENU
+========================================= */
+
+.post-share-menu {
+
+    position: absolute;
+
+    right: 10px;
+
+    bottom: 52px;
+
+    width: 190px;
+
+    background: #ffffff;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.15);
+
+    padding: 6px;
+
+    z-index: 100;
+
+}
+
+
+/* =========================================
+   SHARE OPTION
+========================================= */
+
+.post-share-menu button {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 12px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #333333;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    font-size: 13px;
+}
+
+
+.post-share-menu button:hover {
+
+    background: #f3f3f3;
+
+}
+
+
+.post-share-menu button i {
+
+    width: 18px;
+
+    text-align: center;
+
+    font-size: 15px;
+
+}
+/* =========================================
+   POST MEDIA VIEWER
+========================================= */
+
+.post-media-viewer {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 30px;
+
+    background: rgba(0, 0, 0, 0.92);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   VIEWER CONTENT
+========================================= */
+
+.post-media-viewer-content {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+
+.post-media-viewer-content img,
+.post-media-viewer-content video {
+
+    max-width: 100%;
+
+    max-height: 100%;
+
+    width: auto;
+
+    height: auto;
+
+    object-fit: contain;
+
+    display: block;
+}
+
+
+/* =========================================
+   CLOSE BUTTON
+========================================= */
+
+.post-media-close {
+
+    position: absolute;
+
+    top: 18px;
+
+    right: 18px;
+
+    z-index: 100000;
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.15);
+
+    color: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 20px;
+}
+
+
+.post-media-close:hover {
+
+    background: rgba(255, 255, 255, 0.25);
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .post-media-viewer {
+
+        padding: 15px;
+
+    }
+
+
+    .post-media-close {
+
+        top: 12px;
+
+        right: 12px;
+
+        width: 38px;
+
+        height: 38px;
+
+        font-size: 18px;
+
+    }
+
+}
+/* =========================================
+   CAPTION MODAL
+========================================= */
+
+.caption-modal-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+.caption-modal {
+
+    width: 100%;
+
+    max-width: 420px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.25);
+
+    overflow: hidden;
+
+    animation:
+        captionModalIn 0.18s ease-out;
+}
+
+
+@keyframes captionModalIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(15px)
+            scale(0.97);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.caption-modal-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 18px 18px 12px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+.caption-modal-header h3 {
+
+    margin: 0;
+
+    font-size: 18px;
+
+    color: #222222;
+}
+
+
+.caption-modal-header p {
+
+    margin: 4px 0 0;
+
+    font-size: 12px;
+
+    color: #888888;
+}
+
+
+.caption-close-btn {
+
+    width: 34px;
+
+    height: 34px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #f3f3f3;
+
+    color: #555555;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 16px;
+}
+
+
+.caption-close-btn:hover {
+
+    background: #e9e9e9;
+}
+
+
+/* =========================================
+   BODY
+========================================= */
+
+.caption-modal-body {
+
+    padding: 15px 18px 10px;
+}
+
+
+.caption-input {
+
+    width: 100%;
+
+    min-height: 110px;
+
+    max-height: 220px;
+
+    resize: vertical;
+
+    padding: 13px 14px;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 14px;
+
+    outline: none;
+
+    background: #f8f8f8;
+
+    color: #222222;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.caption-input:focus {
+
+    border-color: #128c7e;
+
+    background: #ffffff;
+}
+
+
+.caption-input::placeholder {
+
+    color: #999999;
+}
+
+
+/* =========================================
+   COUNTER
+========================================= */
+
+.caption-counter {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 6px;
+
+    padding: 0 3px;
+
+    font-size: 11px;
+
+    color: #999999;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.caption-modal-footer {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 12px 18px 16px;
+}
+
+
+.caption-cancel-btn {
+
+    height: 38px;
+
+    padding: 0 16px;
+
+    border: none;
+
+    border-radius: 20px;
+
+    background: #f1f1f1;
+
+    color: #555555;
+
+    cursor: pointer;
+
+    font-size: 13px;
+}
+
+
+.caption-cancel-btn:hover {
+
+    background: #e7e7e7;
+}
+
+
+.caption-post-btn {
+
+    height: 38px;
+
+    padding: 0 17px;
+
+    border: none;
+
+    border-radius: 20px;
+
+    background: #128c7e;
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    font-size: 13px;
+
+    font-weight: 500;
+}
+
+
+.caption-post-btn:hover {
+
+    background: #0f7d70;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .caption-modal-overlay {
+
+        align-items: flex-end;
+
+        padding: 0;
+    }
+
+
+    .caption-modal {
+
+        max-width: none;
+
+        border-radius:
+            20px 20px 0 0;
+    }
+
+
+    .caption-modal-header {
+
+        padding: 16px;
+    }
+
+
+    .caption-modal-body {
+
+        padding: 14px 16px 8px;
+    }
+
+
+    .caption-modal-footer {
+
+        padding:
+            10px 16px 16px;
+    }
+
+
+    .caption-input {
+
+        min-height: 100px;
+    }
+
+}
+/* =========================================
+   VIBECHAT CONFIRM MODAL
+========================================= */
+
+.custom-confirm-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 999999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    backdrop-filter: blur(4px);
+
+}
+
+
+.custom-confirm-modal {
+
+    width: 320px;
+
+    max-width: 90%;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 22px 20px 18px;
+
+    text-align: center;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.25);
+
+    animation:
+        confirmModalShow 0.18s ease-out;
+
+}
+
+
+@keyframes confirmModalShow {
+
+    from {
+
+        opacity: 0;
+
+        transform: scale(0.92);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
+
+
+.custom-confirm-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    margin: 0 auto 12px;
+
+    border-radius: 50%;
+
+    background: #fff1f2;
+
+    color: #e11d48;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 19px;
+
+}
+
+
+.custom-confirm-title {
+
+    margin: 0 0 8px;
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+    color: #222222;
+
+}
+
+
+.custom-confirm-message {
+
+    margin: 0 0 20px;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    color: #666666;
+
+}
+
+
+.custom-confirm-actions {
+
+    display: flex;
+
+    gap: 10px;
+
+}
+
+
+.custom-confirm-actions button {
+
+    flex: 1;
+
+    height: 40px;
+
+    border: none;
+
+    border-radius: 20px;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+}
+
+
+.custom-confirm-cancel {
+
+    background: #f1f1f1;
+
+    color: #444444;
+
+}
+
+
+.custom-confirm-delete {
+
+    background: #128c7e;
+
+    color: #ffffff;
+
+}
+
+
+.custom-confirm-cancel:hover {
+
+    background: #e7e7e7;
+
+}
+
+
+.custom-confirm-delete:hover {
+
+    opacity: 0.9;
+
 }
