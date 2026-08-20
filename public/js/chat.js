@@ -95,8 +95,11 @@ const createPostBtn =
 const postFileInput =
     document.getElementById("postFileInput");
 
-const postList =
-    document.getElementById("postList");    
+const myPostList =
+    document.getElementById("myPostList");
+
+const publicPostList =
+    document.getElementById("publicPostList");
 
 const addStatusBtn =
     document.getElementById("addStatusBtn");
@@ -241,19 +244,36 @@ function showPosts() {
 
 async function loadPosts() {
 
-    if (!postList) {
+    if (
+        !myPostList ||
+        !publicPostList
+    ) {
         return;
     }
 
 
     try {
 
-        postList.innerHTML = `
+        // =====================================
+        // LOADING STATE
+        // =====================================
+
+        myPostList.innerHTML = `
             <div class="post-loading">
                 Loading posts...
             </div>
         `;
 
+        publicPostList.innerHTML = `
+            <div class="post-loading">
+                Loading posts...
+            </div>
+        `;
+
+
+        // =====================================
+        // GET POSTS
+        // =====================================
 
         const response =
             await fetch(
@@ -275,9 +295,22 @@ async function loadPosts() {
             await response.json();
 
 
-        if (!response.ok || !data.success) {
+        // =====================================
+        // API ERROR
+        // =====================================
 
-            postList.innerHTML = `
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            myPostList.innerHTML = `
+                <div class="post-empty">
+                    Unable to load posts
+                </div>
+            `;
+
+            publicPostList.innerHTML = `
                 <div class="post-empty">
                     Unable to load posts
                 </div>
@@ -293,6 +326,10 @@ async function loadPosts() {
         }
 
 
+        // =====================================
+        // RENDER POSTS
+        // =====================================
+
         renderPosts(
             data.posts || []
         );
@@ -306,7 +343,13 @@ async function loadPosts() {
         );
 
 
-        postList.innerHTML = `
+        myPostList.innerHTML = `
+            <div class="post-empty">
+                Unable to load posts
+            </div>
+        `;
+
+        publicPostList.innerHTML = `
             <div class="post-empty">
                 Unable to load posts
             </div>
@@ -315,34 +358,46 @@ async function loadPosts() {
     }
 
 }
+
 // =========================================
 // RENDER POSTS
 // =========================================
 
 function renderPosts(posts) {
 
-    if (!postList) {
+    if (
+        !myPostList ||
+        !publicPostList
+    ) {
         return;
     }
 
 
-    postList.innerHTML = "";
+    myPostList.innerHTML = "";
+
+    publicPostList.innerHTML = "";
 
 
     if (
-        !posts ||
-        posts.length === 0
-    ) {
+    !posts ||
+    posts.length === 0
+) {
 
-        postList.innerHTML = `
-            <div class="post-empty">
-                No posts available
-            </div>
-        `;
+    myPostList.innerHTML = `
+        <div class="post-empty">
+            No posts yet
+        </div>
+    `;
 
-        return;
+    publicPostList.innerHTML = `
+        <div class="post-empty">
+            No public posts available
+        </div>
+    `;
 
-    }
+    return;
+
+}
 
 
     posts.forEach(
@@ -1644,14 +1699,176 @@ if (postDeleteBtn) {
 // APPEND POST
 // =========================================
 
-postList.appendChild(
-    item
-);
+if (isMine) {
+
+    myPostList.appendChild(
+        item
+    );
+
+}
+else {
+
+    publicPostList.appendChild(
+        item
+     );
+
+        }
 
     }
 );
 
 }
+// =========================================
+// VIBECHAT CONFIRM MODAL
+// =========================================
+
+function showConfirmModal(
+    title,
+    message
+) {
+
+    return new Promise(
+        (resolve) => {
+
+            const modal =
+                document.getElementById(
+                    "confirmModal"
+                );
+
+            const titleElement =
+                document.getElementById(
+                    "confirmModalTitle"
+                );
+
+            const messageElement =
+                document.getElementById(
+                    "confirmModalMessage"
+                );
+
+            const cancelBtn =
+                document.getElementById(
+                    "confirmModalCancel"
+                );
+
+            const confirmBtn =
+                document.getElementById(
+                    "confirmModalConfirm"
+                );
+
+
+            // =====================================
+            // MODAL NOT FOUND
+            // =====================================
+
+            if (
+                !modal ||
+                !titleElement ||
+                !messageElement ||
+                !cancelBtn ||
+                !confirmBtn
+            ) {
+
+                console.error(
+                    "VibeChat confirm modal not found."
+                );
+
+                resolve(false);
+
+                return;
+
+            }
+
+
+            // =====================================
+            // SET TEXT
+            // =====================================
+
+            titleElement.innerText =
+                title;
+
+            messageElement.innerText =
+                message;
+
+
+            // =====================================
+            // SHOW MODAL
+            // =====================================
+
+            modal.style.display =
+                "flex";
+
+
+            // =====================================
+            // CLOSE FUNCTION
+            // =====================================
+
+            const closeModal =
+                (result) => {
+
+                    modal.style.display =
+                        "none";
+
+                    cancelBtn.onclick =
+                        null;
+
+                    confirmBtn.onclick =
+                        null;
+
+                    modal.onclick =
+                        null;
+
+                    resolve(result);
+
+                };
+
+
+            // =====================================
+            // CANCEL
+            // =====================================
+
+            cancelBtn.onclick =
+                () => {
+
+                    closeModal(false);
+
+                };
+
+
+            // =====================================
+            // CONFIRM
+            // =====================================
+
+            confirmBtn.onclick =
+                () => {
+
+                    closeModal(true);
+
+                };
+
+
+            // =====================================
+            // CLICK OUTSIDE
+            // =====================================
+
+            modal.onclick =
+                (event) => {
+
+                    if (
+                        event.target ===
+                        modal
+                    ) {
+
+                        closeModal(false);
+
+                    }
+
+                };
+
+        }
+    );
+
+}
+
 
 // =========================================
 // LOAD STATUSES
@@ -1911,156 +2128,156 @@ item.innerHTML = `
     }
 
 `;
-// =========================================
-// VIBECHAT CONFIRM MODAL
-// =========================================
+// // =========================================
+// // VIBECHAT CONFIRM MODAL
+// // =========================================
 
-function showConfirmModal(
-    title,
-    message
-) {
+// function showConfirmModal(
+//     title,
+//     message
+// ) {
 
-    return new Promise(
-        (resolve) => {
+//     return new Promise(
+//         (resolve) => {
 
-            const modal =
-                document.getElementById(
-                    "confirmModal"
-                );
+//             const modal =
+//                 document.getElementById(
+//                     "confirmModal"
+//                 );
 
-            const titleElement =
-                document.getElementById(
-                    "confirmModalTitle"
-                );
+//             const titleElement =
+//                 document.getElementById(
+//                     "confirmModalTitle"
+//                 );
 
-            const messageElement =
-                document.getElementById(
-                    "confirmModalMessage"
-                );
+//             const messageElement =
+//                 document.getElementById(
+//                     "confirmModalMessage"
+//                 );
 
-            const cancelBtn =
-                document.getElementById(
-                    "confirmModalCancel"
-                );
+//             const cancelBtn =
+//                 document.getElementById(
+//                     "confirmModalCancel"
+//                 );
 
-            const confirmBtn =
-                document.getElementById(
-                    "confirmModalConfirm"
-                );
-
-
-            // =====================================
-            // MODAL NOT FOUND
-            // =====================================
-
-            if (
-                !modal ||
-                !titleElement ||
-                !messageElement ||
-                !cancelBtn ||
-                !confirmBtn
-            ) {
-
-                console.error(
-                    "VibeChat confirm modal not found."
-                );
-
-                resolve(false);
-
-                return;
-
-            }
+//             const confirmBtn =
+//                 document.getElementById(
+//                     "confirmModalConfirm"
+//                 );
 
 
-            // =====================================
-            // SET TEXT
-            // =====================================
+//             // =====================================
+//             // MODAL NOT FOUND
+//             // =====================================
 
-            titleElement.innerText =
-                title;
+//             if (
+//                 !modal ||
+//                 !titleElement ||
+//                 !messageElement ||
+//                 !cancelBtn ||
+//                 !confirmBtn
+//             ) {
 
-            messageElement.innerText =
-                message;
+//                 console.error(
+//                     "VibeChat confirm modal not found."
+//                 );
 
+//                 resolve(false);
 
-            // =====================================
-            // SHOW MODAL
-            // =====================================
+//                 return;
 
-            modal.style.display =
-                "flex";
-
-
-            // =====================================
-            // CLOSE FUNCTION
-            // =====================================
-
-            const closeModal =
-                (result) => {
-
-                    modal.style.display =
-                        "none";
-
-                    cancelBtn.onclick =
-                        null;
-
-                    confirmBtn.onclick =
-                        null;
-
-                    modal.onclick =
-                        null;
-
-                    resolve(result);
-
-                };
+//             }
 
 
-            // =====================================
-            // CANCEL
-            // =====================================
+//             // =====================================
+//             // SET TEXT
+//             // =====================================
 
-            cancelBtn.onclick =
-                () => {
+//             titleElement.innerText =
+//                 title;
 
-                    closeModal(false);
-
-                };
-
-
-            // =====================================
-            // DELETE / CONFIRM
-            // =====================================
-
-            confirmBtn.onclick =
-                () => {
-
-                    closeModal(true);
-
-                };
+//             messageElement.innerText =
+//                 message;
 
 
-            // =====================================
-            // CLICK OUTSIDE
-            // =====================================
+//             // =====================================
+//             // SHOW MODAL
+//             // =====================================
 
-            modal.onclick =
-                (event) => {
+//             modal.style.display =
+//                 "flex";
 
-                    if (
-                        event.target ===
-                        modal
-                    ) {
 
-                        closeModal(false);
+//             // =====================================
+//             // CLOSE FUNCTION
+//             // =====================================
 
-                    }
+//             const closeModal =
+//                 (result) => {
 
-                };
+//                     modal.style.display =
+//                         "none";
 
-        }
-    );
+//                     cancelBtn.onclick =
+//                         null;
 
-}
+//                     confirmBtn.onclick =
+//                         null;
+
+//                     modal.onclick =
+//                         null;
+
+//                     resolve(result);
+
+//                 };
+
+
+//             // =====================================
+//             // CANCEL
+//             // =====================================
+
+//             cancelBtn.onclick =
+//                 () => {
+
+//                     closeModal(false);
+
+//                 };
+
+
+//             // =====================================
+//             // DELETE / CONFIRM
+//             // =====================================
+
+//             confirmBtn.onclick =
+//                 () => {
+
+//                     closeModal(true);
+
+//                 };
+
+
+//             // =====================================
+//             // CLICK OUTSIDE
+//             // =====================================
+
+//             modal.onclick =
+//                 (event) => {
+
+//                     if (
+//                         event.target ===
+//                         modal
+//                     ) {
+
+//                         closeModal(false);
+
+//                     }
+
+//                 };
+
+//         }
+//     );
+
+// }
 // =========================================
 // DELETE STATUS
 // =========================================
