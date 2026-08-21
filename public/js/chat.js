@@ -1429,11 +1429,47 @@ if (postActions) {
 
                 }
             );
+// =========================================
+// CLOSE SHARE MENU WHEN CLICKING OUTSIDE
+// =========================================
 
+const closeShareMenu =
+    (event) => {
+
+        if (
+            !shareMenu.contains(
+                event.target
+            ) &&
+            !shareBtn.contains(
+                event.target
+            )
+        ) {
+
+            shareMenu.remove();
+
+            document.removeEventListener(
+                "click",
+                closeShareMenu
+            );
+
+        }
+
+    };
+
+
+setTimeout(() => {
+
+    document.addEventListener(
+        "click",
+        closeShareMenu
+    );
+
+}, 0);
         }
     );
 
 }
+
 // =========================================
 // LIKE / UNLIKE POST
 // =========================================
@@ -5792,7 +5828,11 @@ if (welcomeShareScreen) {
                 );
 
             }
+// =====================================
+// UPDATE UNREAD COUNT IMMEDIATELY
+// =====================================
 
+await loadChats();
         }
 
     }
@@ -6737,30 +6777,53 @@ async function markMessagesSeen(
 
     try {
 
-        await fetch(
-            API_URL +
-            "/message/seen/" +
-            messageId,
-            {
+        const response =
+            await fetch(
+                API_URL +
+                "/message/seen/" +
+                messageId,
+                {
 
-                method: "PUT",
+                    method: "PUT",
 
-                headers: {
+                    headers: {
 
-                    Authorization:
-                        "Bearer " +
-                        token
+                        Authorization:
+                            "Bearer " +
+                            token
+
+                    }
 
                 }
+            );
 
-            }
-        );
+
+        if (!response.ok) {
+
+            console.log(
+                "Unable to mark message as seen."
+            );
+
+            return;
+
+        }
+
+
+        // =====================================
+        // REFRESH CHAT LIST
+        // REMOVE UNREAD COUNT IMMEDIATELY
+        // =====================================
+
+        await loadChats();
 
     }
 
     catch (err) {
 
-        console.log(err);
+        console.log(
+            "Mark message seen error:",
+            err
+        );
 
     }
 
