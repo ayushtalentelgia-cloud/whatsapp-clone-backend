@@ -3,7 +3,7 @@
 // =========================================
 
 const API_BASE =
-    "https://whatsapp-clone-backend-b5o7.onrender.com/api/users";
+    "https://vibechat-backend-i6xa.onrender.com/api/users";
 
 
 // =========================================
