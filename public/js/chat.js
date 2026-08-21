@@ -3,10 +3,10 @@
 // =========================================
 
 const API_URL =
-    "https://whatsapp-clone-backend-b5o7.onrender.com/api";
+    "https://vibechat-backend-i6xa.onrender.com/api";
 
 const SOCKET_URL =
-    "https://whatsapp-clone-backend-b5o7.onrender.com";
+    "https://vibechat-backend-i6xa.onrender.com";
 
 // =========================================
 // API CONFIG
@@ -3583,7 +3583,515 @@ const attachmentBtn =
     document.getElementById(
         "attachmentBtn"
     );
+// =========================================
+// SHARE FILE MODAL
+// =========================================
 
+const shareFileModal =
+    document.getElementById(
+        "shareFileModal"
+    );
+
+const closeShareFileBtn =
+    document.getElementById(
+        "closeShareFileBtn"
+    );
+
+const cancelShareFileBtn =
+    document.getElementById(
+        "cancelShareFileBtn"
+    );
+
+const sharePhotoVideoBtn =
+    document.getElementById(
+        "sharePhotoVideoBtn"
+    );
+
+const shareDocumentBtn =
+    document.getElementById(
+        "shareDocumentBtn"
+    );
+
+const shareAudioBtn =
+    document.getElementById(
+        "shareAudioBtn"
+    );
+
+const shareOtherFileBtn =
+    document.getElementById(
+        "shareOtherFileBtn"
+    );
+
+const sharePhotoVideoInput =
+    document.getElementById(
+        "sharePhotoVideoInput"
+    );
+
+const shareDocumentInput =
+    document.getElementById(
+        "shareDocumentInput"
+    );
+
+const shareAudioInput =
+    document.getElementById(
+        "shareAudioInput"
+    );
+
+const shareOtherFileInput =
+    document.getElementById(
+        "shareOtherFileInput"
+    );
+
+const shareFilePreview =
+    document.getElementById(
+        "shareFilePreview"
+    );
+
+const shareFileName =
+    document.getElementById(
+        "shareFileName"
+    );
+
+const shareFileSize =
+    document.getElementById(
+        "shareFileSize"
+    );
+
+const shareFilePreviewIcon =
+    document.getElementById(
+        "shareFilePreviewIcon"
+    );
+
+const removeShareFileBtn =
+    document.getElementById(
+        "removeShareFileBtn"
+    );
+
+const continueShareFileBtn =
+    document.getElementById(
+        "continueShareFileBtn"
+    );
+
+
+// =========================================
+// SELECTED FILE
+// =========================================
+
+let selectedShareFile = null;
+
+
+// =========================================
+// OPEN SHARE FILE MODAL
+// =========================================
+
+function openShareFileModal() {
+
+    if (!shareFileModal) {
+        return;
+    }
+
+    shareFileModal.classList.add(
+        "active"
+    );
+
+}
+
+
+// =========================================
+// CLOSE SHARE FILE MODAL
+// =========================================
+
+function closeShareFileModal() {
+
+    if (!shareFileModal) {
+        return;
+    }
+
+    shareFileModal.classList.remove(
+        "active"
+    );
+
+    selectedShareFile =
+        null;
+
+    if (shareFilePreview) {
+
+        shareFilePreview.style.display =
+            "none";
+
+    }
+
+    if (continueShareFileBtn) {
+
+        continueShareFileBtn.disabled =
+            true;
+
+    }
+
+}
+
+
+// =========================================
+// FILE SIZE
+// =========================================
+
+function formatShareFileSize(
+    bytes
+) {
+
+    if (!bytes) {
+        return "0 KB";
+    }
+
+    if (bytes < 1024) {
+
+        return bytes + " B";
+
+    }
+
+    if (bytes < 1024 * 1024) {
+
+        return (
+            (bytes / 1024)
+                .toFixed(1) +
+            " KB"
+        );
+
+    }
+
+    return (
+        (bytes / (1024 * 1024))
+            .toFixed(1) +
+        " MB"
+    );
+
+}
+
+
+// =========================================
+// SHOW SELECTED FILE
+// =========================================
+
+function handleShareFileSelect(
+    file
+) {
+
+    if (!file) {
+        return;
+    }
+
+    selectedShareFile =
+        file;
+
+
+    if (shareFileName) {
+
+        shareFileName.innerText =
+            file.name;
+
+    }
+
+
+    if (shareFileSize) {
+
+        shareFileSize.innerText =
+            formatShareFileSize(
+                file.size
+            );
+
+    }
+
+
+    if (shareFilePreviewIcon) {
+
+        let icon =
+            "fa-file";
+
+        if (
+            file.type.startsWith(
+                "image/"
+            )
+        ) {
+
+            icon =
+                "fa-file-image";
+
+        }
+        else if (
+            file.type.startsWith(
+                "video/"
+            )
+        ) {
+
+            icon =
+                "fa-file-video";
+
+        }
+        else if (
+            file.type.startsWith(
+                "audio/"
+            )
+        ) {
+
+            icon =
+                "fa-file-audio";
+
+        }
+        else if (
+            file.type.includes(
+                "pdf"
+            )
+        ) {
+
+            icon =
+                "fa-file-pdf";
+
+        }
+
+
+        shareFilePreviewIcon.innerHTML = `
+
+            <i class="fas ${icon}"></i>
+
+        `;
+
+    }
+
+
+    if (shareFilePreview) {
+
+        shareFilePreview.style.display =
+            "flex";
+
+    }
+
+
+    if (continueShareFileBtn) {
+
+        continueShareFileBtn.disabled =
+            false;
+
+    }
+
+}
+
+
+// =========================================
+// PHOTO / VIDEO
+// =========================================
+
+if (sharePhotoVideoBtn) {
+
+    sharePhotoVideoBtn.addEventListener(
+        "click",
+        () => {
+
+            sharePhotoVideoInput.click();
+
+        }
+    );
+
+}
+
+
+if (sharePhotoVideoInput) {
+
+    sharePhotoVideoInput.addEventListener(
+        "change",
+        () => {
+
+            handleShareFileSelect(
+                sharePhotoVideoInput.files[0]
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// DOCUMENT
+// =========================================
+
+if (shareDocumentBtn) {
+
+    shareDocumentBtn.addEventListener(
+        "click",
+        () => {
+
+            shareDocumentInput.click();
+
+        }
+    );
+
+}
+
+
+if (shareDocumentInput) {
+
+    shareDocumentInput.addEventListener(
+        "change",
+        () => {
+
+            handleShareFileSelect(
+                shareDocumentInput.files[0]
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// AUDIO
+// =========================================
+
+if (shareAudioBtn) {
+
+    shareAudioBtn.addEventListener(
+        "click",
+        () => {
+
+            shareAudioInput.click();
+
+        }
+    );
+
+}
+
+
+if (shareAudioInput) {
+
+    shareAudioInput.addEventListener(
+        "change",
+        () => {
+
+            handleShareFileSelect(
+                shareAudioInput.files[0]
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// OTHER FILE
+// =========================================
+
+if (shareOtherFileBtn) {
+
+    shareOtherFileBtn.addEventListener(
+        "click",
+        () => {
+
+            shareOtherFileInput.click();
+
+        }
+    );
+
+}
+
+
+if (shareOtherFileInput) {
+
+    shareOtherFileInput.addEventListener(
+        "change",
+        () => {
+
+            handleShareFileSelect(
+                shareOtherFileInput.files[0]
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// REMOVE SELECTED FILE
+// =========================================
+
+if (removeShareFileBtn) {
+
+    removeShareFileBtn.addEventListener(
+        "click",
+        () => {
+
+            selectedShareFile =
+                null;
+
+            if (shareFilePreview) {
+
+                shareFilePreview.style.display =
+                    "none";
+
+            }
+
+            if (continueShareFileBtn) {
+
+                continueShareFileBtn.disabled =
+                    true;
+
+            }
+
+        }
+    );
+
+}
+
+
+// =========================================
+// CLOSE BUTTONS
+// =========================================
+
+if (closeShareFileBtn) {
+
+    closeShareFileBtn.addEventListener(
+        "click",
+        closeShareFileModal
+    );
+
+}
+
+
+if (cancelShareFileBtn) {
+
+    cancelShareFileBtn.addEventListener(
+        "click",
+        closeShareFileModal
+    );
+
+}
+
+
+// =========================================
+// CLICK OUTSIDE
+// =========================================
+
+if (shareFileModal) {
+
+    shareFileModal.addEventListener(
+        "click",
+        (event) => {
+
+            if (
+                event.target ===
+                shareFileModal
+            ) {
+
+                closeShareFileModal();
+
+            }
+
+        }
+    );
+
+}
 const fileInput =
     document.getElementById(
         "fileInput"
@@ -3947,7 +4455,40 @@ function openProfileImage(
     );
 
 }
+// =========================================
+// OPEN CHAT IMAGE
+// =========================================
 
+function openChatImage(
+    imageSrc
+) {
+
+    if (!imageSrc) {
+        return;
+    }
+
+
+    if (!imageViewer) {
+
+        createImageViewer();
+
+    }
+
+
+    imageViewerImg.src =
+        imageSrc;
+
+
+    imageViewer.classList.add(
+        "chat-image-viewer"
+    );
+
+
+    imageViewer.classList.add(
+        "active"
+    );
+
+}
 
 // =========================================
 // CLOSE PROFILE IMAGE
@@ -3957,9 +4498,16 @@ function closeProfileImage() {
 
     if (!imageViewer) return;
 
+
     imageViewer.classList.remove(
         "active"
     );
+
+
+    imageViewer.classList.remove(
+        "chat-image-viewer"
+    );
+
 
     if (imageViewerImg) {
 
@@ -4313,7 +4861,90 @@ function loadCurrentUser() {
     }
 
 }
+// =========================================
+// VIBECHAT TOAST MESSAGE
+// =========================================
 
+function showVibeToast(message, type = "success") {
+
+    const oldToast =
+        document.querySelector(".vibe-toast");
+
+    if (oldToast) {
+        oldToast.remove();
+    }
+
+    const toast =
+        document.createElement("div");
+
+    toast.className =
+        `vibe-toast vibe-toast-${type}`;
+
+    const icon =
+        type === "success"
+            ? "fa-check-circle"
+            : "fa-circle-exclamation";
+
+    toast.innerHTML = `
+
+        <div class="vibe-toast-icon">
+            <i class="fas ${icon}"></i>
+        </div>
+
+        <div class="vibe-toast-content">
+
+            <strong>
+                ${type === "success" ? "Success" : "Error"}
+            </strong>
+
+            <span>
+                ${message}
+            </span>
+
+        </div>
+
+        <button
+            type="button"
+            class="vibe-toast-close"
+        >
+            <i class="fas fa-times"></i>
+        </button>
+
+    `;
+
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        toast.classList.add("show");
+    });
+
+    const closeToast = () => {
+
+        toast.classList.remove("show");
+
+        setTimeout(() => {
+
+            if (toast) {
+                toast.remove();
+            }
+
+        }, 300);
+
+    };
+
+    toast
+        .querySelector(".vibe-toast-close")
+        .addEventListener(
+            "click",
+            closeToast
+        );
+
+    setTimeout(
+        closeToast,
+        3000
+    );
+
+}
 // =========================================
 // SOCKET EVENTS
 // =========================================
@@ -5156,13 +5787,8 @@ function renderMessage(message) {
         ).toLocaleTimeString(
             [],
             {
-
-                hour:
-                    "2-digit",
-
-                minute:
-                    "2-digit"
-
+                hour: "2-digit",
+                minute: "2-digit"
             }
         );
 
@@ -5178,16 +5804,168 @@ function renderMessage(message) {
 
 
     // =====================================
+    // MESSAGE CONTENT
+    // =====================================
+
+    let messageContent = "";
+
+
+    // =====================================
+    // IMAGE
+    // =====================================
+
+    if (
+        message.type === "image" &&
+        message.fileUrl
+    ) {
+
+        messageContent = `
+
+    <div class="message-file">
+
+        <img
+            src="${message.fileUrl}"
+            class="message-image"
+            alt="${message.fileName || "Image"}"
+            loading="lazy"
+        >
+
+    </div>
+
+`;
+
+    }
+
+
+    // =====================================
+    // VIDEO
+    // =====================================
+
+    else if (
+        message.type === "video" &&
+        message.fileUrl
+    ) {
+
+        messageContent = `
+
+            <div class="message-file">
+
+                <video
+                    src="${message.fileUrl}"
+                    class="message-video"
+                    controls
+                    playsinline
+                ></video>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // =====================================
+    // AUDIO
+    // =====================================
+
+    else if (
+        message.type === "audio" &&
+        message.fileUrl
+    ) {
+
+        messageContent = `
+
+            <div class="message-file">
+
+                <audio
+                    src="${message.fileUrl}"
+                    class="message-audio"
+                    controls
+                ></audio>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // =====================================
+    // OTHER FILE
+    // =====================================
+
+    else if (
+        message.type === "file" &&
+        message.fileUrl
+    ) {
+
+        messageContent = `
+
+            <a
+                href="${message.fileUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="message-file-card"
+            >
+
+                <div class="message-file-icon">
+
+                    <i class="fas fa-file"></i>
+
+                </div>
+
+
+                <div class="message-file-info">
+
+                    <strong>
+                        ${message.fileName || "File"}
+                    </strong>
+
+                    <span>
+                        Open file
+                    </span>
+
+                </div>
+
+
+                <i class="fas fa-download message-file-download"></i>
+
+            </a>
+
+        `;
+
+    }
+
+
+    // =====================================
+    // NORMAL TEXT
+    // =====================================
+
+    else if (
+        message.content
+    ) {
+
+        messageContent = `
+
+            <div class="message-text">
+
+                ${message.content}
+
+            </div>
+
+        `;
+
+    }
+
+
+    // =====================================
     // MESSAGE HTML
     // =====================================
 
     div.innerHTML = `
 
-        <div class="message-text">
+        ${messageContent}
 
-            ${message.content}
-
-        </div>
 
         <div class="message-meta">
 
@@ -5202,6 +5980,41 @@ function renderMessage(message) {
         </div>
 
     `;
+    // =====================================
+    // OPEN IMAGE ON CLICK
+    // =====================================
+
+    if (
+        message.type === "image" &&
+        message.fileUrl
+    ) {
+
+        const messageImage =
+            div.querySelector(
+                ".message-image"
+            );
+
+
+        if (messageImage) {
+
+            messageImage.style.cursor =
+                "pointer";
+
+
+            messageImage.addEventListener(
+                "click",
+                () => {
+
+                    openChatImage(
+    message.fileUrl
+);
+
+                }
+            );
+
+        }
+
+    }
 
 
     messages.appendChild(
@@ -6467,7 +7280,7 @@ if (
 
 }
 
-// =========================================
+/// =========================================
 // ATTACHMENT
 // =========================================
 
@@ -6476,11 +7289,230 @@ if (
     fileInput
 ) {
 
+    // =====================================
+    // OPEN FILE PICKER
+    // =====================================
+
     attachmentBtn.addEventListener(
         "click",
         () => {
 
+            if (!selectedChat) {
+
+                showVibeToast(
+                    "Please open a chat first.",
+                    "error"
+                );
+
+                return;
+
+            }
+
             fileInput.click();
+
+        }
+    );
+
+
+    // =====================================
+    // FILE SELECTED
+    // =====================================
+
+    fileInput.addEventListener(
+        "change",
+        async () => {
+
+            const file =
+                fileInput.files[0];
+
+
+            if (!file) {
+
+                return;
+
+            }
+
+
+            // =================================
+            // CHECK CHAT
+            // =================================
+
+            if (!selectedChat) {
+
+                showVibeToast(
+                    "Please open a chat first.",
+                    "error"
+                );
+
+                fileInput.value = "";
+
+                return;
+
+            }
+
+
+            // =================================
+            // FILE SIZE
+            // =================================
+
+            const maxSize =
+                25 * 1024 * 1024;
+
+
+            if (
+                file.size >
+                maxSize
+            ) {
+
+                showVibeToast(
+                    "File size must be less than 25 MB.",
+                    "error"
+                );
+
+                fileInput.value = "";
+
+                return;
+
+            }
+
+
+            // =================================
+            // SEND FILE
+            // =================================
+
+            try {
+
+                attachmentBtn.disabled =
+                    true;
+
+
+                attachmentBtn.innerHTML = `
+
+                    <i class="fas fa-spinner fa-spin"></i>
+
+                `;
+
+
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "file",
+                    file
+                );
+
+
+                formData.append(
+                    "chatId",
+                    selectedChat._id
+                );
+
+
+                formData.append(
+                    "content",
+                    ""
+                );
+
+
+                const response =
+                    await fetch(
+                        API_URL + "/message",
+                        {
+
+                            method:
+                                "POST",
+
+                            headers: {
+
+                                Authorization:
+                                    "Bearer " +
+                                    token
+
+                            },
+
+                            body:
+                                formData
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to send file."
+                    );
+
+                }
+
+
+                // =================================
+                // RENDER MESSAGE
+                // =================================
+
+                renderMessage(
+                    data.message
+                );
+
+
+                scrollBottom();
+
+
+                refreshChats();
+
+
+                showVibeToast(
+                    "File sent successfully!",
+                    "success"
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "File upload error:",
+                    error
+                );
+
+
+                showVibeToast(
+                    error.message ||
+                    "Unable to send file.",
+                    "error"
+                );
+
+            }
+
+            finally {
+
+                attachmentBtn.disabled =
+                    false;
+
+
+                attachmentBtn.innerHTML = `
+
+                    <i class="fas fa-paperclip"></i>
+
+                `;
+
+
+                // IMPORTANT:
+                // Same file can be selected again
+
+                fileInput.value =
+                    "";
+
+            }
 
         }
     );
@@ -8060,6 +9092,1257 @@ function openCaptionModal() {
                 "keydown",
                 escapeHandler
             );
+
+        }
+    );
+
+}
+// =========================================
+// WELCOME SHARE CONTACT MODAL
+// =========================================
+
+const shareContactModal =
+    document.getElementById(
+        "shareContactModal"
+    );
+
+const shareContactList =
+    document.getElementById(
+        "shareContactList"
+    );
+
+const shareContactSearch =
+    document.getElementById(
+        "shareContactSearch"
+    );
+
+const shareContactType =
+    document.getElementById(
+        "shareContactType"
+    );
+
+const closeShareContactBtn =
+    document.getElementById(
+        "closeShareContactBtn"
+    );
+
+const cancelShareContactBtn =
+    document.getElementById(
+        "cancelShareContactBtn"
+    );
+
+const confirmShareContactBtn =
+    document.getElementById(
+        "confirmShareContactBtn"
+    );
+
+const welcomeFileBtn =
+    document.getElementById(
+        "welcomeFileBtn"
+    );
+
+const welcomeLinkBtn =
+    document.getElementById(
+        "welcomeLinkBtn"
+    );
+
+const welcomeMessageBtn =
+    document.getElementById(
+        "welcomeMessageBtn"
+    );
+
+
+let shareMode =
+    null;
+
+let selectedShareContact =
+    null;
+
+let shareContacts =
+    [];
+
+
+// =========================================
+// OPEN SHARE CONTACT MODAL
+// =========================================
+
+function openShareContactModal(
+    mode
+) {
+
+    shareMode =
+        mode;
+
+    selectedShareContact =
+        null;
+
+    if (!shareContactModal) {
+        return;
+    }
+
+
+    // UPDATE TITLE
+
+    if (shareContactType) {
+
+        if (mode === "file") {
+
+            shareContactType.innerText =
+                "Choose a contact to share a file";
+
+        }
+        else if (mode === "link") {
+
+            shareContactType.innerText =
+                "Choose a contact to share a link";
+
+        }
+        else {
+
+            shareContactType.innerText =
+                "Choose a contact to send a message";
+
+        }
+
+    }
+
+
+    if (shareContactSearch) {
+
+        shareContactSearch.value =
+            "";
+
+    }
+
+
+    if (confirmShareContactBtn) {
+
+        confirmShareContactBtn.disabled =
+            true;
+
+    }
+
+
+    shareContactModal.classList.add(
+        "active"
+    );
+
+
+    loadShareContacts();
+
+}
+
+
+// =========================================
+// CLOSE MODAL
+// =========================================
+
+function closeShareContactModal() {
+
+    if (!shareContactModal) {
+        return;
+    }
+
+    shareContactModal.classList.remove(
+        "active"
+    );
+
+    selectedShareContact =
+        null;
+
+    shareMode =
+        null;
+
+}
+
+
+// =========================================
+// LOAD CONTACTS
+// =========================================
+
+async function loadShareContacts() {
+
+    if (!shareContactList) {
+        return;
+    }
+
+
+    shareContactList.innerHTML = `
+
+        <div class="share-contact-empty">
+
+            <i class="fas fa-spinner fa-spin"></i>
+
+            Loading contacts...
+
+        </div>
+
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL + "/chat",
+                {
+
+                    headers: {
+
+                        Authorization:
+                            "Bearer " +
+                            token
+
+                    }
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load contacts."
+            );
+
+        }
+
+
+        shareContacts =
+            [];
+
+
+        data.chats.forEach(
+            chat => {
+
+                const otherUser =
+                    chat.users.find(
+                        user =>
+                            user._id.toString() !==
+                            currentUser._id.toString()
+                    );
+
+
+                if (otherUser) {
+
+                    shareContacts.push({
+
+                        user:
+                            otherUser,
+
+                        chat:
+                            chat
+
+                    });
+
+                }
+
+            }
+        );
+
+
+        renderShareContacts(
+            shareContacts
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Share contacts error:",
+            error
+        );
+
+
+        shareContactList.innerHTML = `
+
+            <div class="share-contact-empty">
+
+                <i class="fas fa-user-slash"></i>
+
+                Unable to load contacts.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// =========================================
+// RENDER CONTACTS
+// =========================================
+
+function renderShareContacts(
+    contacts
+) {
+
+    if (!shareContactList) {
+        return;
+    }
+
+
+    shareContactList.innerHTML =
+        "";
+
+
+    if (
+        !contacts ||
+        contacts.length === 0
+    ) {
+
+        shareContactList.innerHTML = `
+
+            <div class="share-contact-empty">
+
+                <i class="fas fa-user-group"></i>
+
+                No contacts found.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    contacts.forEach(
+        item => {
+
+            const user =
+                item.user;
+
+
+            const contact =
+                document.createElement(
+                    "button"
+                );
+
+
+            contact.type =
+                "button";
+
+            contact.className =
+                "share-contact-item";
+
+
+            const firstLetter =
+                user.name
+                    ? user.name
+                        .charAt(0)
+                        .toUpperCase()
+                    : "?";
+
+
+            const avatar =
+                user.profilePic
+
+                    ? `
+                        <img
+                            src="${user.profilePic}"
+                            alt="${user.name}"
+                        >
+                      `
+
+                    : firstLetter;
+
+
+            contact.innerHTML = `
+
+                <div class="share-contact-avatar">
+
+                    ${avatar}
+
+                </div>
+
+
+                <div class="share-contact-info">
+
+                    <strong>
+                        ${user.name || "Unknown User"}
+                    </strong>
+
+                    <span>
+                        ${user.phone || "VibeChat Contact"}
+                    </span>
+
+                </div>
+
+
+                <div class="share-contact-check">
+
+                    <i class="fas fa-check"></i>
+
+                </div>
+
+            `;
+
+
+            contact.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(
+                            ".share-contact-item"
+                        )
+                        .forEach(
+                            item => {
+
+                                item.classList.remove(
+                                    "selected"
+                                );
+
+                            }
+                        );
+
+
+                    contact.classList.add(
+                        "selected"
+                    );
+
+
+                    selectedShareContact =
+                        item;
+
+
+                    if (
+                        confirmShareContactBtn
+                    ) {
+
+                        confirmShareContactBtn.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+
+            shareContactList.appendChild(
+                contact
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// SEARCH CONTACTS
+// =========================================
+
+if (shareContactSearch) {
+
+    shareContactSearch.addEventListener(
+        "input",
+        () => {
+
+            const value =
+                shareContactSearch.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const filtered =
+                shareContacts.filter(
+                    item => {
+
+                        const name =
+                            item.user?.name ||
+                            "";
+
+                        const phone =
+                            item.user?.phone ||
+                            "";
+
+
+                        return (
+                            name
+                                .toLowerCase()
+                                .includes(value) ||
+
+                            phone
+                                .toLowerCase()
+                                .includes(value)
+                        );
+
+                    }
+                );
+
+
+            renderShareContacts(
+                filtered
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// BUTTONS
+// =========================================
+
+if (welcomeFileBtn) {
+
+    welcomeFileBtn.addEventListener(
+        "click",
+        () => {
+
+            openShareFileModal();
+
+        }
+    );
+
+}
+
+
+if (welcomeLinkBtn) {
+
+    welcomeLinkBtn.addEventListener(
+        "click",
+        () => {
+
+            openShareContactModal(
+                "link"
+            );
+
+        }
+    );
+
+}
+
+
+if (welcomeMessageBtn) {
+
+    welcomeMessageBtn.addEventListener(
+        "click",
+        () => {
+
+            openShareContactModal(
+                "message"
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// CLOSE BUTTONS
+// =========================================
+
+if (closeShareContactBtn) {
+
+    closeShareContactBtn.addEventListener(
+        "click",
+        closeShareContactModal
+    );
+
+}
+
+
+if (cancelShareContactBtn) {
+
+    cancelShareContactBtn.addEventListener(
+        "click",
+        closeShareContactModal
+    );
+
+}
+
+
+// =========================================
+// CLICK OUTSIDE MODAL
+// =========================================
+
+if (shareContactModal) {
+
+    shareContactModal.addEventListener(
+        "click",
+        (event) => {
+
+            if (
+                event.target ===
+                shareContactModal
+            ) {
+
+                closeShareContactModal();
+
+            }
+
+        }
+    );
+
+}
+
+/// =========================================
+// CONTINUE WITH SELECTED FILE
+// =========================================
+
+if (continueShareFileBtn) {
+
+    continueShareFileBtn.addEventListener(
+        "click",
+        () => {
+
+            if (!selectedShareFile) {
+
+                showVibeToast(
+                    "Please select a file first.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            // =====================================
+            // HIDE FILE MODAL
+            // DO NOT RESET SELECTED FILE
+            // =====================================
+
+            if (shareFileModal) {
+
+                shareFileModal.classList.remove(
+                    "active"
+                );
+
+            }
+
+
+            // =====================================
+            // OPEN CONTACT MODAL
+            // =====================================
+
+            openShareContactModal(
+                "file"
+            );
+
+        }
+    );
+
+}
+// =========================================
+// SEND MESSAGE FROM WELCOME SHARE
+// =========================================
+
+if (confirmShareContactBtn) {
+
+    confirmShareContactBtn.addEventListener(
+        "click",
+        async () => {
+
+            // =====================================
+            // CHECK CONTACT
+            // =====================================
+
+            if (!selectedShareContact) {
+
+                return;
+
+            }
+
+// =====================================
+// FILE SHARE MODE
+// =====================================
+
+if (shareMode === "file") {
+
+    const selectedChatForShare =
+        selectedShareContact.chat;
+
+
+    if (!selectedChatForShare) {
+
+        showVibeToast(
+            "Unable to open this contact.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!selectedShareFile) {
+
+        showVibeToast(
+            "Please select a file first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        confirmShareContactBtn.disabled =
+            true;
+
+
+        confirmShareContactBtn.innerHTML = `
+
+            <i class="fas fa-spinner fa-spin"></i>
+
+            Sending...
+
+        `;
+
+
+        // =====================================
+        // CREATE FORM DATA
+        // =====================================
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "file",
+            selectedShareFile
+        );
+
+
+        formData.append(
+            "chatId",
+            selectedChatForShare._id
+        );
+
+
+        formData.append(
+            "content",
+            ""
+        );
+
+
+        // =====================================
+        // SEND FILE
+        // =====================================
+
+        const response =
+            await fetch(
+                API_URL + "/message",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        Authorization:
+                            "Bearer " +
+                            token
+
+                    },
+
+                    body:
+                        formData
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to send file."
+            );
+
+        }
+
+
+        // =====================================
+        // SUCCESS
+        // =====================================
+
+        closeShareContactModal();
+
+        refreshChats();
+
+
+        showVibeToast(
+            "File shared successfully!",
+            "success"
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Welcome share file error:",
+            error
+        );
+
+
+        showVibeToast(
+            error.message ||
+            "Unable to send file.",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        confirmShareContactBtn.disabled =
+            false;
+
+        confirmShareContactBtn.innerHTML = `
+
+            <i class="fas fa-share"></i>
+
+            Share
+
+        `;
+
+    }
+
+
+    return;
+
+}
+            // =====================================
+            // ONLY MESSAGE MODE
+            // =====================================
+
+            if (shareMode !== "message") {
+
+                return;
+
+            }
+
+
+            const selectedChatForShare =
+                selectedShareContact.chat;
+
+
+            if (!selectedChatForShare) {
+
+                alert(
+                    "Unable to open this contact."
+                );
+
+                return;
+
+            }
+
+
+            // =====================================
+// CUSTOM MESSAGE MODAL
+// =====================================
+
+const messageModal =
+    document.createElement("div");
+
+messageModal.className =
+    "welcome-message-modal";
+
+
+messageModal.innerHTML = `
+
+    <div class="welcome-message-overlay"></div>
+
+    <div class="welcome-message-dialog">
+
+        <button
+            type="button"
+            class="welcome-message-close"
+            aria-label="Close"
+        >
+            <i class="fas fa-xmark"></i>
+        </button>
+
+
+        <div class="welcome-message-icon">
+
+            <i class="fas fa-comment-dots"></i>
+
+        </div>
+
+
+        <h2>
+            Send a Message
+        </h2>
+
+
+        <p class="welcome-message-subtitle">
+
+            Send a message to
+            <strong>
+                ${
+                    selectedShareContact.user?.name ||
+                    "this contact"
+                }
+            </strong>
+
+        </p>
+
+
+        <textarea
+            class="welcome-message-input"
+            placeholder="Type your message..."
+            maxlength="1000"
+            rows="4"
+        ></textarea>
+
+
+        <div class="welcome-message-footer">
+
+            <span class="welcome-message-counter">
+                0 / 1000
+            </span>
+
+
+            <div class="welcome-message-actions">
+
+                <button
+                    type="button"
+                    class="welcome-message-cancel"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="button"
+                    class="welcome-message-send"
+                >
+
+                    <i class="fas fa-paper-plane"></i>
+
+                    Send
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+`;
+
+
+document.body.appendChild(
+    messageModal
+);
+
+
+// =====================================
+// MESSAGE ELEMENTS
+// =====================================
+
+const messageInputModal =
+    messageModal.querySelector(
+        ".welcome-message-input"
+    );
+
+
+const messageCounter =
+    messageModal.querySelector(
+        ".welcome-message-counter"
+    );
+
+
+const messageSendBtn =
+    messageModal.querySelector(
+        ".welcome-message-send"
+    );
+
+
+const messageCancelBtn =
+    messageModal.querySelector(
+        ".welcome-message-cancel"
+    );
+
+
+const messageCloseBtn =
+    messageModal.querySelector(
+        ".welcome-message-close"
+    );
+
+
+// =====================================
+// FOCUS INPUT
+// =====================================
+
+setTimeout(
+    () => {
+
+        messageInputModal.focus();
+
+    },
+    100
+);
+
+
+// =====================================
+// CHARACTER COUNTER
+// =====================================
+
+messageInputModal.addEventListener(
+    "input",
+    () => {
+
+        messageCounter.innerText =
+            `${messageInputModal.value.length} / 1000`;
+
+    }
+);
+
+
+// =====================================
+// CLOSE MESSAGE MODAL
+// =====================================
+
+const closeMessageModal =
+    () => {
+
+        messageModal.remove();
+
+    };
+
+
+// =====================================
+// CANCEL
+// =====================================
+
+messageCancelBtn.addEventListener(
+    "click",
+    closeMessageModal
+);
+
+
+// =====================================
+// CLOSE BUTTON
+// =====================================
+
+messageCloseBtn.addEventListener(
+    "click",
+    closeMessageModal
+);
+
+
+// =====================================
+// OVERLAY CLICK
+// =====================================
+
+const messageOverlay =
+    messageModal.querySelector(
+        ".welcome-message-overlay"
+    );
+
+
+messageOverlay.addEventListener(
+    "click",
+    closeMessageModal
+);
+
+
+// =====================================
+// SEND MESSAGE
+// =====================================
+
+messageSendBtn.addEventListener(
+    "click",
+    async () => {
+
+        const content =
+            messageInputModal.value.trim();
+
+
+        if (!content) {
+
+            messageInputModal.focus();
+
+            return;
+
+        }
+
+
+        const selectedChatForShare =
+            selectedShareContact.chat;
+
+
+        if (!selectedChatForShare) {
+
+            alert(
+                "Unable to open this contact."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            messageSendBtn.disabled =
+                true;
+
+
+            messageSendBtn.innerHTML = `
+
+                <i class="fas fa-spinner fa-spin"></i>
+
+                Sending...
+
+            `;
+
+
+            const response =
+                await fetch(
+                    API_URL + "/message",
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Authorization":
+                                "Bearer " +
+                                token
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                content:
+                                    content,
+
+                                chatId:
+                                    selectedChatForShare._id
+
+                            })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to send message."
+                );
+
+            }
+
+
+            // =================================
+            // SUCCESS
+            // =================================
+
+            closeMessageModal();
+
+            closeShareContactModal();
+
+            refreshChats();
+
+
+            showVibeToast(
+    "Message sent successfully!",
+    "success"
+);
+        }
+
+        catch (error) {
+
+            console.error(
+                "Welcome share message error:",
+                error
+            );
+
+
+            showVibeToast(
+    error.message ||
+    "Unable to send message.",
+    "error"
+);
+
+
+            messageSendBtn.disabled =
+                false;
+
+
+            messageSendBtn.innerHTML = `
+
+                <i class="fas fa-paper-plane"></i>
+
+                Send
+
+            `;
+
+        }
+
+    }
+);
+
+
+// =====================================
+// ENTER TO SEND
+// =====================================
+
+messageInputModal.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            messageSendBtn.click();
+
+        }
+
+    }
+);
 
         }
     );

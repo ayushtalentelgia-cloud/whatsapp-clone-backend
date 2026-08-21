@@ -841,8 +841,383 @@ title="Menu"
         </button>
 
     </div>
+<!-- =========================================
+     SHARE FILE MODAL
+========================================= -->
+
+<div
+    id="shareFileModal"
+    class="share-file-modal"
+>
+
+    <div class="share-file-modal-content">
+
+        <!-- HEADER -->
+
+        <div class="share-file-header">
+
+            <div>
+
+                <div class="share-file-title">
+
+                    <div class="share-file-title-icon">
+
+                        <i class="fas fa-paperclip"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Share a File
+                        </h2>
+
+                        <p>
+                            Choose something to share
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
 
 
+            <button
+                type="button"
+                id="closeShareFileBtn"
+                class="share-file-close"
+            >
+
+                <i class="fas fa-times"></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- FILE OPTIONS -->
+
+        <div class="share-file-options">
+
+
+            <!-- PHOTO / VIDEO -->
+
+            <button
+                type="button"
+                class="share-file-option"
+                id="sharePhotoVideoBtn"
+            >
+
+                <div class="share-file-option-icon media">
+
+                    <i class="fas fa-images"></i>
+
+                </div>
+
+                <div class="share-file-option-text">
+
+                    <strong>
+                        Photos & Videos
+                    </strong>
+
+                    <span>
+                        Share images and videos
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </button>
+
+
+            <!-- DOCUMENT -->
+
+            <button
+                type="button"
+                class="share-file-option"
+                id="shareDocumentBtn"
+            >
+
+                <div class="share-file-option-icon document">
+
+                    <i class="fas fa-file-lines"></i>
+
+                </div>
+
+                <div class="share-file-option-text">
+
+                    <strong>
+                        Documents
+                    </strong>
+
+                    <span>
+                        PDF, Word, Excel and more
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </button>
+
+
+            <!-- AUDIO -->
+
+            <button
+                type="button"
+                class="share-file-option"
+                id="shareAudioBtn"
+            >
+
+                <div class="share-file-option-icon audio">
+
+                    <i class="fas fa-music"></i>
+
+                </div>
+
+                <div class="share-file-option-text">
+
+                    <strong>
+                        Audio
+                    </strong>
+
+                    <span>
+                        Share audio files
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </button>
+
+
+            <!-- OTHER -->
+
+            <button
+                type="button"
+                class="share-file-option"
+                id="shareOtherFileBtn"
+            >
+
+                <div class="share-file-option-icon other">
+
+                    <i class="fas fa-folder-open"></i>
+
+                </div>
+
+                <div class="share-file-option-text">
+
+                    <strong>
+                        Other Files
+                    </strong>
+
+                    <span>
+                        ZIP and other file types
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- SELECTED FILE PREVIEW -->
+
+        <div
+            id="shareFilePreview"
+            class="share-file-preview"
+            style="display:none"
+        >
+
+            <div
+                id="shareFilePreviewIcon"
+                class="share-file-preview-icon"
+            >
+
+                <i class="fas fa-file"></i>
+
+            </div>
+
+
+            <div class="share-file-preview-info">
+
+                <strong
+                    id="shareFileName"
+                >
+                    File name
+                </strong>
+
+                <span
+                    id="shareFileSize"
+                >
+                    0 KB
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="removeShareFileBtn"
+                class="remove-share-file-btn"
+                title="Remove file"
+            >
+
+                <i class="fas fa-times"></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- HIDDEN INPUTS -->
+
+        <input
+            type="file"
+            id="sharePhotoVideoInput"
+            hidden
+            accept="image/*,video/*"
+        >
+
+        <input
+            type="file"
+            id="shareDocumentInput"
+            hidden
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.txt"
+        >
+
+        <input
+            type="file"
+            id="shareAudioInput"
+            hidden
+            accept="audio/*"
+        >
+
+        <input
+            type="file"
+            id="shareOtherFileInput"
+            hidden
+            accept="*/*"
+        >
+
+
+        <!-- FOOTER -->
+
+        <div class="share-file-footer">
+
+            <button
+                type="button"
+                id="cancelShareFileBtn"
+                class="share-file-cancel"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                type="button"
+                id="continueShareFileBtn"
+                class="share-file-continue"
+                disabled
+            >
+
+                Continue
+
+                <i class="fas fa-arrow-right"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- =========================================
+     SHARE CONTACT MODAL
+========================================= -->
+
+<div
+    id="shareContactModal"
+    class="share-contact-modal"
+>
+
+    <div class="share-contact-modal-content">
+
+        <div class="share-contact-header">
+
+            <div>
+                <h2>Share with</h2>
+                <p id="shareContactType">
+                    Select a contact
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="closeShareContactBtn"
+                class="share-contact-close"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+
+        </div>
+
+
+        <div class="share-contact-search">
+
+            <i class="fas fa-search"></i>
+
+            <input
+                type="text"
+                id="shareContactSearch"
+                placeholder="Search contacts..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div
+            id="shareContactList"
+            class="share-contact-list"
+        >
+
+            <!-- Contacts will appear here -->
+
+        </div>
+
+
+        <div class="share-contact-footer">
+
+            <button
+                type="button"
+                id="cancelShareContactBtn"
+                class="share-cancel-btn"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                id="confirmShareContactBtn"
+                class="share-confirm-btn"
+                disabled
+            >
+                <i class="fas fa-share"></i>
+                Share
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
     <!-- =====================================
          CONTACT HINT
     ====================================== -->
