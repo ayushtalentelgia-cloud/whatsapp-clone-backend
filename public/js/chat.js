@@ -5018,14 +5018,18 @@ loadCurrentUser();
 
 
 // =========================================
-// LOAD CHATS
+// LOAD CHATS + SAVED CONTACTS
 // =========================================
 
 async function loadChats() {
 
     try {
 
-        const res =
+        // =====================================
+        // LOAD EXISTING CHATS
+        // =====================================
+
+        const chatResponse =
             await fetch(
                 API_URL + "/chat",
                 {
@@ -5040,21 +5044,159 @@ async function loadChats() {
                 }
             );
 
-        const data =
-            await res.json();
 
-        if (!data.success) {
+        const chatData =
+            await chatResponse.json();
+
+
+        if (!chatData.success) {
 
             console.log(
-                data.message
+                chatData.message
             );
 
             return;
 
         }
 
+
+        let chats =
+            chatData.chats || [];
+
+
+        // =====================================
+        // LOAD SAVED CONTACTS
+        // =====================================
+
+        const contactResponse =
+            await fetch(
+                API_URL + "/users/contacts",
+                {
+
+                    headers: {
+
+                        Authorization:
+                            "Bearer " + token
+
+                    }
+
+                }
+            );
+
+
+        const contactData =
+            await contactResponse.json();
+
+
+        const contacts =
+            contactData.success
+                ?
+                contactData.contacts || []
+                :
+                [];
+
+
+        // =====================================
+        // GET USERS ALREADY IN CHAT LIST
+        // =====================================
+
+        const chatUserIds =
+            new Set();
+
+
+        chats.forEach(
+            chat => {
+
+                const otherUser =
+                    chat.users.find(
+                        user =>
+                            user._id !==
+                            currentUser._id
+                    );
+
+
+                if (otherUser) {
+
+                    chatUserIds.add(
+                        otherUser._id.toString()
+                    );
+
+                }
+
+            }
+        );
+
+
+        // =====================================
+        // ADD SAVED CONTACTS
+        // =====================================
+
+        contacts.forEach(
+            contact => {
+
+                const contactUser =
+                    contact.user;
+
+
+                if (!contactUser) {
+
+                    return;
+
+                }
+
+
+                const contactId =
+                    contactUser._id.toString();
+
+
+                // Don't duplicate existing chats
+                if (
+                    chatUserIds.has(
+                        contactId
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                // Temporary chat object
+                chats.push({
+
+                    _id:
+                        "contact_" +
+                        contactId,
+
+                    users: [
+
+                        currentUser,
+
+                        contactUser
+
+                    ],
+
+                    latestMessage:
+                        null,
+
+                    isSavedContact:
+                        true,
+
+                    contactId:
+                        contactId
+
+                });
+
+            }
+        );
+
+
+        // =====================================
+        // RENDER CHAT LIST
+        // =====================================
+
         renderChats(
-            data.chats
+            chats
         );
 
     }
@@ -5069,6 +5211,7 @@ async function loadChats() {
     }
 
 }
+
 
 // =========================================
 // RENDER CHAT LIST
@@ -5259,33 +5402,133 @@ function renderChats(chats) {
             // =====================================
 
             div.addEventListener(
-                "click",
-                () => {
+    "click",
+    async () => {
 
-                    document
-                        .querySelectorAll(
-                            ".chat-item"
+        document
+            .querySelectorAll(
+                ".chat-item"
+            )
+            .forEach(
+                item =>
+                    item.classList
+                        .remove(
+                            "active"
                         )
-                        .forEach(
-                            item =>
-                                item.classList
-                                    .remove(
-                                        "active"
-                                    )
-                        );
+            );
 
 
-                    div.classList.add(
-                        "active"
+        div.classList.add(
+            "active"
+        );
+
+
+        // =====================================
+        // SAVED CONTACT
+        // =====================================
+
+        if (
+            chat.isSavedContact
+        ) {
+
+            try {
+
+                const response =
+                    await fetch(
+                        API_URL + "/chat",
+                        {
+
+                            method:
+                                "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                Authorization:
+                                    "Bearer " +
+                                    token
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    userId:
+                                        chat.contactId
+
+                                })
+
+                        }
                     );
 
 
-                    openChat(
-                        chat
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to open chat."
                     );
 
                 }
-            );
+
+
+                // =================================
+                // OPEN REAL CHAT
+                // =================================
+
+                openChat(
+                    data.chat
+                );
+
+
+                // =================================
+                // REFRESH LIST
+                // =================================
+
+                loadChats();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Open saved contact error:",
+                    error
+                );
+
+
+                showVibeToast(
+                    error.message ||
+                    "Unable to open chat.",
+                    "error"
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        // =====================================
+        // EXISTING CHAT
+        // =====================================
+
+        openChat(
+            chat
+        );
+
+    }
+);
 
 
             // =====================================
