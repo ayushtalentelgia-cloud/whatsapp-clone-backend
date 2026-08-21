@@ -303,13 +303,38 @@ body{
    FILTERS
 ========================================= */
 
+.filters {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    column-gap: 12px;
+
+    padding: 0 15px 15px;
+
+    background: white;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================
+   FILTERS
+========================================= */
+
 .filters{
 
     display:flex;
 
     gap:10px;
 
-    padding:0 15px 15px;
+    padding:10px 15px 15px;
 
     background:white;
 
@@ -9508,6 +9533,42 @@ a:hover {
 
         padding:
             0 18px 20px;
+
+    }
+
+}
+/* =========================================
+   MOBILE CHAT SCROLL FIX
+========================================= */
+
+@media (max-width: 600px) {
+
+    .chat-section {
+
+        height: 100dvh !important;
+
+        min-height: 0 !important;
+
+    }
+
+
+    .chat-list {
+
+        flex: 1 1 auto !important;
+
+        min-height: 0 !important;
+
+        height: auto !important;
+
+        overflow-y: auto !important;
+
+        overflow-x: hidden !important;
+
+        -webkit-overflow-scrolling: touch;
+
+        overscroll-behavior-y: contain;
+
+        touch-action: pan-y;
 
     }
 
