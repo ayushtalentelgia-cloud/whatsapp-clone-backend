@@ -9613,15 +9613,276 @@ if (welcomeFileBtn) {
 }
 
 
+// =========================================
+// VIBECHAT SHARE LINK
+// =========================================
+
+const shareLinkModal =
+    document.getElementById(
+        "shareLinkModal"
+    );
+
+const closeShareLinkBtn =
+    document.getElementById(
+        "closeShareLinkBtn"
+    );
+
+const cancelShareLinkBtn =
+    document.getElementById(
+        "cancelShareLinkBtn"
+    );
+
+const nativeShareLinkBtn =
+    document.getElementById(
+        "nativeShareLinkBtn"
+    );
+
+const copyShareLinkBtn =
+    document.getElementById(
+        "copyShareLinkBtn"
+    );
+
+const shareLinkUrl =
+    document.getElementById(
+        "shareLinkUrl"
+    );
+
+
+// =========================================
+// OPEN SHARE LINK MODAL
+// =========================================
+
+function openShareLinkModal() {
+
+    if (!shareLinkModal) {
+        return;
+    }
+
+    const url =
+        window.location.origin;
+
+    if (shareLinkUrl) {
+
+        shareLinkUrl.innerText =
+            url;
+
+    }
+
+    shareLinkModal.classList.add(
+        "active"
+    );
+
+}
+
+
+// =========================================
+// CLOSE SHARE LINK MODAL
+// =========================================
+
+function closeShareLinkModal() {
+
+    if (!shareLinkModal) {
+        return;
+    }
+
+    shareLinkModal.classList.remove(
+        "active"
+    );
+
+}
+
+
+// =========================================
+// SHARE VIA PHONE
+// =========================================
+
+async function shareVibeChatLink() {
+
+    const shareData = {
+
+        title:
+            "VibeChat",
+
+        text:
+            "Join me on VibeChat!",
+
+        url:
+            window.location.origin
+
+    };
+
+
+    if (
+        !navigator.share
+    ) {
+
+        showVibeToast(
+            "Phone sharing is not supported on this device.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        await navigator.share(
+            shareData
+        );
+
+    }
+
+    catch (error) {
+
+        if (
+            error.name ===
+            "AbortError"
+        ) {
+
+            return;
+
+        }
+
+        console.error(
+            "VibeChat share error:",
+            error
+        );
+
+        showVibeToast(
+            "Unable to open phone sharing.",
+            "error"
+        );
+
+    }
+
+}
+
+
+// =========================================
+// COPY LINK
+// =========================================
+
+async function copyVibeChatLink() {
+
+    const url =
+        window.location.origin;
+
+    try {
+
+        await navigator.clipboard.writeText(
+            url
+        );
+
+        showVibeToast(
+            "VibeChat link copied successfully!",
+            "success"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Copy link error:",
+            error
+        );
+
+        showVibeToast(
+            "Unable to copy the link.",
+            "error"
+        );
+
+    }
+
+}
+
+
+// =========================================
+// WELCOME SHARE BUTTON
+// =========================================
+
 if (welcomeLinkBtn) {
 
     welcomeLinkBtn.addEventListener(
         "click",
-        () => {
+        openShareLinkModal
+    );
 
-            openShareContactModal(
-                "link"
-            );
+}
+
+
+// =========================================
+// SHARE BUTTON
+// =========================================
+
+if (nativeShareLinkBtn) {
+
+    nativeShareLinkBtn.addEventListener(
+        "click",
+        shareVibeChatLink
+    );
+
+}
+
+
+// =========================================
+// COPY BUTTON
+// =========================================
+
+if (copyShareLinkBtn) {
+
+    copyShareLinkBtn.addEventListener(
+        "click",
+        copyVibeChatLink
+    );
+
+}
+
+
+// =========================================
+// CLOSE BUTTONS
+// =========================================
+
+if (closeShareLinkBtn) {
+
+    closeShareLinkBtn.addEventListener(
+        "click",
+        closeShareLinkModal
+    );
+
+}
+
+
+if (cancelShareLinkBtn) {
+
+    cancelShareLinkBtn.addEventListener(
+        "click",
+        closeShareLinkModal
+    );
+
+}
+
+
+// =========================================
+// CLICK OUTSIDE
+// =========================================
+
+if (shareLinkModal) {
+
+    shareLinkModal.addEventListener(
+        "click",
+        (event) => {
+
+            if (
+                event.target ===
+                shareLinkModal
+            ) {
+
+                closeShareLinkModal();
+
+            }
 
         }
     );
