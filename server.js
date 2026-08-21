@@ -144,15 +144,17 @@ app.use(
 
                 connectSrc: [
 
-                    "'self'",
+    "'self'",
 
-                    "ws:",
+    "ws:",
 
-                    "wss:",
+    "wss:",
 
-                    "https://whatsapp-clone-backend-b5o7.onrender.com"
+    "https://vibechat-backend-i6xa.onrender.com",
 
-                ]
+    "https://cdn.jsdelivr.net"
+
+]
 
             }
 
@@ -195,7 +197,7 @@ app.use(express.static("public"));
 
 app.get("/", (req, res) => {
 
-    res.send("✅ WhatsApp Clone Backend is Running 🚀");
+    res.send("✅ vibechat Backend is Running 🚀");
 
 });
 
