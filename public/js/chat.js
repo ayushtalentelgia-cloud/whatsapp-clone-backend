@@ -4908,23 +4908,27 @@ socket.on(
 
 
     // =====================================
-    // INVITE FRIEND
-    // =====================================
+// INVITE FRIEND
+// =====================================
 
-    if (
-        inviteBtn
-    ) {
+if (
+    inviteBtn
+) {
 
-        inviteBtn.addEventListener(
-            "click",
-            () => {
+    inviteBtn.addEventListener(
+        "click",
+        () => {
 
-                openGameInviteModal();
+            console.log(
+                "🎮 INVITE BUTTON CLICKED"
+            );
 
-            }
-        );
+            openGameInviteModal();
 
-    }
+        }
+    );
+
+}
 
 
     // =====================================
