@@ -10881,3 +10881,46 @@ a:hover {
     }
 
 }
+/* =========================================
+   TIC TAC TOE - GAME RESULT
+========================================= */
+
+.tic-game-result-number {
+
+    font-size: clamp(
+        55px,
+        8vw,
+        110px
+    );
+
+    line-height: 1;
+
+    letter-spacing: -2px;
+
+    font-weight: 950;
+
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 20px
+        rgba(255, 255, 255, 0.35),
+
+        0 0 50px
+        rgba(124, 58, 237, 0.9),
+
+        0 0 100px
+        rgba(124, 58, 237, 0.55);
+
+    animation:
+        ticCountdownPop
+        0.75s
+        cubic-bezier(
+            0.16,
+            1,
+            0.3,
+            1
+        );
+
+}

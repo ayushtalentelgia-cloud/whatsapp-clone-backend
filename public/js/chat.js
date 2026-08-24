@@ -4260,54 +4260,151 @@ console.log(
             // =================================
 
             if (
-                data.winner
-            ) {
+    data.winner
+) {
 
-                gameActive =
-                    false;
+    gameActive =
+        false;
+
+    countdownActive =
+        false;
 
 
-                countdownActive =
-                    false;
+    // =================================
+    // REMOVE OLD RESULT OVERLAY
+    // =================================
+
+    const oldResult =
+        document.getElementById(
+            "ticGameResultOverlay"
+        );
+
+    if (oldResult) {
+
+        oldResult.remove();
+
+    }
 
 
-                status.innerText =
-                    data.winner ===
-                        playerSymbol
-                        ? "You won! 🎉"
-                        : "You lost!";
+    // =================================
+    // CREATE RESULT OVERLAY
+    // =================================
 
+    const resultOverlay =
+        document.createElement(
+            "div"
+        );
+
+    resultOverlay.id =
+        "ticGameResultOverlay";
+
+    resultOverlay.className =
+        "tic-countdown-overlay";
+
+
+    const won =
+        data.winner ===
+        playerSymbol;
+
+
+    resultOverlay.innerHTML = `
+
+        <div class="tic-countdown-box">
+
+            <div class="tic-countdown-label">
+
+                ${won
+                    ? "GAME OVER"
+                    : "GAME OVER"
+                }
+
+            </div>
+
+
+            <div
+                class="tic-countdown-number tic-game-result-number"
+            >
+
+                ${
+                    won
+                        ? "YOU WON 🎉"
+                        : "YOU LOST 😔"
+                }
+
+            </div>
+
+
+            <div class="tic-countdown-game">
+
+                TIC TAC TOE
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        resultOverlay
+    );
+
+
+    // =================================
+    // HIGHLIGHT WINNING CELLS
+    // =================================
+
+    if (
+        Array.isArray(
+            data.winningPattern
+        )
+    ) {
+
+        data.winningPattern.forEach(
+            index => {
 
                 if (
-                    Array.isArray(
-                        data.winningPattern
-                    )
+                    cells[index]
                 ) {
 
-                    data.winningPattern.forEach(
-                        index => {
-
-                            if (
-                                cells[index]
-                            ) {
-
-                                cells[index]
-                                    .classList
-                                    .add(
-                                        "winner"
-                                    );
-
-                            }
-
-                        }
-                    );
+                    cells[index]
+                        .classList
+                        .add(
+                            "winner"
+                        );
 
                 }
 
+            }
+        );
 
-                return;
+    }
+
+
+    // =================================
+    // REMOVE RESULT AFTER 3 SECONDS
+    // =================================
+
+    setTimeout(
+        () => {
+
+            if (
+                resultOverlay &&
+                resultOverlay.parentNode
+            ) {
+
+                resultOverlay.remove();
 
             }
+
+        },
+        3000
+    );
+
+
+    return;
+
+}
 
 
             // =================================
@@ -4315,24 +4412,90 @@ console.log(
             // =================================
 
             if (
-                data.draw
+    data.draw
+) {
+
+    gameActive =
+        false;
+
+    countdownActive =
+        false;
+
+
+    const oldResult =
+        document.getElementById(
+            "ticGameResultOverlay"
+        );
+
+    if (oldResult) {
+
+        oldResult.remove();
+
+    }
+
+
+    const resultOverlay =
+        document.createElement(
+            "div"
+        );
+
+    resultOverlay.id =
+        "ticGameResultOverlay";
+
+    resultOverlay.className =
+        "tic-countdown-overlay";
+
+
+    resultOverlay.innerHTML = `
+
+        <div class="tic-countdown-box">
+
+            <div class="tic-countdown-label">
+                GAME OVER
+            </div>
+
+
+            <div
+                class="tic-countdown-number tic-game-result-number"
+            >
+                DRAW 🤝
+            </div>
+
+
+            <div class="tic-countdown-game">
+                TIC TAC TOE
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        resultOverlay
+    );
+
+
+    setTimeout(
+        () => {
+
+            if (
+                resultOverlay &&
+                resultOverlay.parentNode
             ) {
 
-                gameActive =
-                    false;
-
-
-                countdownActive =
-                    false;
-
-
-                status.innerText =
-                    "It's a draw! 🤝";
-
-
-                return;
+                resultOverlay.remove();
 
             }
+
+        },
+        3000
+    );
+
+
+    return;
+
+}
 
 
             // =================================
