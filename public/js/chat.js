@@ -6358,6 +6358,17 @@ socket.on(
     "message received",
     (message) => {
 
+        console.log(
+            "📩 RECEIVED MESSAGE:",
+            {
+                id: message?._id,
+                type: message?.type,
+                fileUrl: message?.fileUrl,
+                fileName: message?.fileName,
+                content: message?.content
+            }
+        );
+
         // =====================================
         // CHECK MESSAGE
         // =====================================
