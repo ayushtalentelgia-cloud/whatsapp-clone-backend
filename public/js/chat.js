@@ -62,6 +62,32 @@ let typing = false;
 let typingTimeout = null;
 
 // =========================================
+// TIC TAC TOE - GLOBAL GAME STATE
+// =========================================
+
+let ticGameId = null;
+
+let ticPlayerSymbol = null;
+
+let ticCurrentTurn = null;
+
+let ticGameActive = false;
+
+let ticCountdownActive = false;
+
+let ticGameState = [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+];
+
+// =========================================
 // DOM ELEMENTS
 // =========================================
 
@@ -3681,33 +3707,21 @@ function startTicTacToe() {
     // GAME VARIABLES
     // =====================================
 
-    let gameId =
-        null;
+// =====================================
+// USE GLOBAL TIC TAC TOE STATE
+// =====================================
 
-    let playerSymbol =
-        null;
+let gameId = ticGameId;
 
-    let currentTurn =
-        null;
+let playerSymbol = ticPlayerSymbol;
 
-    let gameActive =
-        false;
+let currentTurn = ticCurrentTurn;
 
-    let countdownActive =
-        true;
+let gameActive = ticGameActive;
 
+let countdownActive = ticCountdownActive;
 
-    let gameState = [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
-    ];
+let gameState = ticGameState;
 
 
     // =====================================
@@ -4513,16 +4527,53 @@ console.log(
     );
 
 
-    // =====================================
-    // GAME START COUNTDOWN
-    // =====================================
+//     // =====================================
+//     // GAME START COUNTDOWN
+//     // =====================================
 
-    socket.off(
-        "game:start-countdown"
-    );
+//     socket.off(
+//         "game:start-countdown"
+//     );
 
 
-   socket.on(
+//    socket.on(
+//     "game:start-countdown",
+//     data => {
+
+//         console.log(
+//             "🎮 COUNTDOWN RECEIVED:",
+//             data
+//         );
+
+
+//         if (
+//             !data
+//         ) {
+//             return;
+//         }
+// socket.on(
+//     "game:start-countdown",
+//     data => {
+
+//         console.log(
+//             "🎮 COUNTDOWN RECEIVED:",
+//             data
+//         );
+
+//         if (!data) {
+
+//             return;
+
+//         }
+// =====================================
+// GAME START COUNTDOWN
+// =====================================
+
+socket.off(
+    "game:start-countdown"
+);
+
+socket.on(
     "game:start-countdown",
     data => {
 
@@ -4531,91 +4582,124 @@ console.log(
             data
         );
 
+        if (!data) {
+
+            return;
+
+        }
+
+
+        // =====================================
+        // OPEN TIC TAC TOE AUTOMATICALLY
+        // =====================================
+
+        openTicTacToe();
+
+
+        gameId =
+            data.gameId;
+
+
+        const myId =
+            currentUser &&
+            currentUser._id
+                ? currentUser._id
+                    .toString()
+                : null;
+
+
+        if (!myId) {
+
+            return;
+
+        }
+
+
+        // =====================================
+        // IDENTIFY PLAYER
+        // =====================================
 
         if (
-            !data
+            data.playerX &&
+            data.playerX.toString() ===
+                myId
         ) {
+
+            playerSymbol =
+                "X";
+
+        }
+        else if (
+            data.playerO &&
+            data.playerO.toString() ===
+                myId
+        ) {
+
+            playerSymbol =
+                "O";
+
+        }
+        else {
+
             return;
-        }
-
-
-            gameId =
-                data.gameId;
-
-
-            const myId =
-                currentUser &&
-                currentUser._id
-                    ? currentUser._id
-                        .toString()
-                    : null;
-
-
-            if (
-                !myId
-            ) {
-
-                return;
-
-            }
-
-
-            if (
-                data.playerX &&
-                data.playerX.toString() ===
-                    myId
-            ) {
-
-                playerSymbol =
-                    "X";
-
-            }
-            else if (
-                data.playerO &&
-                data.playerO.toString() ===
-                    myId
-            ) {
-
-                playerSymbol =
-                    "O";
-
-            }
-
-
-            gameState = [
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
-            ];
-
-
-            renderBoard();
-
-
-            startCountdown(
-                data.countdown || 3
-            );
 
         }
-    );
 
 
-    // =====================================
-    // GAME STARTED EVENT
-    // =====================================
+        // =====================================
+        // RESET BOARD
+        // =====================================
 
-    socket.off(
-        "game:started"
-    );
+        gameState = [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ];
 
 
-    socket.on(
+        currentTurn =
+            data.currentTurn ||
+            "X";
+
+
+        gameActive =
+            false;
+
+
+        countdownActive =
+            true;
+
+
+        renderBoard();
+
+
+        // =====================================
+        // START COUNTDOWN
+        // =====================================
+
+        startCountdown(
+            data.countdown || 3
+        );
+
+    }
+);
+
+
+// =====================================
+// GAME STARTED EVENT
+// =====================================
+
+socket.off(
+    "game:started"
+);
+
+socket.on(
     "game:started",
     data => {
 
@@ -4629,21 +4713,7 @@ console.log(
         countdownActive =
             false;
 
-        if (
-            currentTurn ===
-            playerSymbol
-        ) {
-
-            status.innerText =
-                `Your turn — ${playerSymbol}`;
-
-        }
-        else {
-
-            status.innerText =
-                `Opponent's turn — ${currentTurn}`;
-
-        }
+        updateTurnStatus();
 
     }
 );
