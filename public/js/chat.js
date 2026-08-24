@@ -3628,7 +3628,7 @@ async function loadGameContacts() {
 
 }
 // =========================================
-// TIC TAC TOE GAME LOGIC
+// TIC TAC TOE - MULTIPLAYER GAME LOGIC
 // =========================================
 
 function startTicTacToe() {
@@ -3654,9 +3654,11 @@ function startTicTacToe() {
         );
 
     const inviteBtn =
-    document.getElementById(
-        "ticInviteBtn"
-    );
+        document.getElementById(
+            "ticInviteBtn"
+        );
+
+
     if (
         !board ||
         !status ||
@@ -3675,40 +3677,286 @@ function startTicTacToe() {
         );
 
 
-    let currentPlayer =
-        "X";
+    // =====================================
+    // GAME VARIABLES
+    // =====================================
+
+    let gameId =
+        null;
+
+    let playerSymbol =
+        null;
+
+    let currentTurn =
+        null;
 
     let gameActive =
+        false;
+
+    let countdownActive =
         true;
 
-    let gameState =
-        [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
-        ];
 
-
-    const winningPatterns = [
-
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-
-        [0, 4, 8],
-        [2, 4, 6]
-
+    let gameState = [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
     ];
+
+
+    // =====================================
+    // UPDATE BOARD
+    // =====================================
+
+    function renderBoard() {
+
+        cells.forEach(
+            (cell, index) => {
+
+                const value =
+                    gameState[index] ||
+                    "";
+
+                cell.innerText =
+                    value;
+
+
+                cell.classList.remove(
+                    "x",
+                    "o"
+                );
+
+
+                if (value) {
+
+                    cell.classList.add(
+                        value.toLowerCase()
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // =====================================
+    // UPDATE STATUS
+    // =====================================
+
+    function updateTurnStatus() {
+
+        if (
+            !gameActive
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            currentTurn ===
+            playerSymbol
+        ) {
+
+            status.innerText =
+                `Your turn — ${playerSymbol}`;
+
+        }
+        else {
+
+            status.innerText =
+                `Opponent's turn — ${currentTurn}`;
+
+        }
+
+    }
+
+
+    // =====================================
+    // COUNTDOWN
+    // =====================================
+
+    function startCountdown(
+        seconds
+    ) {
+
+        countdownActive =
+            true;
+
+        gameActive =
+            false;
+
+
+        let count =
+            Number(seconds) || 3;
+
+
+        status.innerText =
+            count;
+
+
+        const timer =
+            setInterval(
+                () => {
+
+                    count--;
+
+
+                    if (
+                        count > 0
+                    ) {
+
+                        status.innerText =
+                            count;
+
+                        return;
+
+                    }
+
+
+                    clearInterval(
+                        timer
+                    );
+
+
+                    status.innerText =
+                        "GO! 🎮";
+
+
+                    setTimeout(
+                        () => {
+
+                            if (
+                                countdownActive
+                            ) {
+
+                                status.innerText =
+                                    "Starting...";
+
+                            }
+
+                        },
+                        700
+                    );
+
+                },
+                1000
+            );
+
+    }
+
+
+    // =====================================
+    // GAME STARTED
+    // =====================================
+
+    function handleGameStarted(
+        data
+    ) {
+
+        if (!data) {
+
+            return;
+
+        }
+
+
+        gameId =
+            data.gameId ||
+            gameId;
+
+
+        const myId =
+            currentUser &&
+            currentUser._id
+                ? currentUser._id
+                    .toString()
+                : null;
+
+
+        if (
+            !myId
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            data.playerX &&
+            data.playerX.toString() ===
+                myId
+        ) {
+
+            playerSymbol =
+                "X";
+
+        }
+        else if (
+            data.playerO &&
+            data.playerO.toString() ===
+                myId
+        ) {
+
+            playerSymbol =
+                "O";
+
+        }
+        else {
+
+            return;
+
+        }
+
+
+        gameState =
+            Array.isArray(
+                data.board
+            )
+                ? [
+                    ...data.board
+                ]
+                : [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ];
+
+
+        currentTurn =
+            data.currentTurn ||
+            "X";
+
+
+        gameActive =
+            true;
+
+        countdownActive =
+            false;
+
+
+        renderBoard();
+
+
+        updateTurnStatus();
+
+    }
 
 
     // =====================================
@@ -3721,6 +3969,67 @@ function startTicTacToe() {
             cell.addEventListener(
                 "click",
                 () => {
+console.log(
+    "🎮 TIC CLICK:",
+    {
+        gameId,
+        playerSymbol,
+        currentTurn,
+        gameActive,
+        countdownActive,
+        gameState
+    }
+);
+                    if (
+                        !gameActive
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    if (
+                        countdownActive
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !gameId
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !playerSymbol
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    if (
+                        currentTurn !==
+                        playerSymbol
+                    ) {
+
+                        showVibeToast(
+                            "Wait for your turn.",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
 
                     const index =
                         Number(
@@ -3729,8 +4038,9 @@ function startTicTacToe() {
 
 
                     if (
-                        !gameActive ||
-                        gameState[index]
+                        Number.isNaN(
+                            index
+                        )
                     ) {
 
                         return;
@@ -3738,20 +4048,32 @@ function startTicTacToe() {
                     }
 
 
-                    gameState[index] =
-                        currentPlayer;
+                    if (
+                        gameState[index]
+                    ) {
 
-                    cell.innerText =
-                        currentPlayer;
+                        return;
 
+                    }
 
-                    cell.classList.add(
-                        currentPlayer
-                            .toLowerCase()
+console.log(
+    "🎮 SENDING MOVE:",
+    {
+        gameId,
+        index,
+        playerSymbol
+    }
+);
+                    socket.emit(
+                        "game:move",
+                        {
+
+                            gameId,
+
+                            index
+
+                        }
                     );
-
-
-                    checkGameResult();
 
                 }
             );
@@ -3761,157 +4083,377 @@ function startTicTacToe() {
 
 
     // =====================================
-    // CHECK GAME RESULT
+    // SERVER GAME STATE
     // =====================================
 
-    function checkGameResult() {
+    socket.off(
+        "game:state"
+    );
 
-        let winner =
-            null;
 
-
-        for (
-            const pattern
-            of winningPatterns
-        ) {
-
-            const [a, b, c] =
-                pattern;
-
+    socket.on(
+        "game:state",
+        data => {
 
             if (
-                gameState[a] &&
-                gameState[a] ===
-                    gameState[b] &&
-                gameState[a] ===
-                    gameState[c]
+                !data ||
+                (
+                    gameId &&
+                    data.gameId !==
+                        gameId
+                )
             ) {
 
-                winner =
-                    gameState[a];
-
-                break;
+                return;
 
             }
 
-        }
+
+            gameId =
+                data.gameId ||
+                gameId;
 
 
-        // =================================
-        // WINNER
-        // =================================
-
-        if (winner) {
-
-            gameActive =
-                false;
-
-
-            status.innerText =
-                `${winner} wins! 🎉`;
+            gameState =
+                Array.isArray(
+                    data.board
+                )
+                    ? [
+                        ...data.board
+                    ]
+                    : gameState;
 
 
-            highlightWinner(
-                winner
-            );
-
-            return;
-
-        }
+            currentTurn =
+                data.currentTurn;
 
 
-        // =================================
-        // DRAW
-        // =================================
-
-        if (
-            gameState.every(
-                cell => cell !== ""
-            )
-        ) {
-
-            gameActive =
-                false;
+            renderBoard();
 
 
-            status.innerText =
-                "It's a draw! 🤝";
+            // =================================
+            // WIN
+            // =================================
 
-            return;
+            if (
+                data.winner
+            ) {
 
-        }
-
-
-        // =================================
-        // NEXT TURN
-        // =================================
-
-        currentPlayer =
-            currentPlayer === "X"
-                ? "O"
-                : "X";
+                gameActive =
+                    false;
 
 
-        status.innerText =
-            `Your turn — ${currentPlayer}`;
-
-    }
+                countdownActive =
+                    false;
 
 
-    // =====================================
-    // HIGHLIGHT WINNER
-    // =====================================
-
-    function highlightWinner(
-        winner
-    ) {
-
-        winningPatterns.forEach(
-            pattern => {
-
-                const [a, b, c] =
-                    pattern;
+                status.innerText =
+                    data.winner ===
+                        playerSymbol
+                        ? "You won! 🎉"
+                        : "You lost!";
 
 
                 if (
-                    gameState[a] ===
-                        winner &&
-                    gameState[b] ===
-                        winner &&
-                    gameState[c] ===
-                        winner
+                    Array.isArray(
+                        data.winningPattern
+                    )
                 ) {
 
-                    cells[a].classList.add(
-                        "winner"
-                    );
+                    data.winningPattern.forEach(
+                        index => {
 
-                    cells[b].classList.add(
-                        "winner"
-                    );
+                            if (
+                                cells[index]
+                            ) {
 
-                    cells[c].classList.add(
-                        "winner"
+                                cells[index]
+                                    .classList
+                                    .add(
+                                        "winner"
+                                    );
+
+                            }
+
+                        }
                     );
 
                 }
 
-            }
-        );
 
-    }
+                return;
+
+            }
+
+
+            // =================================
+            // DRAW
+            // =================================
+
+            if (
+                data.draw
+            ) {
+
+                gameActive =
+                    false;
+
+
+                countdownActive =
+                    false;
+
+
+                status.innerText =
+                    "It's a draw! 🤝";
+
+
+                return;
+
+            }
+
+
+            // =================================
+            // CONTINUE GAME
+            // =================================
+
+            gameActive =
+                data.status ===
+                "playing";
+
+
+            updateTurnStatus();
+
+        }
+    );
 
 
     // =====================================
-    // NEW GAME
+    // GAME START COUNTDOWN
+    // =====================================
+
+    socket.off(
+        "game:start-countdown"
+    );
+
+
+   socket.on(
+    "game:start-countdown",
+    data => {
+
+        console.log(
+            "🎮 COUNTDOWN RECEIVED:",
+            data
+        );
+
+
+        if (
+            !data
+        ) {
+            return;
+        }
+
+
+            gameId =
+                data.gameId;
+
+
+            const myId =
+                currentUser &&
+                currentUser._id
+                    ? currentUser._id
+                        .toString()
+                    : null;
+
+
+            if (
+                !myId
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                data.playerX &&
+                data.playerX.toString() ===
+                    myId
+            ) {
+
+                playerSymbol =
+                    "X";
+
+            }
+            else if (
+                data.playerO &&
+                data.playerO.toString() ===
+                    myId
+            ) {
+
+                playerSymbol =
+                    "O";
+
+            }
+
+
+            gameState = [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ];
+
+
+            renderBoard();
+
+
+            startCountdown(
+                data.countdown || 3
+            );
+
+        }
+    );
+
+
+    // =====================================
+    // GAME STARTED EVENT
+    // =====================================
+
+    socket.off(
+        "game:started"
+    );
+
+
+    socket.on(
+    "game:started",
+    data => {
+
+        handleGameStarted(
+            data
+        );
+
+        gameActive =
+            true;
+
+        countdownActive =
+            false;
+
+        if (
+            currentTurn ===
+            playerSymbol
+        ) {
+
+            status.innerText =
+                `Your turn — ${playerSymbol}`;
+
+        }
+        else {
+
+            status.innerText =
+                `Opponent's turn — ${currentTurn}`;
+
+        }
+
+    }
+);
+
+
+    // =====================================
+    // GAME RESTARTED
+    // =====================================
+
+    socket.off(
+        "game:restarted"
+    );
+
+
+    socket.on(
+        "game:restarted",
+        data => {
+
+            if (
+                !data
+            ) {
+
+                return;
+
+            }
+
+
+            gameId =
+                data.gameId ||
+                gameId;
+
+
+            gameState =
+                Array.isArray(
+                    data.board
+                )
+                    ? [
+                        ...data.board
+                    ]
+                    : [
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""
+                    ];
+
+
+            currentTurn =
+                data.currentTurn ||
+                "X";
+
+
+            gameActive =
+                true;
+
+
+            countdownActive =
+                false;
+
+
+            cells.forEach(
+                cell => {
+
+                    cell.classList.remove(
+                        "winner"
+                    );
+
+                }
+            );
+
+
+            renderBoard();
+
+
+            updateTurnStatus();
+
+        }
+    );
+
+
+    // =====================================
+    // NEW GAME / RESTART
     // =====================================
 
     resetBtn.addEventListener(
         "click",
         () => {
 
-            gameState =
-                [
+            if (
+                !gameId
+            ) {
+
+                gameState = [
                     "",
                     "",
                     "",
@@ -3923,52 +4465,111 @@ function startTicTacToe() {
                 ];
 
 
-            currentPlayer =
-                "X";
+                currentTurn =
+                    "X";
 
 
-            gameActive =
-                true;
+                playerSymbol =
+                    "X";
 
 
-            cells.forEach(
-                cell => {
+                gameActive =
+                    true;
 
-                    cell.innerText =
-                        "";
 
-                    cell.classList.remove(
-                        "x",
-                        "o",
-                        "winner"
-                    );
+                countdownActive =
+                    false;
+
+
+                cells.forEach(
+                    cell => {
+
+                        cell.classList.remove(
+                            "winner"
+                        );
+
+                    }
+                );
+
+
+                renderBoard();
+
+
+                updateTurnStatus();
+
+
+                return;
+
+            }
+
+
+            socket.emit(
+                "game:restart",
+                {
+
+                    gameId
 
                 }
             );
 
-
-            status.innerText =
-                "Your turn — X";
-
         }
     );
 
-// =====================================
-// INVITE FRIEND
-// =====================================
 
-if (inviteBtn) {
+    // =====================================
+    // OPPONENT LEFT
+    // =====================================
 
-    inviteBtn.addEventListener(
-        "click",
+    socket.off(
+        "game:opponent-left"
+    );
+
+
+    socket.on(
+        "game:opponent-left",
         () => {
 
-            openGameInviteModal();
+            gameActive =
+                false;
+
+
+            countdownActive =
+                false;
+
+
+            status.innerText =
+                "Opponent left the game.";
+
+
+            showVibeToast(
+                "Your opponent left the game.",
+                "error"
+            );
 
         }
     );
 
-}
+
+    // =====================================
+    // INVITE FRIEND
+    // =====================================
+
+    if (
+        inviteBtn
+    ) {
+
+        inviteBtn.addEventListener(
+            "click",
+            () => {
+
+                openGameInviteModal();
+
+            }
+        );
+
+    }
+
+
     // =====================================
     // BACK TO GAMES
     // =====================================
@@ -3977,7 +4578,41 @@ if (inviteBtn) {
         "click",
         () => {
 
+            if (
+                gameId &&
+                gameActive
+            ) {
+
+                socket.emit(
+                    "game:leave",
+                    {
+
+                        gameId
+
+                    }
+                );
+
+            }
+
+
+            gameActive =
+                false;
+
+
+            countdownActive =
+                false;
+
+
+            gameId =
+                null;
+
+
+            playerSymbol =
+                null;
+
+
             showGames();
+
 
             document
                 .querySelectorAll(
@@ -3994,9 +4629,15 @@ if (inviteBtn) {
                 );
 
 
-            gamesBtn.classList.add(
-                "active"
-            );
+            if (
+                gamesBtn
+            ) {
+
+                gamesBtn.classList.add(
+                    "active"
+                );
+
+            }
 
         }
     );
@@ -4212,6 +4853,8 @@ socket.on(
 
     }
 );
+
+
 // =========================================
 // SHOW INCOMING GAME INVITE
 // =========================================
@@ -4243,6 +4886,7 @@ function showGameInviteReceived(
     invite.id =
         "incomingGameInvite";
 
+
     invite.className =
         "incoming-game-invite";
 
@@ -4256,6 +4900,7 @@ function showGameInviteReceived(
                 <i class="fas fa-gamepad"></i>
 
             </div>
+
 
             <div class="incoming-game-text">
 
@@ -4281,6 +4926,7 @@ function showGameInviteReceived(
                 Decline
             </button>
 
+
             <button
                 type="button"
                 id="acceptGameInvite"
@@ -4298,6 +4944,10 @@ function showGameInviteReceived(
     );
 
 
+    // =====================================
+    // ACCEPT GAME INVITE
+    // =====================================
+
     document
         .getElementById(
             "acceptGameInvite"
@@ -4305,6 +4955,15 @@ function showGameInviteReceived(
         .addEventListener(
             "click",
             () => {
+
+                // Open game FIRST.
+                // This registers all game socket listeners
+                // before the server sends countdown.
+
+                openTicTacToe();
+
+
+                // Then accept the invite.
 
                 socket.emit(
                     "game:accept",
@@ -4323,13 +4982,17 @@ function showGameInviteReceived(
                 );
 
 
-                invite.remove();
+                // Remove invite popup.
 
-                showGames();
+                invite.remove();
 
             }
         );
 
+
+    // =====================================
+    // DECLINE GAME INVITE
+    // =====================================
 
     document
         .getElementById(
@@ -4366,6 +5029,10 @@ function showGameInviteReceived(
 // GAME INVITE RESPONSE
 // =========================================
 
+// =========================================
+// GAME INVITE ACCEPTED
+// =========================================
+
 socket.on(
     "game:invite-accepted",
     () => {
@@ -4375,7 +5042,7 @@ socket.on(
             "success"
         );
 
-        showGames();
+        openTicTacToe();
 
     }
 );
