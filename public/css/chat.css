@@ -9869,13 +9869,15 @@ a:hover {
 
     padding: 24px 16px;
 
-    background: #f8fafc;
+    background: #eef7ff;
 
     z-index: 999998;
 
     box-sizing: border-box;
 
     overflow-y: auto;
+
+    pointer-events: auto;
 
 }
 
@@ -9904,17 +9906,26 @@ a:hover {
 
     font-weight: 700;
 
+    color: #111111;
+
 }
 
 .tic-header p {
 
     margin: 7px 0 0;
 
-    color: #64748b;
+    color: #0284c7;
 
     font-size: 14px;
 
+    font-weight: 500;
+
 }
+
+
+/* =========================================
+   BACK BUTTON
+========================================= */
 
 .tic-back-btn {
 
@@ -9927,7 +9938,7 @@ a:hover {
 
     background: transparent;
 
-    color: #000;
+    color: #0284c7;
 
     font-size: 14px;
 
@@ -9940,6 +9951,12 @@ a:hover {
     align-items: center;
 
     gap: 6px;
+
+}
+
+.tic-back-btn:hover {
+
+    color: #1d4ed8;
 
 }
 
@@ -9963,26 +9980,39 @@ a:hover {
 
     padding: 8px;
 
-    background: #000;
+    background: #dbeafe;
 
     border-radius: 18px;
 
+    border: 1px solid #bfdbfe;
+
     box-shadow:
         0 12px 30px
-        rgba(0, 0, 0, .12);
+        rgba(2, 132, 199, .12);
 
 }
 
 
+/* =========================================
+   BOARD CELLS
+========================================= */
+
 .tic-board button {
 
-    border: none;
+    border: 1px solid #e5e7eb;
 
     border-radius: 12px;
 
-    background: #fff;
+    background: #ffffff;
 
-    font-size: clamp(38px, 12vw, 58px);
+    color: #111111;
+
+    font-size:
+        clamp(
+            38px,
+            12vw,
+            58px
+        );
 
     font-weight: 700;
 
@@ -9996,17 +10026,20 @@ a:hover {
 
     transition:
         transform .15s ease,
-        background .15s ease;
+        background .15s ease,
+        box-shadow .15s ease;
 
 }
-
 
 .tic-board button:hover {
 
-    background: #f1f5f9;
+    background: #f8fbff;
+
+    box-shadow:
+        0 2px 8px
+        rgba(56, 189, 248, .15);
 
 }
-
 
 .tic-board button:active {
 
@@ -10021,14 +10054,13 @@ a:hover {
 
 .tic-board button.x {
 
-    color: #2563eb;
+    color: #0284c7;
 
 }
 
-
 .tic-board button.o {
 
-    color: #dc2626;
+    color: #1d4ed8;
 
 }
 
@@ -10041,7 +10073,13 @@ a:hover {
 
     background: #dcfce7;
 
+    border-color: #86efac;
+
     transform: scale(.97);
+
+    box-shadow:
+        0 0 12px
+        rgba(34, 197, 94, .25);
 
 }
 
@@ -10060,9 +10098,9 @@ a:hover {
 
     border-radius: 22px;
 
-    background: #000;
+    background: #0284c7;
 
-    color: #fff;
+    color: #ffffff;
 
     font-size: 14px;
 
@@ -10072,17 +10110,18 @@ a:hover {
 
     transition:
         transform .2s ease,
+        background .2s ease,
         opacity .2s ease;
 
 }
 
-
 .tic-reset-btn:hover {
+
+    background: #1d4ed8;
 
     transform: translateY(-2px);
 
 }
-
 
 .tic-reset-btn:active {
 
@@ -10144,15 +10183,21 @@ a:hover {
 
     margin-top: 10px;
 
-    border: 1px solid #e5e7eb;
+    position: relative;
+
+    z-index: 1000000;
+
+    pointer-events: auto;
+
+    border: 1px solid #bfdbfe;
 
     padding: 10px 20px;
 
     border-radius: 22px;
 
-    background: #fff;
+    background: #ffffff;
 
-    color: #000;
+    color: #0284c7;
 
     font-size: 14px;
 
@@ -10174,9 +10219,19 @@ a:hover {
 
 .tic-invite-btn:hover {
 
-    background: #f1f5f9;
+    background: #f8fbff;
+
+    border-color: #38bdf8;
+
+    color: #1d4ed8;
 
     transform: translateY(-1px);
+
+}
+
+.tic-invite-btn:active {
+
+    transform: scale(.96);
 
 }
 /* =========================================
