@@ -9573,3 +9573,970 @@ a:hover {
     }
 
 }
+/* =========================================
+   GAMES SECTION
+========================================= */
+
+.games-section {
+
+    height: 100%;
+    overflow-y: auto;
+    background: #f8fafc;
+    padding: 20px;
+
+}
+
+.games-header {
+
+    margin-bottom: 18px;
+
+}
+
+.games-title {
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+}
+
+.games-title > i {
+
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: #000;
+    color: #fff;
+
+    font-size: 20px;
+
+}
+
+.games-title h2 {
+
+    margin: 0;
+
+    font-size: 22px;
+    font-weight: 700;
+
+}
+
+.games-title p {
+
+    margin: 4px 0 0;
+
+    color: #777;
+    font-size: 13px;
+
+}
+
+
+/* =========================================
+   GAMES LIST
+========================================= */
+
+.games-list {
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+}
+
+
+/* =========================================
+   GAME CARD
+========================================= */
+
+.game-card {
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 16px;
+
+    background: #fff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 12px
+        rgba(0, 0, 0, .05);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+.game-card:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(0, 0, 0, .08);
+
+}
+
+
+/* =========================================
+   GAME ICON
+========================================= */
+
+.game-card-icon {
+
+    width: 52px;
+    height: 52px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: #eef2ff;
+
+    color: #4f46e5;
+
+    font-size: 21px;
+
+}
+
+
+/* =========================================
+   GAME INFO
+========================================= */
+
+.game-card-info {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+.game-card-info h3 {
+
+    margin: 0;
+
+    font-size: 16px;
+    font-weight: 700;
+
+}
+
+.game-card-info p {
+
+    margin: 4px 0 0;
+
+    color: #777;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================
+   PLAY BUTTON
+========================================= */
+
+.game-play-btn {
+
+    border: none;
+
+    padding: 9px 17px;
+
+    border-radius: 20px;
+
+    background: #000;
+
+    color: #fff;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+
+}
+
+.game-play-btn:hover {
+
+    transform: scale(1.04);
+
+}
+
+
+/* =========================================
+   COMING SOON
+========================================= */
+
+.game-coming-label {
+
+    padding: 6px 11px;
+
+    border-radius: 15px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .games-section {
+
+        padding: 14px;
+
+    }
+
+    .games-title h2 {
+
+        font-size: 20px;
+
+    }
+
+    .game-card {
+
+        padding: 13px;
+
+    }
+
+    .game-card-icon {
+
+        width: 46px;
+        height: 46px;
+
+    }
+
+    .game-card-info p {
+
+        font-size: 12px;
+
+    }
+
+    .game-play-btn {
+
+        padding: 8px 13px;
+
+    }
+
+}
+/* =========================================
+   TIC TAC TOE
+========================================= */
+
+.tic-tac-toe {
+
+    min-height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 24px 16px;
+
+    background: #f8fafc;
+
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.tic-header {
+
+    width: min(420px, 100%);
+
+    text-align: center;
+
+    margin-bottom: 24px;
+
+    position: relative;
+
+}
+
+.tic-header h2 {
+
+    margin: 0;
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+}
+
+.tic-header p {
+
+    margin: 7px 0 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+}
+
+.tic-back-btn {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #000;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+}
+
+
+/* =========================================
+   BOARD
+========================================= */
+
+.tic-board {
+
+    width: min(330px, 90vw);
+
+    aspect-ratio: 1 / 1;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 8px;
+
+    padding: 8px;
+
+    background: #000;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0, 0, 0, .12);
+
+}
+
+
+.tic-board button {
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #fff;
+
+    font-size: clamp(38px, 12vw, 58px);
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        transform .15s ease,
+        background .15s ease;
+
+}
+
+
+.tic-board button:hover {
+
+    background: #f1f5f9;
+
+}
+
+
+.tic-board button:active {
+
+    transform: scale(.94);
+
+}
+
+
+/* =========================================
+   X / O
+========================================= */
+
+.tic-board button.x {
+
+    color: #2563eb;
+
+}
+
+
+.tic-board button.o {
+
+    color: #dc2626;
+
+}
+
+
+/* =========================================
+   WINNER
+========================================= */
+
+.tic-board button.winner {
+
+    background: #dcfce7;
+
+    transform: scale(.97);
+
+}
+
+
+/* =========================================
+   RESET BUTTON
+========================================= */
+
+.tic-reset-btn {
+
+    margin-top: 22px;
+
+    border: none;
+
+    padding: 11px 22px;
+
+    border-radius: 22px;
+
+    background: #000;
+
+    color: #fff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+}
+
+
+.tic-reset-btn:hover {
+
+    transform: translateY(-2px);
+
+}
+
+
+.tic-reset-btn:active {
+
+    transform: scale(.96);
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .tic-tac-toe {
+
+        padding:
+            20px 12px;
+
+    }
+
+    .tic-header {
+
+        margin-bottom: 20px;
+
+    }
+
+    .tic-header h2 {
+
+        font-size: 21px;
+
+    }
+
+    .tic-board {
+
+        width:
+            min(310px, 88vw);
+
+        gap: 6px;
+
+        padding: 6px;
+
+        border-radius: 15px;
+
+    }
+
+    .tic-board button {
+
+        border-radius: 9px;
+
+    }
+
+}
+/* =========================================
+   TIC TAC TOE INVITE
+========================================= */
+
+.tic-invite-btn {
+
+    margin-top: 10px;
+
+    border: 1px solid #e5e7eb;
+
+    padding: 10px 20px;
+
+    border-radius: 22px;
+
+    background: #fff;
+
+    color: #000;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    transition: .2s ease;
+
+}
+
+.tic-invite-btn:hover {
+
+    background: #f1f5f9;
+
+    transform: translateY(-1px);
+
+}
+/* =========================================
+   GAME INVITE MODAL
+========================================= */
+
+.game-invite-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(0, 0, 0, .45);
+
+}
+
+.game-invite-modal {
+
+    width: min(430px, 100%);
+
+    max-height: 80vh;
+
+    overflow: hidden;
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 20px 50px
+        rgba(0, 0, 0, .2);
+
+}
+
+.game-invite-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    padding: 18px;
+
+    border-bottom:
+        1px solid #eee;
+
+}
+
+.game-invite-header h3 {
+
+    margin: 0;
+
+    font-size: 18px;
+
+}
+
+.game-invite-header p {
+
+    margin: 5px 0 0;
+
+    color: #777;
+
+    font-size: 12px;
+
+}
+
+.game-invite-close {
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+}
+
+.game-contacts-list {
+
+    max-height: 55vh;
+
+    overflow-y: auto;
+
+    padding: 8px;
+
+}
+
+.game-contact-item {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+}
+
+.game-contact-item:hover {
+
+    background: #f8fafc;
+
+}
+
+.game-contact-user {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-width: 0;
+
+}
+
+.game-contact-user img {
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+}
+
+.game-contact-user strong {
+
+    display: block;
+
+    font-size: 14px;
+
+}
+
+.game-contact-user span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #888;
+
+    font-size: 11px;
+
+}
+
+.game-invite-contact-btn {
+
+    border: none;
+
+    border-radius: 18px;
+
+    padding: 8px 15px;
+
+    background: #000;
+
+    color: #fff;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+.game-no-contacts,
+.game-contacts-loading {
+
+    padding: 30px 15px;
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: 13px;
+
+}
+/* =========================================
+   INCOMING GAME INVITE
+========================================= */
+
+.incoming-game-invite {
+
+    position: fixed;
+
+    top: 20px;
+    right: 20px;
+
+    z-index: 10000;
+
+    width: min(360px, calc(100vw - 30px));
+
+    padding: 15px;
+
+    background: #fff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(0, 0, 0, .15);
+
+    animation:
+        gameInviteIn .25s ease;
+
+}
+
+.incoming-game-content {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+.incoming-game-icon {
+
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #000;
+
+    color: #fff;
+
+    font-size: 18px;
+
+}
+
+.incoming-game-text {
+
+    min-width: 0;
+
+}
+
+.incoming-game-text strong {
+
+    display: block;
+
+    font-size: 15px;
+
+}
+
+.incoming-game-text span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+}
+
+.incoming-game-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    margin-top: 14px;
+
+}
+
+.incoming-game-actions button {
+
+    border: none;
+
+    padding: 8px 15px;
+
+    border-radius: 18px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+#declineGameInvite {
+
+    background: #f1f5f9;
+
+    color: #334155;
+
+}
+
+#acceptGameInvite {
+
+    background: #000;
+
+    color: #fff;
+
+}
+
+.incoming-game-actions button:hover {
+
+    opacity: .85;
+
+}
+
+@keyframes gameInviteIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(-10px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .incoming-game-invite {
+
+        top: 12px;
+        right: 12px;
+        left: 12px;
+
+        width: auto;
+
+    }
+
+}

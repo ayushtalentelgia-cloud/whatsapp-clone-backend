@@ -86,6 +86,12 @@ const statusSection =
 const postsBtn =
     document.getElementById("postsBtn");
 
+const gamesBtn =
+    document.getElementById("gamesBtn");
+
+const gamesSection =
+    document.getElementById("gamesSection");
+
 const postsSection =
     document.getElementById("postsSection");
 
@@ -329,7 +335,9 @@ function showChats() {
     if (postsSection) {
     postsSection.style.display = "none";
 }
-
+if (gamesSection) {
+    gamesSection.style.display = "none";
+}
 }
 
 
@@ -369,7 +377,12 @@ function showStatus() {
 
     }
 
+if (gamesSection) {
 
+    gamesSection.style.display =
+        "none";
+
+}
     // Load latest statuses
     loadStatuses();
 
@@ -410,10 +423,59 @@ function showPosts() {
             "block";
 
     }
+if (gamesSection) {
 
+    gamesSection.style.display =
+        "none";
+
+}
 
     // Load posts
     loadPosts();
+
+}
+// =========================================
+// SHOW GAMES
+// =========================================
+
+function showGames() {
+
+    localStorage.setItem(
+        "vibechatActiveSection",
+        "games"
+    );
+
+    // Hide chat list
+    if (chatList) {
+
+        chatList.style.display =
+            "none";
+
+    }
+
+    // Hide status section
+    if (statusSection) {
+
+        statusSection.style.display =
+            "none";
+
+    }
+
+    // Hide posts section
+    if (postsSection) {
+
+        postsSection.style.display =
+            "none";
+
+    }
+
+    // Show games section
+    if (gamesSection) {
+
+        gamesSection.style.display =
+            "block";
+
+    }
 
 }
 
@@ -429,6 +491,74 @@ function restoreActiveSection() {
         );
 
 
+    // =====================================
+    // RESTORE GAMES
+    // =====================================
+
+    if (section === "games") {
+
+        showGames();
+
+        if (gamesBtn) {
+
+            document
+                .querySelectorAll(
+                    ".filters button"
+                )
+                .forEach(
+                    button => {
+
+                        button.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+            gamesBtn.classList.add(
+                "active"
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    // =====================================
+    // RESTORE POSTS
+    // =====================================
+
+    if (section === "posts") {
+
+        showPosts();
+
+        if (postsBtn) {
+
+            document
+                .querySelectorAll(
+                    ".filters button"
+                )
+                .forEach(
+                    button => {
+
+                        button.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+            postsBtn.classList.add(
+                "active"
+            );
+
+        }
+
+        return;
+
+    }
     // =====================================
     // RESTORE POSTS
     // =====================================
@@ -3156,7 +3286,1112 @@ if (postsBtn) {
 
 }
 
+// =========================================
+// GAMES BUTTON
+// =========================================
 
+if (gamesBtn) {
+
+    gamesBtn.addEventListener(
+        "click",
+        () => {
+
+            showGames();
+
+            document
+                .querySelectorAll(
+                    ".filters button"
+                )
+                .forEach(
+                    button => {
+
+                        button.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+            gamesBtn.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+// =========================================
+// TIC TAC TOE
+// =========================================
+
+const gamePlayButtons =
+    document.querySelectorAll(
+        ".game-play-btn[data-game]"
+    );
+
+
+gamePlayButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const game =
+                    button.dataset.game;
+
+
+                if (
+                    game ===
+                    "tic-tac-toe"
+                ) {
+
+                    openTicTacToe();
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+// =========================================
+// OPEN TIC TAC TOE
+// =========================================
+
+function openTicTacToe() {
+
+    const gamesSection =
+        document.getElementById(
+            "gamesSection"
+        );
+
+    if (!gamesSection) {
+        return;
+    }
+
+
+    gamesSection.innerHTML = `
+
+        <div class="tic-tac-toe">
+
+            <div class="tic-header">
+
+                <button
+                    type="button"
+                    class="tic-back-btn"
+                    id="ticBackBtn"
+                >
+                    <i class="fas fa-arrow-left"></i>
+                    Games
+                </button>
+
+                <h2>
+                    Tic Tac Toe
+                </h2>
+
+                <p id="ticStatus">
+                    Your turn — X
+                </p>
+
+            </div>
+
+
+            <div
+                class="tic-board"
+                id="ticBoard"
+            >
+
+                <button data-cell="0"></button>
+                <button data-cell="1"></button>
+                <button data-cell="2"></button>
+
+                <button data-cell="3"></button>
+                <button data-cell="4"></button>
+                <button data-cell="5"></button>
+
+                <button data-cell="6"></button>
+                <button data-cell="7"></button>
+                <button data-cell="8"></button>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="ticResetBtn"
+                class="tic-reset-btn"
+            >
+                New Game
+            </button>
+
+            <button
+    type="button"
+    id="ticInviteBtn"
+    class="tic-invite-btn"
+>
+    <i class="fas fa-user-plus"></i>
+    Invite Friend
+</button>
+
+        </div>
+
+    `;
+
+
+    startTicTacToe();
+
+}
+// =========================================
+// LOAD GAME CONTACTS
+// =========================================
+
+async function loadGameContacts() {
+
+    const list =
+        document.getElementById(
+            "gameContactsList"
+        );
+
+
+    if (!list) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL +
+                "/users/contacts",
+                {
+
+                    headers: {
+
+                        Authorization:
+                            "Bearer " +
+                            token
+
+                    }
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data.success ||
+            !data.contacts ||
+            data.contacts.length === 0
+        ) {
+
+            list.innerHTML = `
+
+                <div class="game-no-contacts">
+
+                    No saved contacts found.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        list.innerHTML = "";
+
+
+        data.contacts.forEach(
+            contact => {
+
+                const user =
+                    contact.user;
+
+
+                if (!user) {
+
+                    return;
+
+                }
+
+
+                const name =
+                    contact.name ||
+                    user.name ||
+                    "Unknown User";
+
+
+                const avatar =
+                    user.profileImage ||
+                    user.avatar ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
+
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "game-contact-item";
+
+
+                item.innerHTML = `
+
+                    <div class="game-contact-user">
+
+                        <img
+                            src="${avatar}"
+                            alt=""
+                        >
+
+                        <div>
+
+                            <strong>
+                                ${name}
+                            </strong>
+
+                            <span>
+                                ${contact.phone || ""}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="game-invite-contact-btn"
+                    >
+                        Invite
+                    </button>
+
+                `;
+
+
+                item
+                    .querySelector(
+                        ".game-invite-contact-btn"
+                    )
+                    .addEventListener(
+                        "click",
+                        () => {
+
+                            sendGameInvite(
+                                user._id,
+                                name
+                            );
+
+                        }
+                    );
+
+
+                list.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Load game contacts error:",
+            error
+        );
+
+
+        list.innerHTML = `
+
+            <div class="game-no-contacts">
+
+                Unable to load contacts.
+
+            </div>
+
+        `;
+
+    }
+
+}
+// =========================================
+// TIC TAC TOE GAME LOGIC
+// =========================================
+
+function startTicTacToe() {
+
+    const board =
+        document.getElementById(
+            "ticBoard"
+        );
+
+    const status =
+        document.getElementById(
+            "ticStatus"
+        );
+
+    const resetBtn =
+        document.getElementById(
+            "ticResetBtn"
+        );
+
+    const backBtn =
+        document.getElementById(
+            "ticBackBtn"
+        );
+
+    const inviteBtn =
+    document.getElementById(
+        "ticInviteBtn"
+    );
+    if (
+        !board ||
+        !status ||
+        !resetBtn ||
+        !backBtn
+    ) {
+
+        return;
+
+    }
+
+
+    const cells =
+        board.querySelectorAll(
+            "[data-cell]"
+        );
+
+
+    let currentPlayer =
+        "X";
+
+    let gameActive =
+        true;
+
+    let gameState =
+        [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ];
+
+
+    const winningPatterns = [
+
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+
+        [0, 4, 8],
+        [2, 4, 6]
+
+    ];
+
+
+    // =====================================
+    // CELL CLICK
+    // =====================================
+
+    cells.forEach(
+        cell => {
+
+            cell.addEventListener(
+                "click",
+                () => {
+
+                    const index =
+                        Number(
+                            cell.dataset.cell
+                        );
+
+
+                    if (
+                        !gameActive ||
+                        gameState[index]
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    gameState[index] =
+                        currentPlayer;
+
+                    cell.innerText =
+                        currentPlayer;
+
+
+                    cell.classList.add(
+                        currentPlayer
+                            .toLowerCase()
+                    );
+
+
+                    checkGameResult();
+
+                }
+            );
+
+        }
+    );
+
+
+    // =====================================
+    // CHECK GAME RESULT
+    // =====================================
+
+    function checkGameResult() {
+
+        let winner =
+            null;
+
+
+        for (
+            const pattern
+            of winningPatterns
+        ) {
+
+            const [a, b, c] =
+                pattern;
+
+
+            if (
+                gameState[a] &&
+                gameState[a] ===
+                    gameState[b] &&
+                gameState[a] ===
+                    gameState[c]
+            ) {
+
+                winner =
+                    gameState[a];
+
+                break;
+
+            }
+
+        }
+
+
+        // =================================
+        // WINNER
+        // =================================
+
+        if (winner) {
+
+            gameActive =
+                false;
+
+
+            status.innerText =
+                `${winner} wins! 🎉`;
+
+
+            highlightWinner(
+                winner
+            );
+
+            return;
+
+        }
+
+
+        // =================================
+        // DRAW
+        // =================================
+
+        if (
+            gameState.every(
+                cell => cell !== ""
+            )
+        ) {
+
+            gameActive =
+                false;
+
+
+            status.innerText =
+                "It's a draw! 🤝";
+
+            return;
+
+        }
+
+
+        // =================================
+        // NEXT TURN
+        // =================================
+
+        currentPlayer =
+            currentPlayer === "X"
+                ? "O"
+                : "X";
+
+
+        status.innerText =
+            `Your turn — ${currentPlayer}`;
+
+    }
+
+
+    // =====================================
+    // HIGHLIGHT WINNER
+    // =====================================
+
+    function highlightWinner(
+        winner
+    ) {
+
+        winningPatterns.forEach(
+            pattern => {
+
+                const [a, b, c] =
+                    pattern;
+
+
+                if (
+                    gameState[a] ===
+                        winner &&
+                    gameState[b] ===
+                        winner &&
+                    gameState[c] ===
+                        winner
+                ) {
+
+                    cells[a].classList.add(
+                        "winner"
+                    );
+
+                    cells[b].classList.add(
+                        "winner"
+                    );
+
+                    cells[c].classList.add(
+                        "winner"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // =====================================
+    // NEW GAME
+    // =====================================
+
+    resetBtn.addEventListener(
+        "click",
+        () => {
+
+            gameState =
+                [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ];
+
+
+            currentPlayer =
+                "X";
+
+
+            gameActive =
+                true;
+
+
+            cells.forEach(
+                cell => {
+
+                    cell.innerText =
+                        "";
+
+                    cell.classList.remove(
+                        "x",
+                        "o",
+                        "winner"
+                    );
+
+                }
+            );
+
+
+            status.innerText =
+                "Your turn — X";
+
+        }
+    );
+
+// =====================================
+// INVITE FRIEND
+// =====================================
+
+if (inviteBtn) {
+
+    inviteBtn.addEventListener(
+        "click",
+        () => {
+
+            openGameInviteModal();
+
+        }
+    );
+
+}
+    // =====================================
+    // BACK TO GAMES
+    // =====================================
+
+    backBtn.addEventListener(
+        "click",
+        () => {
+
+            showGames();
+
+            document
+                .querySelectorAll(
+                    ".filters button"
+                )
+                .forEach(
+                    button => {
+
+                        button.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+
+            gamesBtn.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+// =========================================
+// GAME INVITE MODAL
+// =========================================
+
+async function openGameInviteModal() {
+
+    let modal =
+        document.getElementById(
+            "gameInviteModal"
+        );
+
+
+    if (modal) {
+
+        modal.remove();
+
+    }
+
+
+    modal =
+        document.createElement(
+            "div"
+        );
+
+
+    modal.id =
+        "gameInviteModal";
+
+    modal.className =
+        "game-invite-overlay";
+
+
+    modal.innerHTML = `
+
+        <div class="game-invite-modal">
+
+            <div class="game-invite-header">
+
+                <div>
+
+                    <h3>
+                        Invite a Friend
+                    </h3>
+
+                    <p>
+                        Choose a contact to play Tic Tac Toe
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    id="closeGameInvite"
+                    class="game-invite-close"
+                >
+                    <i class="fas fa-times"></i>
+                </button>
+
+            </div>
+
+
+            <div
+                id="gameContactsList"
+                class="game-contacts-list"
+            >
+
+                <div class="game-contacts-loading">
+                    Loading contacts...
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        modal
+    );
+
+
+    document
+        .getElementById(
+            "closeGameInvite"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                modal.remove();
+
+            }
+        );
+
+
+    modal.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target ===
+                modal
+            ) {
+
+                modal.remove();
+
+            }
+
+        }
+    );
+
+
+    await loadGameContacts();
+
+}
+// =========================================
+// SEND GAME INVITE
+// =========================================
+
+function sendGameInvite(
+    userId,
+    userName
+) {
+
+    if (
+        !userId ||
+        !socket ||
+        !socket.connected
+    ) {
+
+        showVibeToast(
+            "Unable to send game invite.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    socket.emit(
+        "game:invite",
+        {
+
+            to:
+                userId.toString(),
+
+            from:
+                currentUser._id.toString(),
+
+            fromName:
+                currentUser.name ||
+                "A friend",
+
+            game:
+                "tic-tac-toe"
+
+        }
+    );
+
+
+    const modal =
+        document.getElementById(
+            "gameInviteModal"
+        );
+
+
+    if (modal) {
+
+        modal.remove();
+
+    }
+
+
+    showVibeToast(
+        `Game invite sent to ${userName}.`,
+        "success"
+    );
+
+}
+// =========================================
+// RECEIVE GAME INVITE
+// =========================================
+
+socket.on(
+    "game:incoming-invite",
+    ({
+        from,
+        fromName,
+        game
+    }) => {
+
+        if (
+            game !==
+            "tic-tac-toe"
+        ) {
+
+            return;
+
+        }
+
+
+        showGameInviteReceived(
+            from,
+            fromName
+        );
+
+    }
+);
+// =========================================
+// SHOW INCOMING GAME INVITE
+// =========================================
+
+function showGameInviteReceived(
+    from,
+    fromName
+) {
+
+    const existing =
+        document.getElementById(
+            "incomingGameInvite"
+        );
+
+
+    if (existing) {
+
+        existing.remove();
+
+    }
+
+
+    const invite =
+        document.createElement(
+            "div"
+        );
+
+
+    invite.id =
+        "incomingGameInvite";
+
+    invite.className =
+        "incoming-game-invite";
+
+
+    invite.innerHTML = `
+
+        <div class="incoming-game-content">
+
+            <div class="incoming-game-icon">
+
+                <i class="fas fa-gamepad"></i>
+
+            </div>
+
+            <div class="incoming-game-text">
+
+                <strong>
+                    Tic Tac Toe
+                </strong>
+
+                <span>
+                    ${fromName} invited you to play
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="incoming-game-actions">
+
+            <button
+                type="button"
+                id="declineGameInvite"
+            >
+                Decline
+            </button>
+
+            <button
+                type="button"
+                id="acceptGameInvite"
+            >
+                Accept
+            </button>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        invite
+    );
+
+
+    document
+        .getElementById(
+            "acceptGameInvite"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                socket.emit(
+                    "game:accept",
+                    {
+
+                        to:
+                            from,
+
+                        from:
+                            currentUser._id.toString(),
+
+                        game:
+                            "tic-tac-toe"
+
+                    }
+                );
+
+
+                invite.remove();
+
+                showGames();
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "declineGameInvite"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                socket.emit(
+                    "game:decline",
+                    {
+
+                        to:
+                            from,
+
+                        from:
+                            currentUser._id.toString(),
+
+                        game:
+                            "tic-tac-toe"
+
+                    }
+                );
+
+
+                invite.remove();
+
+            }
+        );
+
+}
+// =========================================
+// GAME INVITE RESPONSE
+// =========================================
+
+socket.on(
+    "game:invite-accepted",
+    () => {
+
+        showVibeToast(
+            "Your friend accepted the game invite! 🎮",
+            "success"
+        );
+
+        showGames();
+
+    }
+);
+
+
+socket.on(
+    "game:invite-declined",
+    () => {
+
+        showVibeToast(
+            "Your friend declined the game invite.",
+            "error"
+        );
+
+    }
+);
 // =========================================
 // ADD STATUS
 // =========================================

@@ -97,7 +97,150 @@ const socketHandler = (io) => {
                 }
             );
 
+// =========================================
+// TIC TAC TOE - GAME INVITE
+// =========================================
 
+socket.on(
+    "game:invite",
+    ({
+        to,
+        from,
+        fromName,
+        game
+    }) => {
+
+        if (
+            !to ||
+            !from
+        ) {
+
+            return;
+
+        }
+
+
+        console.log(
+            `🎮 Game Invite: ${from} → ${to}`
+        );
+
+
+        io.to(
+            to.toString()
+        ).emit(
+            "game:incoming-invite",
+            {
+
+                from:
+                    from.toString(),
+
+                fromName:
+                    fromName ||
+                    "A friend",
+
+                game:
+                    game ||
+                    "tic-tac-toe"
+
+            }
+        );
+
+    }
+);
+
+
+// =========================================
+// TIC TAC TOE - ACCEPT INVITE
+// =========================================
+
+socket.on(
+    "game:accept",
+    ({
+        to,
+        from,
+        game
+    }) => {
+
+        if (
+            !to ||
+            !from
+        ) {
+
+            return;
+
+        }
+
+
+        console.log(
+            `🎮 Game Accepted: ${from} → ${to}`
+        );
+
+
+        io.to(
+            to.toString()
+        ).emit(
+            "game:invite-accepted",
+            {
+
+                from:
+                    from.toString(),
+
+                game:
+                    game ||
+                    "tic-tac-toe"
+
+            }
+        );
+
+    }
+);
+
+
+// =========================================
+// TIC TAC TOE - DECLINE INVITE
+// =========================================
+
+socket.on(
+    "game:decline",
+    ({
+        to,
+        from,
+        game
+    }) => {
+
+        if (
+            !to ||
+            !from
+        ) {
+
+            return;
+
+        }
+
+
+        console.log(
+            `🎮 Game Declined: ${from} → ${to}`
+        );
+
+
+        io.to(
+            to.toString()
+        ).emit(
+            "game:invite-declined",
+            {
+
+                from:
+                    from.toString(),
+
+                game:
+                    game ||
+                    "tic-tac-toe"
+
+            }
+        );
+
+    }
+);
             // =========================================
             // VOICE CALL - START
             // =========================================

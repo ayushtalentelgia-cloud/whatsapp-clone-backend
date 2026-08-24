@@ -181,6 +181,11 @@ placeholder="Search contacts..."
     >
         Posts
     </button>
+    <button
+    id="gamesBtn"
+>
+    Games
+</button>
 
 </div>
 
@@ -408,6 +413,100 @@ id="statusList"
             >
                 Delete
             </button>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- =========================================
+     GAMES SECTION
+========================================= -->
+
+<div
+    id="gamesSection"
+    class="games-section"
+    style="display:none;"
+>
+
+    <div class="games-header">
+
+        <div class="games-title">
+            <i class="fas fa-gamepad"></i>
+
+            <div>
+                <h2>Games</h2>
+
+                <p>
+                    Play and have fun with your friends
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="games-list">
+
+        <!-- TIC TAC TOE -->
+
+        <div
+            class="game-card"
+            data-game="tic-tac-toe"
+        >
+
+            <div class="game-card-icon">
+                <i class="fas fa-hashtag"></i>
+            </div>
+
+            <div class="game-card-info">
+
+                <h3>
+                    Tic Tac Toe
+                </h3>
+
+                <p>
+                    Play Tic Tac Toe with a friend
+                </p>
+
+            </div>
+
+            <button
+    type="button"
+    class="game-play-btn"
+    data-game="tic-tac-toe"
+>
+    Play
+</button>
+
+        </div>
+
+
+        <!-- COMING SOON -->
+
+        <div
+            class="game-card coming-soon"
+        >
+
+            <div class="game-card-icon">
+                <i class="fas fa-puzzle-piece"></i>
+            </div>
+
+            <div class="game-card-info">
+
+                <h3>
+                    More Games
+                </h3>
+
+                <p>
+                    More games are coming soon
+                </p>
+
+            </div>
+
+            <span class="game-coming-label">
+                Soon
+            </span>
 
         </div>
 
