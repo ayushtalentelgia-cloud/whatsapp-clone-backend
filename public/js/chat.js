@@ -3782,77 +3782,201 @@ function startTicTacToe() {
 
 
     // =====================================
-    // COUNTDOWN
+// COUNTDOWN
+// =====================================
+
+function startCountdown(
+    seconds
+) {
+
+    countdownActive =
+        true;
+
+    gameActive =
+        false;
+
+
+    let count =
+        Number(seconds) || 3;
+
+
+    // =====================================
+    // REMOVE OLD COUNTDOWN
     // =====================================
 
-    function startCountdown(
-        seconds
-    ) {
+    const oldOverlay =
+        document.getElementById(
+            "ticCountdownOverlay"
+        );
 
-        countdownActive =
-            true;
+    if (oldOverlay) {
 
-        gameActive =
-            false;
+        oldOverlay.remove();
 
-
-        let count =
-            Number(seconds) || 3;
+    }
 
 
-        status.innerText =
-            count;
+    // =====================================
+    // CREATE FULL SCREEN COUNTDOWN
+    // =====================================
+
+    const overlay =
+        document.createElement(
+            "div"
+        );
+
+    overlay.id =
+        "ticCountdownOverlay";
+
+    overlay.className =
+        "tic-countdown-overlay";
 
 
-        const timer =
-            setInterval(
-                () => {
+    overlay.innerHTML = `
 
-                    count--;
+        <div class="tic-countdown-box">
+
+            <div class="tic-countdown-label">
+                GET READY
+            </div>
+
+            <div
+                id="ticCountdownNumber"
+                class="tic-countdown-number"
+            >
+                ${count}
+            </div>
+
+            <div class="tic-countdown-game">
+                TIC TAC TOE
+            </div>
+
+        </div>
+
+    `;
 
 
-                    if (
-                        count > 0
-                    ) {
+    document.body.appendChild(
+        overlay
+    );
 
-                        status.innerText =
+
+    const number =
+        document.getElementById(
+            "ticCountdownNumber"
+        );
+
+
+    // =====================================
+    // NUMBER ANIMATION
+    // =====================================
+
+    function animateNumber() {
+
+        if (!number) {
+
+            return;
+
+        }
+
+
+        number.classList.remove(
+            "tic-countdown-pop"
+        );
+
+
+        void number.offsetWidth;
+
+
+        number.classList.add(
+            "tic-countdown-pop"
+        );
+
+    }
+
+
+    animateNumber();
+
+
+    // =====================================
+    // COUNTDOWN TIMER
+    // =====================================
+
+    const timer =
+        setInterval(
+            () => {
+
+                count--;
+
+
+                if (
+                    count > 0
+                ) {
+
+                    if (number) {
+
+                        number.innerText =
                             count;
 
-                        return;
+                        animateNumber();
 
                     }
 
+                    return;
 
-                    clearInterval(
-                        timer
+                }
+
+
+                clearInterval(
+                    timer
+                );
+
+
+                // =================================
+                // GO
+                // =================================
+
+                if (number) {
+
+                    number.innerText =
+                        "GO!";
+
+                    number.classList.add(
+                        "tic-countdown-go"
                     );
 
-
-                    status.innerText =
-                        "GO! 🎮";
+                }
 
 
-                    setTimeout(
-                        () => {
+                setTimeout(
+                    () => {
 
-                            if (
-                                countdownActive
-                            ) {
+                        if (overlay) {
 
-                                status.innerText =
-                                    "Starting...";
+                            overlay.remove();
 
-                            }
+                        }
 
-                        },
-                        700
-                    );
 
-                },
-                1000
-            );
+                        countdownActive =
+                            false;
 
-    }
+                        gameActive =
+                            true;
+
+
+                        updateTurnStatus();
+
+                    },
+                    700
+                );
+
+
+            },
+            1000
+        );
+
+}
 
 
     // =====================================
