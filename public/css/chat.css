@@ -11889,3 +11889,98 @@ a:hover {
 
 }
 
+
+/* =========================================
+   MOBILE CHAT LIST - FULL SCROLL FIX
+========================================= */
+
+.chat-list-wrapper {
+
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    height: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow: hidden;
+
+}
+
+
+.chat-list {
+
+    flex: 1 1 auto !important;
+
+    min-height: 0 !important;
+
+    height: auto !important;
+
+    overflow-y: auto !important;
+
+    overflow-x: hidden !important;
+
+    -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior-y: contain;
+
+    touch-action: pan-y;
+
+    padding-bottom: 30px;
+
+}
+
+
+/* =========================================
+   PHONE CHAT LIST
+========================================= */
+
+@media screen and (max-width: 600px) {
+
+    .chat-list-wrapper {
+
+        flex: 1 1 auto;
+
+        min-height: 0;
+
+        height: 0;
+
+        overflow: hidden;
+
+    }
+
+
+    .chat-list {
+
+        flex: 1 1 auto !important;
+
+        min-height: 0 !important;
+
+        height: auto !important;
+
+        overflow-y: auto !important;
+
+        overflow-x: hidden !important;
+
+        padding-bottom: 70px;
+
+        -webkit-overflow-scrolling: touch;
+
+        overscroll-behavior-y: contain;
+
+        touch-action: pan-y;
+
+    }
+
+
+    .chat-item {
+
+        flex-shrink: 0;
+
+    }
+
+}
+
