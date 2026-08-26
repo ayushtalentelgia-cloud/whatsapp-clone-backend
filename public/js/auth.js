@@ -62,8 +62,9 @@ if (signupForm) {
                 !password
             ) {
 
-                alert(
-                    "Please fill all fields."
+                showToast(
+                    "Please fill all fields.",
+                    "error"
                 );
 
                 return;
@@ -141,9 +142,10 @@ if (signupForm) {
                     !data.success
                 ) {
 
-                    alert(
+                    showToast(
                         data.message ||
-                        "Unable to create account."
+                        "Unable to create account.",
+                        "error"
                     );
 
 
@@ -222,8 +224,9 @@ if (signupForm) {
                 );
 
 
-                alert(
-                    "Server Error. Please try again."
+                showToast(
+                    "Server Error. Please try again.",
+                    "error"
                 );
 
 
@@ -359,8 +362,9 @@ if (loginForm) {
 
                 else {
 
-                    alert(
-                        data.message
+                    showToast(
+                        data.message,
+                        "error"
                     );
 
                 }
@@ -376,8 +380,9 @@ if (loginForm) {
                 );
 
 
-                alert(
-                    "Server Error"
+                showToast(
+                    "Server Error",
+                    "error"
                 );
 
             }
