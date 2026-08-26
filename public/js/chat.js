@@ -11146,21 +11146,535 @@ if (statusCameraBtn) {
 
     statusCameraBtn.addEventListener(
         "click",
-        () => {
+        openStatusCamera
+    );
 
-            if (
-                typeof openQuickCamera ===
-                "function"
-            ) {
+}
 
-                openQuickCamera();
+
+// =========================================
+// STATUS CAMERA
+// =========================================
+
+let statusCameraStream = null;
+let statusCameraModal = null;
+
+
+async function openStatusCamera() {
+
+    if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+    ) {
+
+        showVibeToast(
+            "Camera is not supported by this browser.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        statusCameraStream =
+            await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: "user"
+                },
+                audio: false
+            });
+
+
+        statusCameraModal =
+            document.createElement("div");
+
+        statusCameraModal.id =
+            "statusCameraModal";
+
+        statusCameraModal.className =
+            "status-camera-overlay";
+
+
+        statusCameraModal.innerHTML = `
+
+            <div class="status-camera-modal">
+
+                <div class="status-camera-header">
+
+                    <h3>
+                        Add Status
+                    </h3>
+
+                    <button
+                        type="button"
+                        id="statusCameraClose"
+                        class="status-camera-close"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                </div>
+
+
+                <div class="status-camera-preview">
+
+                    <video
+                        id="statusCameraVideo"
+                        autoplay
+                        playsinline
+                        muted
+                    ></video>
+
+                    <canvas
+                        id="statusCameraCanvas"
+                        hidden
+                    ></canvas>
+
+                    <img
+                        id="statusCameraCaptured"
+                        hidden
+                        alt="Captured status"
+                    >
+
+                </div>
+
+
+                <div class="status-camera-actions">
+
+                    <button
+                        type="button"
+                        id="statusCameraCancel"
+                        class="status-camera-secondary"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="statusCameraCapture"
+                        class="status-camera-capture"
+                    >
+                        <i class="fas fa-camera"></i>
+                        Capture
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="statusCameraRetake"
+                        class="status-camera-secondary"
+                        hidden
+                    >
+                        Retake
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="statusCameraAdd"
+                        class="status-camera-add"
+                        hidden
+                    >
+                        <i class="fas fa-check"></i>
+                        Add to Status
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            statusCameraModal
+        );
+
+
+        const video =
+            document.getElementById(
+                "statusCameraVideo"
+            );
+
+        const canvas =
+            document.getElementById(
+                "statusCameraCanvas"
+            );
+
+        const captured =
+            document.getElementById(
+                "statusCameraCaptured"
+            );
+
+        const captureBtn =
+            document.getElementById(
+                "statusCameraCapture"
+            );
+
+        const retakeBtn =
+            document.getElementById(
+                "statusCameraRetake"
+            );
+
+        const addBtn =
+            document.getElementById(
+                "statusCameraAdd"
+            );
+
+        const cancelBtn =
+            document.getElementById(
+                "statusCameraCancel"
+            );
+
+        const closeBtn =
+            document.getElementById(
+                "statusCameraClose"
+            );
+
+
+        video.srcObject =
+            statusCameraStream;
+
+
+        function stopStatusCamera() {
+
+            if (statusCameraStream) {
+
+                statusCameraStream
+                    .getTracks()
+                    .forEach(
+                        track => {
+                            track.stop();
+                        }
+                    );
+
+                statusCameraStream =
+                    null;
 
             }
 
         }
-    );
+
+
+        function closeStatusCamera() {
+
+            stopStatusCamera();
+
+            if (statusCameraModal) {
+
+                statusCameraModal.remove();
+
+                statusCameraModal =
+                    null;
+
+            }
+
+        }
+
+
+        function retakePhoto() {
+
+            captured.hidden =
+                true;
+
+            captured.src =
+                "";
+
+            video.hidden =
+                false;
+
+            captureBtn.hidden =
+                false;
+
+            retakeBtn.hidden =
+                true;
+
+            addBtn.hidden =
+                true;
+
+        }
+
+
+        captureBtn.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    !video.videoWidth ||
+                    !video.videoHeight
+                ) {
+
+                    showVibeToast(
+                        "Camera is not ready yet.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                canvas.width =
+                    video.videoWidth;
+
+                canvas.height =
+                    video.videoHeight;
+
+
+                const context =
+                    canvas.getContext(
+                        "2d"
+                    );
+
+
+                context.drawImage(
+                    video,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+
+                captured.src =
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.9
+                    );
+
+
+                video.hidden =
+                    true;
+
+                captured.hidden =
+                    false;
+
+                captureBtn.hidden =
+                    true;
+
+                retakeBtn.hidden =
+                    false;
+
+                addBtn.hidden =
+                    false;
+
+            }
+        );
+
+
+        retakeBtn.addEventListener(
+            "click",
+            retakePhoto
+        );
+
+
+        cancelBtn.addEventListener(
+            "click",
+            closeStatusCamera
+        );
+
+
+        closeBtn.addEventListener(
+            "click",
+            closeStatusCamera
+        );
+
+
+        addBtn.addEventListener(
+            "click",
+            () => {
+
+                canvas.toBlob(
+                    async blob => {
+
+                        if (!blob) {
+
+                            showVibeToast(
+                                "Unable to capture photo.",
+                                "error"
+                            );
+
+                            return;
+
+                        }
+
+
+                        const file =
+                            new File(
+                                [blob],
+                                "status-photo.jpg",
+                                {
+                                    type:
+                                        "image/jpeg"
+                                }
+                            );
+
+
+                        const formData =
+                            new FormData();
+
+
+                        formData.append(
+                            "status",
+                            file
+                        );
+
+
+                        addBtn.disabled =
+                            true;
+
+                        addBtn.innerHTML = `
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Adding...
+                        `;
+
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    API_URL +
+                                    "/status",
+                                    {
+                                        method:
+                                            "POST",
+
+                                        headers: {
+                                            Authorization:
+                                                "Bearer " +
+                                                token
+                                        },
+
+                                        body:
+                                            formData
+                                    }
+                                );
+
+
+                            const data =
+                                await response.json();
+
+
+                            if (
+                                !response.ok ||
+                                !data.success
+                            ) {
+
+                                throw new Error(
+                                    data.message ||
+                                    "Status upload failed."
+                                );
+
+                            }
+
+
+                            showVibeToast(
+                                "Status added successfully!",
+                                "success"
+                            );
+
+
+                            closeStatusCamera();
+
+
+                            if (
+                                typeof loadStatuses ===
+                                "function"
+                            ) {
+
+                                loadStatuses();
+
+                            }
+
+                        }
+                        catch (error) {
+
+                            console.error(
+                                "Status camera upload error:",
+                                error
+                            );
+
+
+                            showVibeToast(
+                                error.message ||
+                                "Unable to add status.",
+                                "error"
+                            );
+
+
+                            addBtn.disabled =
+                                false;
+
+                            addBtn.innerHTML = `
+                                <i class="fas fa-check"></i>
+                                Add to Status
+                            `;
+
+                        }
+
+                    },
+                    "image/jpeg",
+                    0.9
+                );
+
+            }
+        );
+
+
+        statusCameraModal.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    statusCameraModal
+                ) {
+
+                    closeStatusCamera();
+
+                }
+
+            }
+        );
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "Status Camera Error:",
+            error
+        );
+
+
+        if (
+            error.name ===
+            "NotAllowedError"
+        ) {
+
+            showVibeToast(
+                "Camera permission was denied.",
+                "error"
+            );
+
+        }
+        else {
+
+            showVibeToast(
+                "Unable to access camera.",
+                "error"
+            );
+
+        }
+
+    }
 
 }
+
 
 // =========================================
 // QUICK PHOTO BUTTON
