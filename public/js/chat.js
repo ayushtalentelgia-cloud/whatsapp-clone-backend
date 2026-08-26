@@ -2,21 +2,21 @@
 // API CONFIG
 // =========================================
 
-// const API_URL =
-//     "https://vibechat-backend-i6xa.onrender.com/api";
+const API_URL =
+    "https://vibechat-backend-i6xa.onrender.com/api";
 
-// const SOCKET_URL =
-//     "https://vibechat-backend-i6xa.onrender.com";
+const SOCKET_URL =
+    "https://vibechat-backend-i6xa.onrender.com";
 
 // =========================================
 // API CONFIG
 // =========================================
 
-const API_URL =
-    "http://localhost:5000/api";
+// const API_URL =
+//     "http://localhost:5000/api";
 
-const SOCKET_URL =
-    "http://localhost:5000";
+// const SOCKET_URL =
+//     "http://localhost:5000";
 
 // =========================================
 // AUTH
@@ -6236,6 +6236,11 @@ const attachmentBtn =
     document.getElementById(
         "attachmentBtn"
     );
+
+const quickPhotoBtn =
+    document.getElementById(
+        "quickPhotoBtn"
+    );
 // =========================================
 // SHARE FILE MODAL
 // =========================================
@@ -10116,6 +10121,23 @@ window.addEventListener(
 // PAGE LOAD
 // =========================================
 
+// =========================================
+// INITIAL CAMERA BUTTON VISIBILITY
+// =========================================
+
+window.addEventListener(
+    "load",
+    () => {
+
+        setTimeout(
+            updateCameraButtonVisibility,
+            100
+        );
+
+    }
+);
+
+
 window.addEventListener(
     "load",
     () => {
@@ -10443,6 +10465,656 @@ if (
     );
 
 }
+
+// =========================================
+// QUICK CAMERA - PHOTO
+// =========================================
+let quickCameraStream = null;
+let quickCameraModal = null;
+
+
+// =========================================
+// CLOSE QUICK CAMERA
+// =========================================
+
+function closeQuickCamera() {
+
+    if (
+        quickCameraStream
+    ) {
+
+        quickCameraStream
+            .getTracks()
+            .forEach(
+                track => track.stop()
+            );
+
+        quickCameraStream = null;
+
+    }
+
+
+    if (
+        quickCameraModal
+    ) {
+
+        quickCameraModal.remove();
+
+        quickCameraModal = null;
+
+    }
+
+}
+
+
+// =========================================
+// CAMERA PERMISSION / OPEN CAMERA
+// =========================================
+
+async function openQuickCamera() {
+
+    if (!selectedChat) {
+
+        showVibeToast(
+            "Please open a chat first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+    ) {
+
+        showVibeToast(
+            "Camera is not supported by this browser.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        quickCameraStream =
+            await navigator.mediaDevices
+                .getUserMedia({
+                    video: {
+                        facingMode: "user"
+                    },
+                    audio: false
+                });
+
+
+        quickCameraModal =
+            document.createElement("div");
+
+        quickCameraModal.className =
+            "quick-camera-overlay";
+
+        quickCameraModal.innerHTML = `
+
+            <div class="quick-camera-modal">
+
+                <div class="quick-camera-header">
+
+                    <h3>
+                        Take a Photo
+                    </h3>
+
+                    <button
+                        type="button"
+                        class="quick-camera-close"
+                        id="quickCameraClose"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                </div>
+
+
+                <div class="quick-camera-preview">
+
+                    <video
+                        id="quickCameraVideo"
+                        autoplay
+                        playsinline
+                        muted
+                    ></video>
+
+                    <canvas
+                        id="quickCameraCanvas"
+                        hidden
+                    ></canvas>
+
+                    <img
+                        id="quickCameraCaptured"
+                        hidden
+                        alt="Captured photo"
+                    >
+
+                </div>
+
+
+                <div class="quick-camera-actions">
+
+                    <button
+                        type="button"
+                        id="quickCameraCancel"
+                        class="quick-camera-secondary"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="button"
+                        id="quickCameraCapture"
+                        class="quick-camera-capture"
+                    >
+                        <i class="fas fa-camera"></i>
+                        Capture
+                    </button>
+
+                    <button
+                        type="button"
+                        id="quickCameraRetake"
+                        class="quick-camera-secondary"
+                        hidden
+                    >
+                        Retake
+                    </button>
+
+                    <button
+                        type="button"
+                        id="quickCameraSend"
+                        class="quick-camera-send"
+                        hidden
+                    >
+                        <i class="fas fa-paper-plane"></i>
+                        Send
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            quickCameraModal
+        );
+
+
+        const video =
+            document.getElementById(
+                "quickCameraVideo"
+            );
+
+        const canvas =
+            document.getElementById(
+                "quickCameraCanvas"
+            );
+
+        const captured =
+            document.getElementById(
+                "quickCameraCaptured"
+            );
+
+        const captureBtn =
+            document.getElementById(
+                "quickCameraCapture"
+            );
+
+        const retakeBtn =
+            document.getElementById(
+                "quickCameraRetake"
+            );
+
+        const sendBtn =
+            document.getElementById(
+                "quickCameraSend"
+            );
+
+        const closeBtn =
+            document.getElementById(
+                "quickCameraClose"
+            );
+
+        const cancelBtn =
+            document.getElementById(
+                "quickCameraCancel"
+            );
+
+
+        video.srcObject =
+            quickCameraStream;
+
+
+        // =====================================
+        // CLOSE
+        // =====================================
+
+        const closeCamera =
+            () => {
+
+                closeQuickCamera();
+
+            };
+
+
+        closeBtn.onclick =
+            closeCamera;
+
+        cancelBtn.onclick =
+            closeCamera;
+
+
+        // =====================================
+        // CAPTURE
+        // =====================================
+
+        captureBtn.onclick =
+            () => {
+
+                if (
+                    !video.videoWidth ||
+                    !video.videoHeight
+                ) {
+
+                    showVibeToast(
+                        "Camera is not ready yet.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                canvas.width =
+                    video.videoWidth;
+
+                canvas.height =
+                    video.videoHeight;
+
+
+                const context =
+                    canvas.getContext("2d");
+
+
+                context.drawImage(
+                    video,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+
+                const imageUrl =
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.90
+                    );
+
+
+                captured.src =
+                    imageUrl;
+
+                captured.hidden =
+                    false;
+
+                video.hidden =
+                    true;
+
+                captureBtn.hidden =
+                    true;
+
+                retakeBtn.hidden =
+                    false;
+
+                sendBtn.hidden =
+                    false;
+
+            };
+
+
+        // =====================================
+        // RETAKE
+        // =====================================
+
+        retakeBtn.onclick =
+            () => {
+
+                captured.hidden =
+                    true;
+
+                video.hidden =
+                    false;
+
+                captureBtn.hidden =
+                    false;
+
+                retakeBtn.hidden =
+                    true;
+
+                sendBtn.hidden =
+                    true;
+
+            };
+
+
+        // =====================================
+        // SEND PHOTO
+        // =====================================
+
+        sendBtn.onclick =
+            async () => {
+
+                try {
+
+                    sendBtn.disabled =
+                        true;
+
+                    sendBtn.innerHTML = `
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Sending...
+                    `;
+
+
+                    const blob =
+                        await new Promise(
+                            resolve => {
+
+                                canvas.toBlob(
+                                    resolve,
+                                    "image/jpeg",
+                                    0.90
+                                );
+
+                            }
+                        );
+
+
+                    if (!blob) {
+
+                        throw new Error(
+                            "Unable to capture photo."
+                        );
+
+                    }
+
+
+                    const file =
+                        new File(
+                            [blob],
+                            `VibeChat-${Date.now()}.jpg`,
+                            {
+                                type:
+                                    "image/jpeg"
+                            }
+                        );
+
+
+                    if (
+                        file.size >
+                        25 * 1024 * 1024
+                    ) {
+
+                        throw new Error(
+                            "Photo size must be less than 25 MB."
+                        );
+
+                    }
+
+
+                    const formData =
+                        new FormData();
+
+
+                    formData.append(
+                        "file",
+                        file
+                    );
+
+                    formData.append(
+                        "chatId",
+                        selectedChat._id
+                    );
+
+                    formData.append(
+                        "content",
+                        ""
+                    );
+
+
+                    const response =
+                        await fetch(
+                            API_URL +
+                            "/message",
+                            {
+                                method:
+                                    "POST",
+
+                                headers: {
+                                    Authorization:
+                                        "Bearer " +
+                                        token
+                                },
+
+                                body:
+                                    formData
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (
+                        !response.ok ||
+                        !data.success
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            "Unable to send photo."
+                        );
+
+                    }
+
+
+                    closeQuickCamera();
+
+
+                    renderMessage(
+                        data.message
+                    );
+
+                    scrollBottom();
+
+                    refreshChats();
+
+
+                    showVibeToast(
+                        "Photo sent successfully!",
+                        "success"
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Camera photo upload error:",
+                        error
+                    );
+
+
+                    sendBtn.disabled =
+                        false;
+
+                    sendBtn.innerHTML = `
+                        <i class="fas fa-paper-plane"></i>
+                        Send
+                    `;
+
+
+                    showVibeToast(
+                        error.message ||
+                        "Unable to send photo.",
+                        "error"
+                    );
+
+                }
+
+            };
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Camera permission error:",
+            error
+        );
+
+
+        if (
+            error.name ===
+            "NotAllowedError"
+        ) {
+
+            showVibeToast(
+                "Camera permission was denied. Please allow camera access in your browser settings.",
+                "error"
+            );
+
+        }
+
+        else if (
+            error.name ===
+            "NotFoundError"
+        ) {
+
+            showVibeToast(
+                "No camera was found on this device.",
+                "error"
+            );
+
+        }
+
+        else {
+
+            showVibeToast(
+                "Unable to access the camera.",
+                "error"
+            );
+
+        }
+
+    }
+
+}
+
+
+
+
+// =========================================
+// CAMERA BUTTON VISIBILITY
+// SHOW ONLY ON ALL + STATUS
+// =========================================
+
+function updateCameraButtonVisibility() {
+
+    const cameraBtn =
+        document.getElementById(
+            "chatListCameraBtn"
+        );
+
+    if (!cameraBtn) {
+        return;
+    }
+
+    const activeSection =
+        localStorage.getItem(
+            "vibechatActiveSection"
+        ) || "chats";
+
+
+    if (
+        activeSection === "chats" ||
+        activeSection === "status"
+    ) {
+
+        cameraBtn.style.display =
+            "flex";
+
+    } else {
+
+        cameraBtn.style.display =
+            "none";
+
+    }
+
+}
+
+
+// =========================================
+// CHAT LIST CAMERA BUTTON
+// =========================================
+
+const chatListCameraBtn =
+    document.getElementById(
+        "chatListCameraBtn"
+    );
+
+
+if (chatListCameraBtn) {
+
+    chatListCameraBtn.addEventListener(
+        "click",
+        () => {
+
+            if (
+                typeof openQuickCamera ===
+                "function"
+            ) {
+
+                openQuickCamera();
+
+            }
+
+        }
+    );
+
+}
+
+
+// =========================================
+// QUICK PHOTO BUTTON
+// =========================================
+
+if (
+    quickPhotoBtn
+) {
+
+    quickPhotoBtn.addEventListener(
+        "click",
+        openQuickCamera
+    );
+
+}
+
+
 // =========================================
 // VOICE CALL - WEBRTC
 // =========================================
