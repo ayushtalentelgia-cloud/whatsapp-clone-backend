@@ -6142,31 +6142,6 @@ if (caption !== null) {
     );
 
 }
-// =========================================
-// LOGOUT
-// =========================================
-
-if (logoutBtn) {
-
-    logoutBtn.addEventListener(
-        "click",
-        () => {
-
-            localStorage.removeItem(
-                "token"
-            );
-
-            localStorage.removeItem(
-                "user"
-            );
-
-            window.location.href =
-                "/index.html";
-
-        }
-    );
-
-}
 
 // =========================================
 // SIDEBAR MENU
@@ -10092,22 +10067,13 @@ if (logoutBtn) {
         () => {
 
             if (
-                !confirm(
-                    "Logout?"
-                )
-            )
-                return;
+                typeof showBrowserLogoutModal ===
+                "function"
+            ) {
 
-            localStorage.removeItem(
-                "token"
-            );
+                showBrowserLogoutModal();
 
-            localStorage.removeItem(
-                "user"
-            );
-
-            window.location.href =
-                "/index.html";
+            }
 
         };
 
@@ -13585,7 +13551,7 @@ messageInputModal.addEventListener(
     );
 
 
-    function showBrowserLogoutModal() {
+    window.showBrowserLogoutModal = function () {
 
         const existing =
             document.getElementById(
