@@ -3444,6 +3444,76 @@ gamePlayButtons.forEach(
 
 
 // =========================================
+// GAME PLAY BUTTONS
+// =========================================
+
+function bindGamePlayButtons() {
+
+    const gamePlayButtons =
+        document.querySelectorAll(
+            ".game-play-btn[data-game]"
+        );
+
+
+    gamePlayButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const game =
+                        button.dataset.game;
+
+
+                    // =====================================
+                    // TIC TAC TOE
+                    // =====================================
+
+                    if (
+                        game ===
+                        "tic-tac-toe"
+                    ) {
+
+                        openTicTacToe();
+
+                        return;
+
+                    }
+
+
+                    // =====================================
+                    // LUDO
+                    // =====================================
+
+                    if (
+                        game ===
+                        "ludo"
+                    ) {
+
+                        openLudo();
+
+                        return;
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// BIND GAME BUTTONS
+// =========================================
+
+bindGamePlayButtons();
+
+
+// =========================================
 // OPEN TIC TAC TOE
 // =========================================
 
@@ -3551,7 +3621,11 @@ async function loadGameContacts() {
 
     try {
 
-        const response =
+        // =====================================
+        // LOAD SAVED CONTACTS
+        // =====================================
+
+        const contactResponse =
             await fetch(
                 API_URL +
                 "/users/contacts",
@@ -3569,21 +3643,250 @@ async function loadGameContacts() {
             );
 
 
-        const data =
-            await response.json();
+        const contactData =
+            await contactResponse.json();
 
+
+        // =====================================
+        // LOAD EXISTING CHATS
+        // =====================================
+
+        const chatResponse =
+            await fetch(
+                API_URL +
+                "/chat",
+                {
+
+                    headers: {
+
+                        Authorization:
+                            "Bearer " +
+                            token
+
+                    }
+
+                }
+            );
+
+
+        const chatData =
+            await chatResponse.json();
+
+
+        // =====================================
+        // COMBINE USERS WITHOUT DUPLICATES
+        // =====================================
+
+        const usersMap =
+            new Map();
+
+
+        // =====================================
+        // ADD SAVED CONTACTS
+        // =====================================
 
         if (
-            !data.success ||
-            !data.contacts ||
-            data.contacts.length === 0
+            contactData.success &&
+            Array.isArray(
+                contactData.contacts
+            )
+        ) {
+
+            contactData.contacts.forEach(
+                contact => {
+
+                    const user =
+                        contact.user;
+
+
+                    if (!user) {
+
+                        return;
+
+                    }
+
+
+                    const userId =
+                        user._id?.toString();
+
+
+                    if (!userId) {
+
+                        return;
+
+                    }
+
+
+                    // Don't show current user
+                    if (
+                        currentUser &&
+                        userId ===
+                        currentUser._id.toString()
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    usersMap.set(
+                        userId,
+                        {
+
+                            user:
+                                user,
+
+                            name:
+                                contact.name ||
+                                user.name ||
+                                "Unknown User",
+
+                            phone:
+                                contact.phone ||
+                                user.phone ||
+                                ""
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+
+
+        // =====================================
+        // ADD USERS FROM EXISTING CHATS
+        // =====================================
+
+        if (
+            chatData.success &&
+            Array.isArray(
+                chatData.chats
+            )
+        ) {
+
+            chatData.chats.forEach(
+                chat => {
+
+                    if (
+                        !Array.isArray(
+                            chat.users
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const otherUser =
+                        chat.users.find(
+                            user => {
+
+                                if (!user) {
+
+                                    return false;
+
+                                }
+
+
+                                return (
+                                    user._id?.toString() !==
+                                    currentUser._id.toString()
+                                );
+
+                            }
+                        );
+
+
+                    if (!otherUser) {
+
+                        return;
+
+                    }
+
+
+                    const userId =
+                        otherUser._id?.toString();
+
+
+                    if (!userId) {
+
+                        return;
+
+                    }
+
+
+                    if (
+                        userId ===
+                        currentUser._id.toString()
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    // Don't duplicate saved contact
+                    if (
+                        usersMap.has(
+                            userId
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    usersMap.set(
+                        userId,
+                        {
+
+                            user:
+                                otherUser,
+
+                            name:
+                                otherUser.name ||
+                                "Unknown User",
+
+                            phone:
+                                otherUser.phone ||
+                                ""
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+
+
+        // =====================================
+        // FINAL USERS
+        // =====================================
+
+        const users =
+            Array.from(
+                usersMap.values()
+            );
+
+
+        // =====================================
+        // NO USERS
+        // =====================================
+
+        if (
+            users.length === 0
         ) {
 
             list.innerHTML = `
 
                 <div class="game-no-contacts">
 
-                    No saved contacts found.
+                    No contacts found.
 
                 </div>
 
@@ -3594,21 +3897,22 @@ async function loadGameContacts() {
         }
 
 
+        // =====================================
+        // CLEAR LIST
+        // =====================================
+
         list.innerHTML = "";
 
 
-        data.contacts.forEach(
+        // =====================================
+        // RENDER ALL USERS
+        // =====================================
+
+        users.forEach(
             contact => {
 
                 const user =
                     contact.user;
-
-
-                if (!user) {
-
-                    return;
-
-                }
 
 
                 const name =
@@ -3618,6 +3922,7 @@ async function loadGameContacts() {
 
 
                 const avatar =
+                    user.profilePic ||
                     user.profileImage ||
                     user.avatar ||
                     `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`;
@@ -3639,7 +3944,7 @@ async function loadGameContacts() {
 
                         <img
                             src="${avatar}"
-                            alt=""
+                            alt="${name}"
                         >
 
                         <div>
@@ -3661,17 +3966,27 @@ async function loadGameContacts() {
                         type="button"
                         class="game-invite-contact-btn"
                     >
+
                         Invite
+
                     </button>
 
                 `;
 
 
-                item
-                    .querySelector(
+                // =====================================
+                // INVITE BUTTON
+                // =====================================
+
+                const inviteButton =
+                    item.querySelector(
                         ".game-invite-contact-btn"
-                    )
-                    .addEventListener(
+                    );
+
+
+                if (inviteButton) {
+
+                    inviteButton.addEventListener(
                         "click",
                         () => {
 
@@ -3683,6 +3998,8 @@ async function loadGameContacts() {
                         }
                     );
 
+                }
+
 
                 list.appendChild(
                     item
@@ -3692,6 +4009,7 @@ async function loadGameContacts() {
         );
 
     }
+
     catch (error) {
 
         console.error(
