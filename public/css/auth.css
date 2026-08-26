@@ -21,7 +21,9 @@ body{
 
     background:linear-gradient(135deg,#111111,#000000,#2c2c2c);
 
-    overflow:hidden;
+    overflow-x:hidden;
+
+    overflow-y:auto;
 
 }
 
