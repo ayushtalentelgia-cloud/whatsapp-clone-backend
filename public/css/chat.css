@@ -11539,31 +11539,58 @@ a:hover {
 
 
 /* =========================================
-   CAMERA BUTTON - CHAT LIST
-========================================= */
 
-.chat-list-wrapper {
-
-    position: relative;
-
-    flex: 1;
-
-    min-height: 0;
+    transform: scale(0.94);
 
 }
 
 
-.chat-list-camera-btn {
+/* =========================================
+   COMPOSER CAMERA BUTTON
+========================================= */
+
+#composerCameraBtn {
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+#composerCameraBtn:hover {
+
+    opacity: 0.75;
+
+}
+
+
+/* =========================================
+   STATUS FLOATING CAMERA
+========================================= */
+
+#statusSection {
+    position: relative;
+}
+
+.status-camera-btn {
 
     position: absolute;
 
-    right: 14px;
+    right: 20px;
 
-    bottom: 14px;
+    bottom: 20px;
 
-    width: 46px;
+    width: 50px;
 
-    height: 46px;
+    height: 50px;
 
     border: none;
 
@@ -11579,37 +11606,32 @@ a:hover {
 
     color: #ffffff;
 
-    font-size: 18px;
+    font-size: 19px;
 
     cursor: pointer;
 
-    z-index: 50;
+    z-index: 100;
 
     box-shadow:
-        0 6px 18px
-        rgba(0, 0, 0, 0.22);
+        0 7px 22px
+        rgba(0, 0, 0, 0.25);
 
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease;
-
 }
 
-
-.chat-list-camera-btn:hover {
+.status-camera-btn:hover {
 
     transform: scale(1.06);
 
     box-shadow:
-        0 9px 24px
-        rgba(0, 0, 0, 0.28);
-
+        0 10px 28px
+        rgba(0, 0, 0, 0.30);
 }
 
-
-.chat-list-camera-btn:active {
+.status-camera-btn:active {
 
     transform: scale(0.94);
-
 }
 

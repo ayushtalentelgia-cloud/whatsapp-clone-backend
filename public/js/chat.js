@@ -6237,6 +6237,38 @@ const attachmentBtn =
         "attachmentBtn"
     );
 
+const composerCameraBtn =
+    document.getElementById(
+        "composerCameraBtn"
+    );
+
+
+if (composerCameraBtn) {
+
+    composerCameraBtn.addEventListener(
+        "click",
+        () => {
+
+            if (
+                typeof openQuickCamera ===
+                "function"
+            ) {
+
+                openQuickCamera();
+
+            } else {
+
+                console.error(
+                    "openQuickCamera() is not available."
+                );
+
+            }
+
+        }
+    );
+
+}
+
 const quickPhotoBtn =
     document.getElementById(
         "quickPhotoBtn"
@@ -11098,6 +11130,37 @@ if (chatListCameraBtn) {
 
 }
 
+
+
+// =========================================
+// STATUS CAMERA BUTTON
+// =========================================
+
+const statusCameraBtn =
+    document.getElementById(
+        "statusCameraBtn"
+    );
+
+
+if (statusCameraBtn) {
+
+    statusCameraBtn.addEventListener(
+        "click",
+        () => {
+
+            if (
+                typeof openQuickCamera ===
+                "function"
+            ) {
+
+                openQuickCamera();
+
+            }
+
+        }
+    );
+
+}
 
 // =========================================
 // QUICK PHOTO BUTTON
