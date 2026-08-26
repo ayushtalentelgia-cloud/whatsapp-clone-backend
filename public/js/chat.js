@@ -471,43 +471,103 @@ function showGames() {
         "games"
     );
 
-    // Hide chat list
     if (chatList) {
-
-        chatList.style.display =
-            "none";
-
+        chatList.style.display = "none";
     }
 
-    // Hide status section
     if (statusSection) {
-
-        statusSection.style.display =
-            "none";
-
+        statusSection.style.display = "none";
     }
 
-    // Hide posts section
     if (postsSection) {
-
-        postsSection.style.display =
-            "none";
-
+        postsSection.style.display = "none";
     }
 
-    // Show games section
     if (gamesSection) {
 
-        gamesSection.style.display =
-            "block";
+        gamesSection.style.display = "block";
 
+        gamesSection.innerHTML = `
+            <div class="games-header">
+
+                <div class="games-title">
+                    <i class="fas fa-gamepad"></i>
+
+                    <div>
+                        <h2>Games</h2>
+                        <p>Play and have fun with your friends</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="games-list">
+
+                <div class="game-card" data-game="tic-tac-toe">
+
+                    <div class="game-card-icon">
+                        <i class="fas fa-hashtag"></i>
+                    </div>
+
+                    <div class="game-card-info">
+                        <h3>Tic Tac Toe</h3>
+                        <p>Play Tic Tac Toe with a friend</p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="game-play-btn"
+                        data-game="tic-tac-toe"
+                    >
+                        Play
+                    </button>
+
+                </div>
+
+                <div class="game-card" data-game="ludo">
+
+                    <div class="game-card-icon">
+                        <i class="fas fa-dice"></i>
+                    </div>
+
+                    <div class="game-card-info">
+                        <h3>Ludo</h3>
+                        <p>Play Ludo with your friends</p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="game-play-btn"
+                        data-game="ludo"
+                    >
+                        Play
+                    </button>
+
+                </div>
+
+                <div class="game-card coming-soon">
+
+                    <div class="game-card-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+
+                    <div class="game-card-info">
+                        <h3>More Games</h3>
+                        <p>More games are coming soon</p>
+                    </div>
+
+                    <span class="game-coming-label">
+                        Soon
+                    </span>
+
+                </div>
+
+            </div>
+        `;
+
+        bindGamePlayButtons();
     }
-
 }
-
-// =========================================
-// RESTORE ACTIVE SECTION
-// =========================================
 
 function restoreActiveSection() {
 
