@@ -6823,7 +6823,7 @@ const profileEmail =
 
 const profileBtn =
     document.getElementById(
-        "profileBtn"
+        "profileMenuBtn"
     );
 
 const backBtn =

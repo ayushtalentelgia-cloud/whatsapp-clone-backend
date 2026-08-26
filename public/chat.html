@@ -71,20 +71,6 @@ Loading...
 
 <button
 
-id="profileBtn"
-
-class="icon-btn"
-
-title="Profile"
-
->
-
-<i class="fa-solid fa-user"></i>
-
-</button>
-
-<button
-
 id="addContactBtn"
 
 class="icon-btn"
@@ -112,11 +98,29 @@ title="Menu"
 </button>
 <div id="menuDropdown" class="menu-dropdown">
 
-    <button id="logoutBtn">
+    <button
+        id="profileMenuBtn"
+        class="menu-item"
+        type="button"
+    >
+
+        <i class="fa-solid fa-user"></i>
+
+        <span>My Profile</span>
+
+    </button>
+
+    <div class="menu-divider"></div>
+
+    <button
+        id="logoutBtn"
+        class="menu-item logout-item"
+        type="button"
+    >
 
         <i class="fas fa-right-from-bracket"></i>
 
-        Logout
+        <span>Logout</span>
 
     </button>
 
