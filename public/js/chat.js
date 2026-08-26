@@ -2,21 +2,21 @@
 // API CONFIG
 // =========================================
 
-const API_URL =
-    "https://vibechat-backend-i6xa.onrender.com/api";
+// const API_URL =
+//     "https://vibechat-backend-i6xa.onrender.com/api";
 
-const SOCKET_URL =
-    "https://vibechat-backend-i6xa.onrender.com";
+// const SOCKET_URL =
+//     "https://vibechat-backend-i6xa.onrender.com";
 
 // =========================================
 // API CONFIG
 // =========================================
 
-// const API_URL =
-//     "http://localhost:5000/api";
+const API_URL =
+    "http://localhost:5000/api";
 
-// const SOCKET_URL =
-//     "http://localhost:5000";
+const SOCKET_URL =
+    "http://localhost:5000";
 
 // =========================================
 // AUTH
@@ -13568,3 +13568,176 @@ messageInputModal.addEventListener(
     );
 
 }
+// =========================================
+
+// =========================================
+// BROWSER BACK BUTTON - CUSTOM LOGOUT
+// =========================================
+
+(function () {
+
+    history.pushState(
+        {
+            vibechat: true
+        },
+        "",
+        window.location.href
+    );
+
+
+    function showBrowserLogoutModal() {
+
+        const existing =
+            document.getElementById(
+                "browserLogoutModal"
+            );
+
+        if (existing) {
+            return;
+        }
+
+
+        const modal =
+            document.createElement("div");
+
+        modal.id =
+            "browserLogoutModal";
+
+        modal.className =
+            "browser-logout-overlay";
+
+
+        modal.innerHTML = `
+
+            <div class="browser-logout-modal">
+
+                <div class="browser-logout-icon">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+
+
+                <h3>
+                    Logout from VibeChat?
+                </h3>
+
+
+                <p>
+                    Are you sure you want to logout
+                    from your account?
+                </p>
+
+
+                <div class="browser-logout-actions">
+
+                    <button
+                        type="button"
+                        id="browserLogoutCancel"
+                        class="browser-logout-cancel"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="browserLogoutConfirm"
+                        class="browser-logout-confirm"
+                    >
+                        Logout
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            modal
+        );
+
+
+        document
+            .getElementById(
+                "browserLogoutCancel"
+            )
+            .addEventListener(
+                "click",
+                () => {
+
+                    modal.remove();
+
+                    history.pushState(
+                        {
+                            vibechat: true
+                        },
+                        "",
+                        window.location.href
+                    );
+
+                }
+            );
+
+
+        document
+            .getElementById(
+                "browserLogoutConfirm"
+            )
+            .addEventListener(
+                "click",
+                () => {
+
+                    localStorage.removeItem(
+                        "token"
+                    );
+
+                    localStorage.removeItem(
+                        "user"
+                    );
+
+                    window.location.href =
+                        "/index.html";
+
+                }
+            );
+
+
+        modal.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    modal
+                ) {
+
+                    modal.remove();
+
+                    history.pushState(
+                        {
+                            vibechat: true
+                        },
+                        "",
+                        window.location.href
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    window.addEventListener(
+        "popstate",
+        function () {
+
+            showBrowserLogoutModal();
+
+        }
+    );
+
+})();
+
