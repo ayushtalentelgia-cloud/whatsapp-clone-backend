@@ -3689,7 +3689,8 @@ function startTicTacToe() {
         !board ||
         !status ||
         !resetBtn ||
-        !backBtn
+        !backBtn ||
+        !inviteBtn
     ) {
 
         return;
