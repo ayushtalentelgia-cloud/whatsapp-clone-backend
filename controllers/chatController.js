@@ -181,6 +181,20 @@ const fetchChats = async (req, res) => {
 
             },
 
+            deletedFor: {
+
+                $not: {
+
+                    $elemMatch: {
+
+                        user: req.user._id
+
+                    }
+
+                }
+
+            }
+
         })
 
         .populate("users", "-password")
@@ -243,6 +257,132 @@ const fetchChats = async (req, res) => {
     }
 
 };
+// =========================================
+// DELETE CHAT FOR CURRENT USER
+// =========================================
+
+const deleteChat = async (req, res) => {
+
+    try {
+
+        const { chatId } =
+            req.params;
+
+
+        if (!chatId) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Chat ID is required."
+
+            });
+
+        }
+
+
+        const chat =
+            await Chat.findById(chatId);
+
+
+        if (!chat) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message:
+                    "Chat not found."
+
+            });
+
+        }
+
+
+        const isMember =
+            chat.users.some(
+                user =>
+                    user.toString() ===
+                    req.user._id.toString()
+            );
+
+
+        if (!isMember) {
+
+            return res.status(403).json({
+
+                success: false,
+
+                message:
+                    "You are not a member of this chat."
+
+            });
+
+        }
+
+
+        const alreadyDeleted =
+            chat.deletedFor?.some(
+                item =>
+                    item.user.toString() ===
+                    req.user._id.toString()
+            );
+
+
+        if (!alreadyDeleted) {
+
+            chat.deletedFor.push({
+
+                user:
+                    req.user._id,
+
+                deletedAt:
+                    new Date()
+
+            });
+
+
+            await chat.save();
+
+        }
+
+
+        return res.status(200).json({
+
+            success: true,
+
+            message:
+                "Chat deleted successfully."
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Delete chat error:",
+            error
+        );
+
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                error.message ||
+                "Unable to delete chat."
+
+        });
+
+    }
+
+};
+
+
 // =========================================
 // CREATE GROUP CHAT
 // =========================================
@@ -916,6 +1056,8 @@ module.exports = {
     accessChat,
 
     fetchChats,
+
+    deleteChat,
 
     createGroupChat,
 

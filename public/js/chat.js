@@ -7905,6 +7905,175 @@ async function loadChats() {
 
 // =========================================
 // RENDER CHAT LIST
+
+// =========================================
+// DELETE CHAT CONFIRMATION MODAL
+// =========================================
+
+function showDeleteChatModal(userName) {
+
+    return new Promise(
+        resolve => {
+
+            const existing =
+                document.getElementById(
+                    "deleteChatOverlay"
+                );
+
+            if (existing) {
+                existing.remove();
+            }
+
+
+            const overlay =
+                document.createElement("div");
+
+            overlay.id =
+                "deleteChatOverlay";
+
+            overlay.className =
+                "delete-chat-overlay";
+
+
+            overlay.innerHTML = `
+
+                <div class="delete-chat-modal">
+
+                    <div class="delete-chat-icon">
+
+                        <i class="fas fa-trash"></i>
+
+                    </div>
+
+
+                    <h3>
+                        Delete Chat?
+                    </h3>
+
+
+                    <p>
+                        Are you sure you want
+                        to delete your chat with
+                        <strong>
+                            ${userName}
+                        </strong>?
+                    </p>
+
+
+                    <div class="delete-chat-actions">
+
+                        <button
+                            type="button"
+                            class="delete-chat-cancel"
+                            id="deleteChatCancel"
+                        >
+                            Cancel
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="delete-chat-confirm"
+                            id="deleteChatConfirm"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            document.body.appendChild(
+                overlay
+            );
+
+
+            const close = result => {
+
+                overlay.remove();
+
+                resolve(result);
+
+            };
+
+
+            document
+                .getElementById(
+                    "deleteChatCancel"
+                )
+                .onclick =
+                    () => close(false);
+
+
+            document
+                .getElementById(
+                    "deleteChatConfirm"
+                )
+                .onclick =
+                    () => close(true);
+
+
+            overlay.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target ===
+                        overlay
+                    ) {
+
+                        close(false);
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+
+// =========================================
+// CHAT DELETE MENU - CLOSE ON OUTSIDE CLICK
+// =========================================
+
+document.addEventListener(
+    "click",
+    (event) => {
+
+        if (
+            event.target.closest(
+                ".chat-delete-menu-btn"
+            )
+        ) {
+            return;
+        }
+
+
+        document
+            .querySelectorAll(
+                ".chat-delete-menu.active"
+            )
+            .forEach(
+                menu => {
+
+                    menu.classList.remove(
+                        "active"
+                    );
+
+                }
+            );
+
+    }
+);
+
+
 // =========================================
 
 function renderChats(chats) {
@@ -8085,6 +8254,228 @@ function renderChats(chats) {
                 }
 
             `;
+
+
+            // =====================================
+            // CHAT DELETE MENU
+            // =====================================
+
+            const chatMenuBtn =
+                document.createElement("button");
+
+            chatMenuBtn.type =
+                "button";
+
+            chatMenuBtn.className =
+                "chat-delete-menu-btn";
+
+            chatMenuBtn.title =
+                "Chat options";
+
+            chatMenuBtn.innerHTML =
+                '<i class="fas fa-ellipsis-v"></i>';
+
+
+            const chatDeleteMenu =
+                document.createElement("div");
+
+            chatDeleteMenu.className =
+                "chat-delete-menu";
+
+            chatDeleteMenu.innerHTML = `
+
+                <button
+                    type="button"
+                    class="chat-delete-option"
+                >
+                    <i class="fas fa-trash"></i>
+                    <span>Delete Chat</span>
+                </button>
+
+            `;
+
+
+            chatMenuBtn.addEventListener(
+                "click",
+                (e) => {
+
+                    e.preventDefault();
+
+                    e.stopPropagation();
+
+
+                    document
+                        .querySelectorAll(
+                            ".chat-delete-menu.active"
+                        )
+                        .forEach(
+                            menu => {
+
+                                if (
+                                    menu !==
+                                    chatDeleteMenu
+                                ) {
+
+                                    menu.classList
+                                        .remove(
+                                            "active"
+                                        );
+
+                                }
+
+                            }
+                        );
+
+
+                    chatDeleteMenu.classList.toggle(
+                        "active"
+                    );
+
+                }
+            );
+
+
+            const chatDeleteOption =
+                chatDeleteMenu.querySelector(
+                    ".chat-delete-option"
+                );
+
+
+            chatDeleteOption.addEventListener(
+                "click",
+                async (e) => {
+
+                    e.preventDefault();
+
+                    e.stopPropagation();
+
+
+                    const confirmed =
+                        await showDeleteChatModal(
+                            otherUser.name
+                        );
+
+
+                    if (!confirmed) {
+
+                        chatDeleteMenu.classList.remove(
+                            "active"
+                        );
+
+                        return;
+
+                    }
+
+
+                    chatDeleteMenu.classList.remove(
+                        "active"
+                    );
+
+
+                    try {
+
+                        chatDeleteOption.disabled =
+                            true;
+
+
+                        const response =
+                            await fetch(
+                                API_URL +
+                                "/chat/" +
+                                chat._id,
+                                {
+
+                                    method:
+                                        "DELETE",
+
+                                    headers: {
+
+                                        Authorization:
+                                            "Bearer " +
+                                            token
+
+                                    }
+
+                                }
+                            );
+
+
+                        const data =
+                            await response.json();
+
+
+                        if (
+                            !response.ok ||
+                            !data.success
+                        ) {
+
+                            throw new Error(
+                                data.message ||
+                                "Unable to delete chat."
+                            );
+
+                        }
+
+
+                        if (
+                            selectedChat &&
+                            selectedChat._id ===
+                                chat._id
+                        ) {
+
+                            selectedChat =
+                                null;
+
+                            chatHeader.style.display =
+                                "none";
+
+                            welcomeScreen.style.display =
+                                "flex";
+
+                        }
+
+
+                        div.remove();
+
+
+                        showVibeToast(
+                            "Chat deleted successfully.",
+                            "success"
+                        );
+
+
+                    }
+                    catch (error) {
+
+                        console.error(
+                            "Delete chat error:",
+                            error
+                        );
+
+
+                        showVibeToast(
+                            error.message ||
+                            "Unable to delete chat.",
+                            "error"
+                        );
+
+
+                        chatDeleteOption.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+
+            div.appendChild(
+                chatMenuBtn
+            );
+
+            div.appendChild(
+                chatDeleteMenu
+            );
 
 
             // =====================================
@@ -11179,6 +11570,17 @@ async function openStatusCamera() {
 
     try {
 
+        // Lock background page scroll while camera is open
+        document.body.dataset.statusCameraOverflow =
+            document.body.style.overflow;
+
+        document.body.style.overflow =
+            "hidden";
+
+        document.documentElement.style.overflow =
+            "hidden";
+
+
         statusCameraStream =
             await navigator.mediaDevices.getUserMedia({
                 video: {
@@ -11363,6 +11765,16 @@ async function openStatusCamera() {
         function closeStatusCamera() {
 
             stopStatusCamera();
+
+            // Restore background page scrolling
+            document.body.style.overflow =
+                document.body.dataset.statusCameraOverflow || "";
+
+            document.documentElement.style.overflow =
+                "";
+
+            delete document.body.dataset.statusCameraOverflow;
+
 
             if (statusCameraModal) {
 

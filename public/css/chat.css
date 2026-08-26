@@ -400,6 +400,8 @@ body{
 
 .chat-item{
 
+    position:relative;
+
     display:flex;
 
     align-items:center;
@@ -11979,6 +11981,281 @@ a:hover {
     .chat-item {
 
         flex-shrink: 0;
+
+    }
+
+}
+
+
+/* =========================================
+   CHAT DELETE MENU
+========================================= */
+
+.chat-delete-menu-btn {
+
+    margin-left: auto;
+
+    width: 32px;
+
+    height: 32px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #777;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+}
+
+.chat-delete-menu-btn:hover {
+
+    background: #f1f1f1;
+
+    color: #000;
+
+}
+
+
+.chat-delete-menu {
+
+    position: absolute;
+
+    right: 12px;
+
+    top: 48px;
+
+    min-width: 150px;
+
+    background: #fff;
+
+    border-radius: 12px;
+
+    padding: 6px;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.15);
+
+    display: none;
+
+    z-index: 1000;
+
+}
+
+.chat-delete-menu.active {
+
+    display: block;
+
+}
+
+
+.chat-delete-option {
+
+    width: 100%;
+
+    border: none;
+
+    background: transparent;
+
+    padding: 10px 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    color: #d93025;
+
+    font-size: 14px;
+
+}
+
+.chat-delete-option:hover {
+
+    background: #fff1f1;
+
+}
+
+
+/* =========================================
+   DELETE CHAT MODAL
+========================================= */
+
+.delete-chat-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0,0,0,.45);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 10000;
+
+    padding: 20px;
+
+}
+
+
+.delete-chat-modal {
+
+    width: min(400px, 100%);
+
+    background: #fff;
+
+    border-radius: 20px;
+
+    padding: 26px;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.25);
+
+    animation:
+        deleteChatModalIn .2s ease;
+
+}
+
+
+.delete-chat-icon {
+
+    width: 58px;
+
+    height: 58px;
+
+    margin: 0 auto 16px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #fff1f1;
+
+    color: #d93025;
+
+    font-size: 23px;
+
+}
+
+
+.delete-chat-modal h3 {
+
+    margin: 0 0 8px;
+
+    color: #222;
+
+}
+
+
+.delete-chat-modal p {
+
+    margin: 0;
+
+    color: #777;
+
+    line-height: 1.5;
+
+}
+
+
+.delete-chat-actions {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 22px;
+
+}
+
+
+.delete-chat-actions button {
+
+    flex: 1;
+
+    border: none;
+
+    border-radius: 11px;
+
+    padding: 12px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+}
+
+
+.delete-chat-cancel {
+
+    background: #f1f1f1;
+
+    color: #333;
+
+}
+
+
+.delete-chat-confirm {
+
+    background: #d93025;
+
+    color: #fff;
+
+}
+
+
+@keyframes deleteChatModalIn {
+
+    from {
+
+        opacity: 0;
+
+        transform: scale(.94);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .delete-chat-modal {
+
+        padding: 22px;
 
     }
 

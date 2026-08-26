@@ -135,7 +135,36 @@ const chatSchema = new mongoose.Schema(
 
             default: false,
 
-        }
+        },
+
+        // =========================================
+        // PER USER DELETED CHAT
+        // =========================================
+
+        deletedFor: [
+
+            {
+
+                user: {
+
+                    type:
+                        mongoose.Schema.Types.ObjectId,
+
+                    ref: "User"
+
+                },
+
+                deletedAt: {
+
+                    type: Date,
+
+                    default: Date.now
+
+                }
+
+            }
+
+        ]
 
     },
 
