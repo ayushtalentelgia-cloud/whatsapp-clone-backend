@@ -11833,3 +11833,59 @@ a:hover {
 
 }
 
+
+/* =========================================
+   STATUS CAMERA SCROLL LOCK
+========================================= */
+
+.status-camera-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+
+    height: 100vh;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    overscroll-behavior: contain;
+
+    touch-action: pan-y;
+
+}
+
+
+.status-camera-modal {
+
+    max-height: calc(100vh - 40px);
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    overscroll-behavior: contain;
+
+    touch-action: pan-y;
+
+}
+
+
+.status-camera-preview {
+
+    overflow: hidden;
+
+    touch-action: none;
+
+}
+
+
+.status-camera-actions {
+
+    flex-shrink: 0;
+
+}
+
