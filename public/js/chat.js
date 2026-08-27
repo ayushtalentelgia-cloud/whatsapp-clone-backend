@@ -364,6 +364,9 @@ function showChats() {
 if (gamesSection) {
     gamesSection.style.display = "none";
 }
+
+    updateCameraButtonVisibility();
+
 }
 
 
@@ -411,6 +414,8 @@ if (gamesSection) {
 }
     // Load latest statuses
     loadStatuses();
+
+    updateCameraButtonVisibility();
 
 }
 
@@ -8131,6 +8136,17 @@ function renderChats(chats) {
 
 
             // =====================================
+            // ONLINE STATUS
+            // =====================================
+
+            const onlineIndicator =
+                otherUser.isOnline
+                    ?
+                    '<span class="chat-online-dot"></span>'
+                    :
+                    "";
+
+            // =====================================
             // LAST MESSAGE
             // =====================================
 
@@ -8204,6 +8220,8 @@ function renderChats(chats) {
                 <div class="chat-avatar">
 
                     ${profilePic}
+
+                    ${onlineIndicator}
 
                 </div>
 
@@ -11452,15 +11470,15 @@ async function openQuickCamera() {
 
 
 // =========================================
-// CAMERA BUTTON VISIBILITY
-// SHOW ONLY ON ALL + STATUS
-// =========================================
+ // CAMERA BUTTON VISIBILITY
+ // STATUS CAMERA IS ALWAYS AVAILABLE
+ // =========================================
 
 function updateCameraButtonVisibility() {
 
     const cameraBtn =
         document.getElementById(
-            "chatListCameraBtn"
+            "statusCameraBtn"
         );
 
     if (!cameraBtn) {
@@ -11472,9 +11490,7 @@ function updateCameraButtonVisibility() {
             "vibechatActiveSection"
         ) || "chats";
 
-
     if (
-        activeSection === "chats" ||
         activeSection === "status"
     ) {
 
@@ -11492,39 +11508,8 @@ function updateCameraButtonVisibility() {
 
 
 // =========================================
-// CHAT LIST CAMERA BUTTON
-// =========================================
-
-const chatListCameraBtn =
-    document.getElementById(
-        "chatListCameraBtn"
-    );
-
-
-if (chatListCameraBtn) {
-
-    chatListCameraBtn.addEventListener(
-        "click",
-        () => {
-
-            if (
-                typeof openQuickCamera ===
-                "function"
-            ) {
-
-                openQuickCamera();
-
-            }
-
-        }
-    );
-
-}
-
-
-
-// =========================================
 // STATUS CAMERA BUTTON
+
 // =========================================
 
 const statusCameraBtn =
