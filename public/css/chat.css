@@ -12385,3 +12385,77 @@ a:hover {
     }
 }
 
+
+/* =========================================
+   MESSAGE REPLY
+========================================= */
+
+.message-reply {
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    border-left: 4px solid currentColor;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.08);
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.message-reply-sender {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.message-reply-text {
+    font-size: 13px;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Sent message reply */
+.message.sent .message-reply {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* Received message reply */
+.message.received .message-reply {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================================
+   FIXED CHAT INPUT + SCROLLABLE MESSAGES
+========================================= */
+
+/* Main chat area must stay within viewport */
+.chat-container,
+.chat-main,
+.chat-body {
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Only messages should scroll */
+.messages {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Keep message input/footer fixed */
+.message-input,
+#messageInputArea {
+    flex: 0 0 auto;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+}
+
+/* Prevent page/body from becoming the chat scroller */
+body {
+    overflow: hidden;
+}
+
