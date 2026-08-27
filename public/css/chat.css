@@ -12459,3 +12459,32 @@ body {
     overflow: hidden;
 }
 
+
+/* =========================================
+   MOBILE CHAT - LOCK PAGE, SCROLL MESSAGES
+========================================= */
+
+@media (max-width: 768px) {
+
+    html,
+    body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden !important;
+        overscroll-behavior: none;
+    }
+
+    .messages {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        min-height: 0 !important;
+    }
+
+    #messageInputArea {
+        flex-shrink: 0 !important;
+        position: relative !important;
+    }
+
+}
