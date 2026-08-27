@@ -8771,7 +8771,20 @@ async function openChat(chat) {
                 currentUser._id
         );
 
-        // =====================================
+              // =====================================
+      // CLEAR PREVIOUS CHAT IMMEDIATELY
+      // =====================================
+
+      if (messages) {
+          messages.innerHTML = `
+            <div class="chat-loading-state">
+                <div class="chat-loading-spinner"></div>
+                <span>Loading messages...</span>
+            </div>
+        `;
+      }
+
+// =====================================
 // SHOW CHAT UI
 // =====================================
 
@@ -8835,80 +8848,86 @@ if (welcomeShareScreen) {
         };
 
     // =====================================
-    // LOAD MESSAGES
+    // LOAD MESSAGES IN BACKGROUND
     // =====================================
 
-    await loadMessages(
+    loadMessages(
         chat._id
+    ).catch(
+        error => {
+            console.error(
+                "Background message load error:",
+                error
+            );
+        }
     );
     // =====================================
-    // MARK UNREAD MESSAGES AS SEEN
-    // =====================================
+      // MARK UNREAD MESSAGES AS SEEN
+      // BACKGROUND - DO NOT BLOCK CHAT OPEN
+      // =====================================
 
-    try {
+      (async () => {
 
-        const messagesRes =
-            await fetch(
-                API_URL +
-                "/message/" +
-                chat._id,
-                {
+          try {
 
-                    headers: {
+              const messagesRes =
+                  await fetch(
+                      API_URL +
+                      "/message/" +
+                      chat._id,
+                      {
+                          headers: {
+                              Authorization:
+                                  "Bearer " +
+                                  token
+                          }
+                      }
+                  );
 
-                        Authorization:
-                            "Bearer " +
-                            token
+              const messagesData =
+                  await messagesRes.json();
 
-                    }
+              if (
+                  messagesData.success &&
+                  messagesData.messages
+              ) {
 
-                }
-            );
+                  const unreadMessages =
+                      messagesData.messages.filter(
+                          message =>
+                              message.sender &&
+                              message.sender._id.toString() !==
+                              currentUser._id.toString() &&
+                              !message.seen
+                      );
 
-        const messagesData =
-            await messagesRes.json();
+                  await Promise.all(
+                      unreadMessages.map(
+                          message =>
+                              markMessagesSeen(
+                                  message._id
+                              )
+                      )
+                  );
 
-        if (
-            messagesData.success &&
-            messagesData.messages
-        ) {
+                  await loadChats();
 
-            const unreadMessages =
-                messagesData.messages.filter(
-                    message =>
-                        message.sender &&
-                        message.sender._id.toString() !==
-                        currentUser._id.toString() &&
-                        !message.seen
-                );
+              }
 
-            for (
-                const message of unreadMessages
-            ) {
+          }
+          catch (error) {
 
-                await markMessagesSeen(
-                    message._id
-                );
+              console.error(
+                  "Background mark seen error:",
+                  error
+              );
 
-            }
-// =====================================
-// UPDATE UNREAD COUNT IMMEDIATELY
-// =====================================
+          }
 
-await loadChats();
-        }
+      })();
 
-    }
-    catch (error) {
 
-        console.error(
-            "Mark unread messages seen error:",
-            error
-        );
-
-    }
-    // =====================================
-    // MOBILE VIEW
+      // MOBILE VIEW
     // =====================================
 
     if (
