@@ -10607,6 +10607,40 @@ if (confirmDeleteBtn) {
 
                 }
 
+                // =================================
+                // UPDATE DELETED MESSAGE IN CURRENT UI
+                // =================================
+
+                const deletedBubble =
+                    document.getElementById(
+                        "msg-" +
+                        selectedMessageId
+                    );
+
+                if (deletedBubble) {
+
+                    deletedBubble.dataset.deleted =
+                        "true";
+
+                    const deletedText =
+                        deletedBubble.querySelector(
+                            ".message-text"
+                        );
+
+                    if (deletedText) {
+
+                        deletedText.innerText =
+                            "This message was deleted";
+
+                    }
+
+                }
+
+
+                // =================================
+                // CLOSE DELETE MODAL
+                // =================================
+
                 deleteConfirmOpen = false;
 
                 if (deleteConfirmModal) {
@@ -10616,6 +10650,9 @@ if (confirmDeleteBtn) {
                     );
 
                 }
+
+                selectedMessageId =
+                    null;
 
             }
 
