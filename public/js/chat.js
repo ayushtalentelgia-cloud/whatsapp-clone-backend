@@ -2,21 +2,21 @@
 // API CONFIG
 // =========================================
 
-// const API_URL =
-//     "https://vibechat-backend-i6xa.onrender.com/api";
+const API_URL =
+    "https://vibechat-backend-i6xa.onrender.com/api";
 
-// const SOCKET_URL =
-//     "https://vibechat-backend-i6xa.onrender.com";
+const SOCKET_URL =
+    "https://vibechat-backend-i6xa.onrender.com";
 
 // =========================================
 // API CONFIG
 // =========================================
 
-const API_URL =
-    "http://localhost:5000/api";
+// const API_URL =
+//     "http://localhost:5000/api";
 
-const SOCKET_URL =
-    "http://localhost:5000";
+// const SOCKET_URL =
+//     "http://localhost:5000";
 
 // =========================================
 // AUTH
