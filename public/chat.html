@@ -2004,6 +2004,97 @@ title="Menu"
 </div>
 
 <!-- =========================================
+     CUSTOM DELETE CONFIRMATION MODAL
+========================================= -->
+
+<div id="deleteConfirmModal" class="delete-confirm-modal">
+
+    <div class="delete-confirm-box">
+
+        <div class="delete-confirm-icon">
+            <i class="fas fa-trash"></i>
+        </div>
+
+        <h3>Delete this message?</h3>
+
+        <p>This message will be deleted.</p>
+
+        <div class="delete-confirm-actions">
+
+            <button
+                id="cancelDeleteBtn"
+                class="delete-cancel-btn"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="confirmDeleteBtn"
+                class="delete-confirm-btn"
+            >
+                Delete
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+     CUSTOM EDIT MESSAGE MODAL
+========================================= -->
+
+<div id="editMessageModal" class="edit-message-modal">
+
+    <div class="edit-message-box">
+
+        <div class="edit-message-header">
+
+            <h3>Edit Message</h3>
+
+            <button
+                id="cancelEditTopBtn"
+                class="edit-close-btn"
+                type="button"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+
+        </div>
+
+        <textarea
+            id="editMessageInput"
+            class="edit-message-input"
+            rows="4"
+            placeholder="Edit your message..."
+        ></textarea>
+
+        <div class="edit-message-actions">
+
+            <button
+                id="cancelEditBtn"
+                class="edit-cancel-btn"
+                type="button"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="saveEditBtn"
+                class="edit-save-btn"
+                type="button"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================
      SOCKET
 ========================================= -->
 
@@ -2013,9 +2104,15 @@ title="Menu"
      CHAT SCRIPT
 ========================================= -->
 
-<script src="/js/chat.js?v=20260827"></script>
+<script src="/js/chat.js?v=20260831"></script>
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+
+
+
+
+
+
 </body>
 
 </html>

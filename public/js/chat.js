@@ -9127,6 +9127,23 @@ function renderMessage(message) {
         "msg-" +
         message._id;
 
+    // =====================================
+    // STORE MESSAGE CREATED TIME
+    // Used for Edit/Delete 5-minute limit
+    // =====================================
+
+    div.dataset.createdAt =
+        message.createdAt;
+
+    // =====================================
+    // STORE DELETED STATUS
+    // =====================================
+
+    div.dataset.deleted =
+        message.deleted
+            ? "true"
+            : "false";
+
 
     const isSent =
         message.sender &&
@@ -9940,6 +9957,51 @@ messages.addEventListener(
 
         if (!bubble) return;
 
+        // =====================================
+        // DO NOT SHOW MENU FOR DELETED MESSAGE
+        // =====================================
+
+        if (
+            bubble.dataset.deleted ===
+            "true"
+        ) {
+
+            selectedMessageId =
+                null;
+
+            return;
+
+        }
+
+        // =====================================
+        // EDIT / DELETE TIME LIMIT
+        // 5 MINUTES
+        // =====================================
+
+        const createdAt =
+            new Date(
+                bubble.dataset.createdAt
+            ).getTime();
+
+        const messageAge =
+            Date.now() -
+            createdAt;
+
+        const fiveMinutes =
+            5 * 60 * 1000;
+
+        if (
+            !createdAt ||
+            messageAge >= fiveMinutes
+        ) {
+
+            selectedMessageId =
+                null;
+
+            return;
+
+        }
+
         e.preventDefault();
 
         selectedMessageId =
@@ -9955,14 +10017,110 @@ messages.addEventListener(
 
         if (!menu) return;
 
+        // =====================================
+        // SHOW MENU FIRST TO GET ITS SIZE
+        // =====================================
+
         menu.style.display =
             "block";
 
         menu.style.left =
-            e.pageX + "px";
+            "0px";
 
         menu.style.top =
-            e.pageY + "px";
+            "0px";
+
+        const menuRect =
+            menu.getBoundingClientRect();
+
+        const padding =
+            10;
+
+        const viewportWidth =
+            window.innerWidth;
+
+        const viewportHeight =
+            window.innerHeight;
+
+        // =====================================
+        // INITIAL POSITION
+        // =====================================
+
+        let left =
+            e.clientX;
+
+        let top =
+            e.clientY;
+
+        // =====================================
+        // KEEP MENU INSIDE RIGHT EDGE
+        // =====================================
+
+        if (
+            left +
+            menuRect.width +
+            padding >
+            viewportWidth
+        ) {
+
+            left =
+                viewportWidth -
+                menuRect.width -
+                padding;
+
+        }
+
+        // =====================================
+        // KEEP MENU INSIDE LEFT EDGE
+        // =====================================
+
+        if (
+            left <
+            padding
+        ) {
+
+            left =
+                padding;
+
+        }
+
+        // =====================================
+        // KEEP MENU INSIDE BOTTOM EDGE
+        // =====================================
+
+        if (
+            top +
+            menuRect.height +
+            padding >
+            viewportHeight
+        ) {
+
+            top =
+                viewportHeight -
+                menuRect.height -
+                padding;
+
+        }
+
+        // =====================================
+        // KEEP MENU INSIDE TOP EDGE
+        // =====================================
+
+        if (
+            top <
+            padding
+        ) {
+
+            top =
+                padding;
+
+        }
+
+        menu.style.left =
+            left + "px";
+
+        menu.style.top =
+            top + "px";
 
     }
 );
@@ -9999,11 +10157,57 @@ const editBtn =
         "editMessageBtn"
     );
 
+const editMessageModal =
+    document.getElementById(
+        "editMessageModal"
+    );
+
+const editMessageInput =
+    document.getElementById(
+        "editMessageInput"
+    );
+
+const cancelEditBtn =
+    document.getElementById(
+        "cancelEditBtn"
+    );
+
+const cancelEditTopBtn =
+    document.getElementById(
+        "cancelEditTopBtn"
+    );
+
+const saveEditBtn =
+    document.getElementById(
+        "saveEditBtn"
+    );
+
+
+// =========================================
+// CLOSE EDIT MODAL
+// =========================================
+
+function closeEditMessageModal() {
+
+    if (!editMessageModal)
+        return;
+
+    editMessageModal.classList.remove(
+        "show"
+    );
+
+}
+
+
+// =========================================
+// OPEN EDIT MODAL
+// =========================================
+
 if (editBtn) {
 
     editBtn.addEventListener(
         "click",
-        async () => {
+        () => {
 
             if (
                 !selectedMessageId
@@ -10017,20 +10221,132 @@ if (editBtn) {
                     " .message-text"
                 );
 
-            if (!bubble) return;
+            if (!bubble)
+                return;
 
             const oldText =
                 bubble.innerText;
 
-            const newText =
-                prompt(
-                    "Edit Message",
-                    oldText
-                );
+            if (
+                !editMessageModal ||
+                !editMessageInput
+            )
+                return;
 
-            if (!newText) return;
+            editMessageInput.value =
+                oldText;
+
+            editMessageModal.classList.add(
+                "show"
+            );
+
+            setTimeout(
+                () => {
+
+                    editMessageInput.focus();
+
+                    editMessageInput.setSelectionRange(
+                        editMessageInput.value.length,
+                        editMessageInput.value.length
+                    );
+
+                },
+                50
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// CANCEL EDIT
+// =========================================
+
+if (cancelEditBtn) {
+
+    cancelEditBtn.addEventListener(
+        "click",
+        () => {
+
+            closeEditMessageModal();
+
+        }
+    );
+
+}
+
+
+if (cancelEditTopBtn) {
+
+    cancelEditTopBtn.addEventListener(
+        "click",
+        () => {
+
+            closeEditMessageModal();
+
+        }
+    );
+
+}
+
+
+// =========================================
+// CLOSE WHEN CLICKING BACKDROP
+// =========================================
+
+if (editMessageModal) {
+
+    editMessageModal.addEventListener(
+        "click",
+        (event) => {
+
+            if (
+                event.target ===
+                editMessageModal
+            ) {
+
+                closeEditMessageModal();
+
+            }
+
+        }
+    );
+
+}
+
+
+// =========================================
+// SAVE EDITED MESSAGE
+// =========================================
+
+if (saveEditBtn) {
+
+    saveEditBtn.addEventListener(
+        "click",
+        async () => {
+
+            if (
+                !selectedMessageId ||
+                !editMessageInput
+            )
+                return;
+
+            const newText =
+                editMessageInput.value.trim();
+
+            if (!newText)
+                return;
 
             try {
+
+                saveEditBtn.disabled =
+                    true;
+
+                saveEditBtn.innerText =
+                    "Saving...";
+
 
                 const res =
                     await fetch(
@@ -10066,26 +10382,64 @@ if (editBtn) {
                         }
                     );
 
+
                 const data =
                     await res.json();
+
 
                 if (
                     !data.success
                 ) {
 
                     alert(
-                        data.message
+                        data.message ||
+                        "Failed to edit message."
                     );
 
                     return;
 
                 }
 
+
+                // =================================
+                // UPDATE MESSAGE IN CURRENT UI
+                // =================================
+
+                const bubble =
+                    document.querySelector(
+                        "#msg-" +
+                        selectedMessageId +
+                        " .message-text"
+                    );
+
+                if (bubble) {
+
+                    bubble.innerText =
+                        newText;
+
+                }
+
+
+                closeEditMessageModal();
+
             }
 
             catch (err) {
 
-                console.log(err);
+                console.log(
+                    "Edit Message Error:",
+                    err
+                );
+
+            }
+
+            finally {
+
+                saveEditBtn.disabled =
+                    false;
+
+                saveEditBtn.innerText =
+                    "Save Changes";
 
             }
 
@@ -10093,6 +10447,30 @@ if (editBtn) {
     );
 
 }
+
+
+// =========================================
+// ESC KEY CLOSE
+// =========================================
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Escape" &&
+            editMessageModal &&
+            editMessageModal.classList.contains(
+                "show"
+            )
+        ) {
+
+            closeEditMessageModal();
+
+        }
+
+    }
+);
 
 // =========================================
 // DELETE MESSAGE
@@ -10103,22 +10481,94 @@ const deleteBtn =
         "deleteMessageBtn"
     );
 
+const deleteConfirmModal =
+    document.getElementById(
+        "deleteConfirmModal"
+    );
+
+const cancelDeleteBtn =
+    document.getElementById(
+        "cancelDeleteBtn"
+    );
+
+const confirmDeleteBtn =
+    document.getElementById(
+        "confirmDeleteBtn"
+    );
+
+let deleteConfirmOpen = false;
+
 if (deleteBtn) {
 
     deleteBtn.addEventListener(
         "click",
-        async () => {
+        () => {
 
-            if (
-                !selectedMessageId
-            )
+            if (!selectedMessageId)
                 return;
 
+            if (!deleteConfirmModal)
+                return;
+
+            deleteConfirmOpen = true;
+
+            deleteConfirmModal.classList.add(
+                "show"
+            );
+
+        }
+    );
+
+}
+
+if (cancelDeleteBtn) {
+
+    cancelDeleteBtn.addEventListener(
+        "click",
+        () => {
+
+            deleteConfirmOpen = false;
+
+            deleteConfirmModal.classList.remove(
+                "show"
+            );
+
+        }
+    );
+
+}
+
+if (deleteConfirmModal) {
+
+    deleteConfirmModal.addEventListener(
+        "click",
+        (event) => {
+
             if (
-                !confirm(
-                    "Delete this message?"
-                )
-            )
+                event.target ===
+                deleteConfirmModal
+            ) {
+
+                deleteConfirmOpen = false;
+
+                deleteConfirmModal.classList.remove(
+                    "show"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+if (confirmDeleteBtn) {
+
+    confirmDeleteBtn.addEventListener(
+        "click",
+        async () => {
+
+            if (!selectedMessageId)
                 return;
 
             try {
@@ -10147,15 +10597,23 @@ if (deleteBtn) {
                 const data =
                     await res.json();
 
-                if (
-                    !data.success
-                ) {
+                if (!data.success) {
 
                     alert(
                         data.message
                     );
 
                     return;
+
+                }
+
+                deleteConfirmOpen = false;
+
+                if (deleteConfirmModal) {
+
+                    deleteConfirmModal.classList.remove(
+                        "show"
+                    );
 
                 }
 
