@@ -8,7 +8,11 @@ const sendMessage = async (req, res) => {
 
     try {
 
-        const { content, chatId } = req.body;
+        const {
+            content,
+            chatId,
+            replyTo
+        } = req.body;
 
         if (!chatId) {
 
@@ -62,6 +66,17 @@ const sendMessage = async (req, res) => {
 
         }
 
+        // ================= REPLY DEBUG =================
+
+        console.log(
+            "🔎 BACKEND REPLY INPUT:",
+            {
+                replyTo,
+                chatId,
+                content
+            }
+        );
+
         // ================= CREATE MESSAGE =================
 
         let message = await Message.create({
@@ -78,13 +93,38 @@ const sendMessage = async (req, res) => {
 
             fileName,
 
+            // =============================
+            // REPLY MESSAGE
+            // =============================
+
+            replyTo:
+                replyTo || null,
+
         });
+
+        console.log(
+            "🔎 SAVED MESSAGE REPLY TO:",
+            message.replyTo
+        );
 
         // ================= POPULATE =================
 
         message = await Message.findById(message._id)
 
-            .populate("sender", "name email phone profilePic")
+            .populate(
+                "sender",
+                "name email phone profilePic"
+            )
+
+            // =====================================
+            // POPULATE REPLIED MESSAGE
+            // =====================================
+
+            .populate({
+                path: "replyTo",
+                select:
+                    "content type fileUrl fileName deleted createdAt"
+            })
 
             .populate({
 
@@ -198,7 +238,22 @@ const allMessages = async (req, res) => {
         const messages = await Message.find({
             chat: req.params.chatId,
         })
-           .populate("sender", "name email phone profilePic")
+
+            .populate(
+                "sender",
+                "name email phone profilePic"
+            )
+
+            // =====================================
+            // POPULATE REPLIED MESSAGE
+            // =====================================
+
+            .populate({
+                path: "replyTo",
+                select:
+                    "content type fileUrl fileName deleted createdAt"
+            })
+
             .populate({
                 path: "chat",
                 populate: {
@@ -206,19 +261,33 @@ const allMessages = async (req, res) => {
                     select: "-password",
                 },
             })
-            .sort({ createdAt: 1 });
+
+            .sort({
+                createdAt: 1
+            });
 
         return res.status(200).json({
+
             success: true,
-            count: messages.length,
+
+            count:
+                messages.length,
+
             messages,
+
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         return res.status(500).json({
+
             success: false,
-            message: error.message,
+
+            message:
+                error.message,
+
         });
 
     }
@@ -226,6 +295,7 @@ const allMessages = async (req, res) => {
 };
 
 // ================= MARK MESSAGE DELIVERED =================
+
 
 const markMessageAsDelivered = async (req, res) => {
 
@@ -512,6 +582,164 @@ const deleteMessage = async (req, res) => {
 
 };
 
+
+// =========================================
+// REACT TO MESSAGE
+// =========================================
+
+const reactToMessage = async (req, res) => {
+
+    try {
+
+        const { messageId } = req.params;
+        const { emoji } = req.body;
+
+        if (!emoji) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Emoji is required."
+
+            });
+
+        }
+
+        const message =
+            await Message.findById(messageId);
+
+        if (!message) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Message not found."
+
+            });
+
+        }
+
+        // =====================================
+        // FIND USER'S EXISTING REACTION
+        // =====================================
+
+        const existingReaction =
+            message.reactions.find(
+                reaction =>
+                    reaction.user.toString() ===
+                    req.user._id.toString()
+            );
+
+        // =====================================
+        // SAME EMOJI = REMOVE
+        // =====================================
+
+        if (
+            existingReaction &&
+            existingReaction.emoji === emoji
+        ) {
+
+            message.reactions =
+                message.reactions.filter(
+                    reaction =>
+                        reaction.user.toString() !==
+                        req.user._id.toString()
+                );
+
+        }
+
+        // =====================================
+        // DIFFERENT EMOJI = CHANGE
+        // =====================================
+
+        else if (existingReaction) {
+
+            existingReaction.emoji =
+                emoji;
+
+        }
+
+        // =====================================
+        // NEW REACTION = ADD
+        // =====================================
+
+        else {
+
+            message.reactions.push({
+
+                user:
+                    req.user._id,
+
+                emoji
+
+            });
+
+        }
+
+        await message.save();
+
+        // =====================================
+        // POPULATE REACTION USERS
+        // =====================================
+
+        const updatedMessage =
+            await Message.findById(message._id)
+
+                .populate(
+                    "sender",
+                    "name email phone profilePic"
+                )
+
+                .populate({
+
+                    path:
+                        "reactions.user",
+
+                    select:
+                        "name email phone profilePic"
+
+                });
+
+        // =====================================
+        // REAL-TIME UPDATE
+        // =====================================
+
+        getIO()
+            .to(message.chat.toString())
+            .emit(
+                "message reaction",
+                updatedMessage
+            );
+
+        return res.status(200).json({
+
+            success: true,
+
+            message:
+                updatedMessage
+
+        });
+
+    }
+
+    catch (error) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                error.message
+
+        });
+
+    }
+
+};
+
+
 module.exports = {
     sendMessage,
     allMessages,
@@ -519,4 +747,5 @@ module.exports = {
     markMessageAsSeen,
     editMessage,
     deleteMessage,
+    reactToMessage,
 };

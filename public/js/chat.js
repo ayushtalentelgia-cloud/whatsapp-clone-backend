@@ -2,21 +2,21 @@
 // API CONFIG
 // =========================================
 
-const API_URL =
-    "https://vibechat-backend-i6xa.onrender.com/api";
+// const API_URL =
+//     "https://vibechat-backend-i6xa.onrender.com/api";
 
-const SOCKET_URL =
-    "https://vibechat-backend-i6xa.onrender.com";
+// const SOCKET_URL =
+//     "https://vibechat-backend-i6xa.onrender.com";
 
 // =========================================
 // API CONFIG
 // =========================================
 
-// const API_URL =
-//     "http://localhost:5000/api";
+const API_URL =
+    "http://localhost:5000/api";
 
-// const SOCKET_URL =
-//     "http://localhost:5000";
+const SOCKET_URL =
+    "http://localhost:5000";
 
 // =========================================
 // AUTH
@@ -9191,6 +9191,97 @@ function renderMessage(message) {
 
     let messageContent = "";
 
+    // =====================================
+    // REPLIED MESSAGE PREVIEW
+    // =====================================
+
+    let replyPreviewContent = "";
+
+    if (
+        message.replyTo
+    ) {
+
+        const repliedMessage =
+            message.replyTo;
+
+        if (
+            repliedMessage.deleted
+        ) {
+
+            replyPreviewContent =
+                "This message was deleted";
+
+        }
+
+        else if (
+            repliedMessage.type ===
+            "image"
+        ) {
+
+            replyPreviewContent =
+                "📷 Image";
+
+        }
+
+        else if (
+            repliedMessage.type ===
+            "video"
+        ) {
+
+            replyPreviewContent =
+                "🎥 Video";
+
+        }
+
+        else if (
+            repliedMessage.type ===
+            "audio"
+        ) {
+
+            replyPreviewContent =
+                "🎵 Audio";
+
+        }
+
+        else if (
+            repliedMessage.type ===
+            "file"
+        ) {
+
+            replyPreviewContent =
+                "📎 " +
+                (
+                    repliedMessage.fileName ||
+                    "File"
+                );
+
+        }
+
+        else {
+
+            replyPreviewContent =
+                repliedMessage.content ||
+                "Message";
+
+        }
+
+        // =====================================
+        // SMALL REPLY PREVIEW
+        // =====================================
+
+        replyPreviewContent =
+            replyPreviewContent
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                );
+
+    }
+
 
     // =====================================
     // IMAGE
@@ -9346,7 +9437,71 @@ function renderMessage(message) {
 
     div.innerHTML = `
 
+        ${
+            message.replyTo &&
+            replyPreviewContent
+                ?
+                `
+                    <div
+                        class="message-reply-preview"
+                        data-reply-id="${message.replyTo._id}"
+                    >
+
+                        <i class="fas fa-reply"></i>
+
+                        <span>
+                            ${replyPreviewContent}
+                        </span>
+
+                    </div>
+                `
+                :
+                ""
+        }
+
         ${messageContent}
+
+        ${
+            message.reactions &&
+            message.reactions.length
+                ?
+                `
+                    <div class="message-reactions">
+
+                        ${
+                            Object.entries(
+                                message.reactions.reduce(
+                                    (counts, reaction) => {
+
+                                        if (!reaction.emoji) {
+                                            return counts;
+                                        }
+
+                                        counts[reaction.emoji] =
+                                            (counts[reaction.emoji] || 0) + 1;
+
+                                        return counts;
+
+                                    },
+                                    {}
+                                )
+                            )
+                            .map(
+                                ([emoji, count]) =>
+                                    `
+                                        <span class="message-reaction">
+                                            ${emoji} ${count}
+                                        </span>
+                                    `
+                            )
+                            .join("")
+                        }
+
+                    </div>
+                `
+                :
+                ""
+        }
 
 
         <div class="message-meta">
@@ -9464,8 +9619,14 @@ socket.on(
                 type: message?.type,
                 fileUrl: message?.fileUrl,
                 fileName: message?.fileName,
-                content: message?.content
+                content: message?.content,
+                replyTo: message?.replyTo
             }
+        );
+
+        console.log(
+            "🔎 REPLY TO DATA:",
+            message?.replyTo
         );
 
         // =====================================
@@ -9583,6 +9744,11 @@ async function sendMessage() {
         selectedChat._id
     );
 
+    console.log(
+        "🔎 BEFORE SEND replyToMessageId:",
+        replyToMessageId
+    );
+
     try {
 
         const res =
@@ -9612,7 +9778,10 @@ async function sendMessage() {
                                     content,
 
                                 chatId:
-                                    selectedChat._id
+                                    selectedChat._id,
+
+                                replyTo:
+                                    replyToMessageId || null
 
                             }
                         )
@@ -9635,6 +9804,32 @@ async function sendMessage() {
 
         messageInput.value =
             "";
+
+        // =====================================
+        // CLEAR REPLY MODE AFTER SEND
+        // =====================================
+
+        replyToMessageId =
+            null;
+
+        if (replyPreviewText) {
+
+            replyPreviewText.innerText =
+                "";
+
+        }
+
+        if (replyPreview) {
+
+            replyPreview.style.display =
+                "none";
+
+        }
+
+        console.log(
+            "🔎 SENT MESSAGE REPLY DATA:",
+            data.message?.replyTo
+        );
 
         renderMessage(
             data.message
@@ -9793,20 +9988,56 @@ socket.on(
 );
 
 // =========================================
+// MESSAGE REACTION
+// =========================================
+
+socket.on(
+    "message reaction",
+    (message) => {
+
+        if (!message || !message._id) {
+            return;
+        }
+
+        updateMessageReaction(
+            message
+        );
+
+    }
+);
+
+// =========================================
 // MESSAGE DELIVERED
 // =========================================
 
 socket.on(
     "message delivered",
-    () => {
+    (message) => {
 
-        if (selectedChat) {
+        if (!message || !message._id) {
+            return;
+        }
 
-            loadMessages(
-                selectedChat._id
+        const bubble =
+            document.getElementById(
+                "msg-" + message._id
             );
 
+        if (!bubble) {
+            return;
         }
+
+        const status =
+            bubble.querySelector(
+                ".message-status"
+            );
+
+        if (!status) {
+            return;
+        }
+
+        status.outerHTML =
+            getMessageStatus(message);
 
     }
 );
@@ -9817,15 +10048,32 @@ socket.on(
 
 socket.on(
     "message seen",
-    () => {
+    (message) => {
 
-        if (selectedChat) {
+        if (!message || !message._id) {
+            return;
+        }
 
-            loadMessages(
-                selectedChat._id
+        const bubble =
+            document.getElementById(
+                "msg-" + message._id
             );
 
+        if (!bubble) {
+            return;
         }
+
+        const status =
+            bubble.querySelector(
+                ".message-status"
+            );
+
+        if (!status) {
+            return;
+        }
+
+        status.outerHTML =
+            getMessageStatus(message);
 
     }
 );
@@ -9946,16 +10194,30 @@ async function markMessagesSeen(
 let selectedMessageId =
     null;
 
+// =========================================
+// REPLY MESSAGE STATE
+// =========================================
+
+let replyToMessageId =
+    null;
+
 messages.addEventListener(
     "contextmenu",
     function (e) {
 
+        // =====================================
+        // FIND ANY MESSAGE
+        // SENT OR RECEIVED
+        // =====================================
+
         const bubble =
             e.target.closest(
-                ".message.sent"
+                ".message"
             );
 
         if (!bubble) return;
+
+        e.preventDefault();
 
         // =====================================
         // DO NOT SHOW MENU FOR DELETED MESSAGE
@@ -9973,37 +10235,6 @@ messages.addEventListener(
 
         }
 
-        // =====================================
-        // EDIT / DELETE TIME LIMIT
-        // 5 MINUTES
-        // =====================================
-
-        const createdAt =
-            new Date(
-                bubble.dataset.createdAt
-            ).getTime();
-
-        const messageAge =
-            Date.now() -
-            createdAt;
-
-        const fiveMinutes =
-            5 * 60 * 1000;
-
-        if (
-            !createdAt ||
-            messageAge >= fiveMinutes
-        ) {
-
-            selectedMessageId =
-                null;
-
-            return;
-
-        }
-
-        e.preventDefault();
-
         selectedMessageId =
             bubble.id.replace(
                 "msg-",
@@ -10015,7 +10246,95 @@ messages.addEventListener(
                 "messageContextMenu"
             );
 
+        const replyBtn =
+            document.getElementById(
+                "replyMessageBtn"
+            );
+
+        const editBtn =
+            document.getElementById(
+                "editMessageBtn"
+            );
+
+        const deleteBtn =
+            document.getElementById(
+                "deleteMessageBtn"
+            );
+
         if (!menu) return;
+
+        // =====================================
+        // CHECK WHETHER MESSAGE IS SENT
+        // =====================================
+
+        const isSent =
+            bubble.classList.contains(
+                "sent"
+            );
+
+        // =====================================
+        // REPLY IS ALWAYS AVAILABLE
+        // =====================================
+
+        if (replyBtn) {
+
+            replyBtn.style.display =
+                "flex";
+
+        }
+
+        // =====================================
+        // EDIT / DELETE ONLY FOR OWN MESSAGE
+        // AND ONLY WITHIN 5 MINUTES
+        // =====================================
+
+        let canEditDelete =
+            false;
+
+        if (isSent) {
+
+            const createdAt =
+                new Date(
+                    bubble.dataset.createdAt
+                ).getTime();
+
+            const messageAge =
+                Date.now() -
+                createdAt;
+
+            const fiveMinutes =
+                5 * 60 * 1000;
+
+            if (
+                createdAt &&
+                messageAge <
+                fiveMinutes
+            ) {
+
+                canEditDelete =
+                    true;
+
+            }
+
+        }
+
+        if (editBtn) {
+
+            editBtn.style.display =
+                canEditDelete
+                    ? "flex"
+                    : "none";
+
+        }
+
+        if (deleteBtn) {
+
+            deleteBtn.style.display =
+                canEditDelete
+                    ? "flex"
+                    : "none";
+
+        }
 
         // =====================================
         // SHOW MENU FIRST TO GET ITS SIZE
@@ -10148,9 +10467,468 @@ document.addEventListener(
     }
 );
 
+
+// =========================================
+// MESSAGE REACTION
+// =========================================
+
+const reactMessageBtn =
+    document.getElementById(
+        "reactMessageBtn"
+    );
+
+const reactionPicker =
+    document.getElementById(
+        "reactionPicker"
+    );
+
+// =========================================
+// OPEN REACTION PICKER
+// =========================================
+
+if (reactMessageBtn) {
+
+    reactMessageBtn.addEventListener(
+        "click",
+        (e) => {
+
+            e.stopPropagation();
+
+            if (!selectedMessageId) {
+                return;
+            }
+
+            if (!reactionPicker) {
+                return;
+            }
+
+            // =====================================
+            // GET SELECTED MESSAGE POSITION
+            // =====================================
+
+            const selectedBubble =
+                document.getElementById(
+                    "msg-" +
+                    selectedMessageId
+                );
+
+            if (!selectedBubble) {
+                return;
+            }
+
+            const rect =
+                selectedBubble.getBoundingClientRect();
+
+            // =====================================
+            // HIDE MESSAGE MENU
+            // =====================================
+
+            const menu =
+                document.getElementById(
+                    "messageContextMenu"
+                );
+
+            if (menu) {
+                menu.style.display = "none";
+            }
+
+            // =====================================
+            // SHOW REACTION PICKER
+            // =====================================
+
+            reactionPicker.style.display =
+                "flex";
+
+            let left =
+                rect.left;
+
+            let top =
+                rect.top -
+                reactionPicker.offsetHeight -
+                8;
+
+            const pickerWidth =
+                reactionPicker.offsetWidth;
+
+            const pickerHeight =
+                reactionPicker.offsetHeight;
+
+            if (
+                left + pickerWidth >
+                window.innerWidth - 10
+            ) {
+
+                left =
+                    window.innerWidth -
+                    pickerWidth -
+                    10;
+
+            }
+
+            // =====================================
+            // IF NOT ENOUGH SPACE ABOVE MESSAGE
+            // SHOW BELOW MESSAGE
+            // =====================================
+
+            if (
+                top < 10
+            ) {
+
+                top =
+                    rect.bottom +
+                    8;
+
+            }
+
+            reactionPicker.style.left =
+                left + "px";
+
+            reactionPicker.style.top =
+                top + "px";
+
+        }
+    );
+
+}
+
+// =========================================
+// SELECT REACTION
+// =========================================
+
+if (reactionPicker) {
+
+    reactionPicker.addEventListener(
+        "click",
+        async (e) => {
+
+            const button =
+                e.target.closest(
+                    ".reaction-emoji"
+                );
+
+            if (!button) {
+                return;
+            }
+
+            const emoji =
+                button.dataset.emoji;
+
+            if (!emoji || !selectedMessageId) {
+                return;
+            }
+
+            try {
+
+                const res =
+                    await fetch(
+                        API_URL +
+                        "/message/react/" +
+                        selectedMessageId,
+                        {
+
+                            method: "PUT",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    "Bearer " +
+                                    token
+
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    emoji: emoji
+                                })
+
+                        }
+                    );
+
+                const data =
+                    await res.json();
+
+                if (!data.success) {
+
+                    console.error(
+                        "Reaction error:",
+                        data.message
+                    );
+
+                    return;
+
+                }
+
+                updateMessageReaction(
+                    data.message
+                );
+
+            }
+
+            catch (err) {
+
+                console.error(
+                    "Reaction request error:",
+                    err
+                );
+
+            }
+
+            reactionPicker.style.display =
+                "none";
+
+        }
+    );
+
+}
+
+// =========================================
+// CLOSE REACTION PICKER
+// =========================================
+
+document.addEventListener(
+    "click",
+    () => {
+
+        if (reactionPicker) {
+
+            reactionPicker.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+// =========================================
+// UPDATE MESSAGE REACTION
+// =========================================
+
+function updateMessageReaction(
+    message
+) {
+
+    if (!message || !message._id) {
+        return;
+    }
+
+    const bubble =
+        document.getElementById(
+            "msg-" +
+            message._id
+        );
+
+    if (!bubble) {
+        return;
+    }
+
+    let reactionContainer =
+        bubble.querySelector(
+            ".message-reactions"
+        );
+
+    if (!reactionContainer) {
+
+        reactionContainer =
+            document.createElement(
+                "div"
+            );
+
+        reactionContainer.className =
+            "message-reactions";
+
+        bubble.appendChild(
+            reactionContainer
+        );
+
+    }
+
+    reactionContainer.innerHTML = "";
+
+    if (
+        !message.reactions ||
+        !message.reactions.length
+    ) {
+
+        reactionContainer.remove();
+
+        return;
+
+    }
+
+    const counts = {};
+
+    message.reactions.forEach(
+        reaction => {
+
+            if (!reaction.emoji) {
+                return;
+            }
+
+            counts[reaction.emoji] =
+                (counts[reaction.emoji] || 0) + 1;
+
+        }
+    );
+
+    Object.keys(counts).forEach(
+        emoji => {
+
+            const reaction =
+                document.createElement(
+                    "span"
+                );
+
+            reaction.className =
+                "message-reaction";
+
+            reaction.innerText =
+                emoji +
+                " " +
+                counts[emoji];
+
+            reactionContainer.appendChild(
+                reaction
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// REPLY MESSAGE
+// =========================================
+
+const replyBtn =
+    document.getElementById(
+        "replyMessageBtn"
+    );
+
+const replyPreview =
+    document.getElementById(
+        "replyPreview"
+    );
+
+const replyPreviewText =
+    document.getElementById(
+        "replyPreviewText"
+    );
+
+const cancelReplyBtn =
+    document.getElementById(
+        "cancelReplyBtn"
+    );
+
+if (replyBtn) {
+
+    replyBtn.addEventListener(
+        "click",
+        () => {
+
+            if (!selectedMessageId)
+                return;
+
+            const bubble =
+                document.getElementById(
+                    "msg-" +
+                    selectedMessageId
+                );
+
+            if (!bubble)
+                return;
+
+            const messageText =
+                bubble.querySelector(
+                    ".message-text"
+                );
+
+            let text =
+                messageText
+                    ? messageText.innerText.trim()
+                    : "";
+
+            if (!text) {
+
+                text =
+                    "Message";
+
+            }
+
+            replyToMessageId =
+                selectedMessageId;
+
+            if (replyPreviewText) {
+
+                replyPreviewText.innerText =
+                    text;
+
+            }
+
+            if (replyPreview) {
+
+                replyPreview.style.display =
+                    "flex";
+
+            }
+
+            const menu =
+                document.getElementById(
+                    "messageContextMenu"
+                );
+
+            if (menu) {
+
+                menu.style.display =
+                    "none";
+
+            }
+
+            messageInput.focus();
+
+        }
+    );
+
+}
+
+if (cancelReplyBtn) {
+
+    cancelReplyBtn.addEventListener(
+        "click",
+        () => {
+
+            replyToMessageId =
+                null;
+
+            if (replyPreviewText) {
+
+                replyPreviewText.innerText =
+                    "";
+
+            }
+
+            if (replyPreview) {
+
+                replyPreview.style.display =
+                    "none";
+
+            }
+
+            messageInput.focus();
+
+        }
+    );
+
+}
+
 // =========================================
 // EDIT MESSAGE
 // =========================================
+
+
 
 const editBtn =
     document.getElementById(

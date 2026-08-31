@@ -14,6 +14,7 @@ const {
     markMessageAsSeen,
     editMessage,
     deleteMessage,
+    reactToMessage,
 
 } = require("../controllers/messageController");
 
@@ -92,6 +93,21 @@ router.put(
     protect,
 
     deleteMessage
+
+);
+
+
+// =========================================
+// REACT TO MESSAGE
+// =========================================
+
+router.put(
+
+    "/react/:messageId",
+
+    protect,
+
+    reactToMessage
 
 );
 

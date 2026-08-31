@@ -1681,6 +1681,44 @@ title="Menu"
     id="messageInputArea"
 >
 
+    <!-- =====================================
+         REPLY PREVIEW
+    ====================================== -->
+
+    <div
+        id="replyPreview"
+        class="reply-preview"
+        style="display:none;"
+    >
+
+        <div class="reply-preview-content">
+
+            <div class="reply-preview-label">
+                <i class="fas fa-reply"></i>
+                Replying to
+            </div>
+
+            <div
+                id="replyPreviewText"
+                class="reply-preview-text"
+            ></div>
+
+        </div>
+
+        <button
+            id="cancelReplyBtn"
+            class="reply-preview-close"
+            type="button"
+            title="Cancel reply"
+        >
+
+            <i class="fas fa-times"></i>
+
+        </button>
+
+    </div>
+
+
     <!-- Emoji -->
 
     <button id="emojiBtn" type="button">
@@ -1985,6 +2023,22 @@ title="Menu"
 
 <div id="messageContextMenu" class="message-context-menu">
 
+    <button id="reactMessageBtn">
+
+        <i class="far fa-face-smile"></i>
+
+        React
+
+    </button>
+
+    <button id="replyMessageBtn">
+
+        <i class="fas fa-reply"></i>
+
+        Reply
+
+    </button>
+
     <button id="editMessageBtn">
 
         <i class="fas fa-pen"></i>
@@ -2000,6 +2054,54 @@ title="Menu"
         Delete
 
     </button>
+
+</div>
+
+<!-- =========================================
+     MESSAGE REACTION PICKER
+========================================= -->
+
+<div
+    id="reactionPicker"
+    class="reaction-picker"
+    style="display:none;"
+>
+
+    <button
+        type="button"
+        class="reaction-emoji"
+        data-emoji="❤️"
+    >❤️</button>
+
+    <button
+        type="button"
+        class="reaction-emoji"
+        data-emoji="😂"
+    >😂</button>
+
+    <button
+        type="button"
+        class="reaction-emoji"
+        data-emoji="😮"
+    >😮</button>
+
+    <button
+        type="button"
+        class="reaction-emoji"
+        data-emoji="😢"
+    >😢</button>
+
+    <button
+        type="button"
+        class="reaction-emoji"
+        data-emoji="😡"
+    >😡</button>
+
+    <button
+        type="button"
+        class="reaction-emoji"
+        data-emoji="👍"
+    >👍</button>
 
 </div>
 

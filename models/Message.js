@@ -178,7 +178,37 @@ const messageSchema = new mongoose.Schema(
 
             default: null,
 
-        }
+        },
+
+        // =====================================
+        // MESSAGE REACTIONS
+        // =====================================
+
+        reactions: [
+
+            {
+
+                user: {
+
+                    type: mongoose.Schema.Types.ObjectId,
+
+                    ref: "User",
+
+                    required: true,
+
+                },
+
+                emoji: {
+
+                    type: String,
+
+                    required: true,
+
+                }
+
+            }
+
+        ]
 
     },
 
