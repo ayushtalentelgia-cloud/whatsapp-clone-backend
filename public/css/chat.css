@@ -13506,3 +13506,77 @@ body {
     }
 
 }
+
+/* =========================================
+   TIC TAC TOE GAME LAYOUT
+========================================= */
+
+.tic-game-layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 28px;
+    width: 100%;
+}
+
+/* =========================================
+   OPPONENT STATS
+========================================= */
+
+.tic-opponent-stats {
+    width: 210px;
+    padding: 18px;
+    background: var(--vc-surface, #ffffff);
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
+}
+
+.tic-stats-title {
+    font-size: 12px;
+    opacity: 0.65;
+    margin-bottom: 4px;
+}
+
+.tic-stats-opponent {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.tic-stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 13px;
+}
+
+.tic-stat-row:last-child {
+    border-bottom: none;
+}
+
+.tic-stat-row strong {
+    font-size: 16px;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media screen and (max-width: 700px) {
+
+    .tic-game-layout {
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .tic-opponent-stats {
+        width: min(320px, 90%);
+    }
+
+}
+

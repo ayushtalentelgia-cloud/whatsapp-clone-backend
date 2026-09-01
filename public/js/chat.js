@@ -67,6 +67,14 @@ let typingTimeout = null;
 
 let ticGameId = null;
 
+// =========================================
+// TIC TAC TOE - CURRENT OPPONENT
+// =========================================
+
+let ticOpponentId = null;
+
+let ticOpponentName = "Opponent";
+
 let ticPlayerSymbol = null;
 
 let ticCurrentTurn = null;
@@ -3560,22 +3568,99 @@ function openTicTacToe() {
             </div>
 
 
-            <div
-                class="tic-board"
-                id="ticBoard"
-            >
+            <div class="tic-game-layout">
 
-                <button data-cell="0"></button>
-                <button data-cell="1"></button>
-                <button data-cell="2"></button>
+                <div class="tic-board"
+                     id="ticBoard">
 
-                <button data-cell="3"></button>
-                <button data-cell="4"></button>
-                <button data-cell="5"></button>
+                    <button data-cell="0"></button>
+                    <button data-cell="1"></button>
+                    <button data-cell="2"></button>
 
-                <button data-cell="6"></button>
-                <button data-cell="7"></button>
-                <button data-cell="8"></button>
+                    <button data-cell="3"></button>
+                    <button data-cell="4"></button>
+                    <button data-cell="5"></button>
+
+                    <button data-cell="6"></button>
+                    <button data-cell="7"></button>
+                    <button data-cell="8"></button>
+
+                </div>
+
+
+                <!-- =================================
+                     OPPONENT GAME STATS
+                ================================== -->
+
+                <div
+                    class="tic-opponent-stats"
+                    id="ticOpponentStats"
+                >
+
+                    <div class="tic-stats-title">
+                        Playing With
+                    </div>
+
+                    <div
+                        class="tic-stats-opponent"
+                        id="ticStatsOpponent"
+                    >
+                        Opponent
+                    </div>
+
+
+                    <div class="tic-stat-row">
+
+                        <span>
+                            🎮 Games Played
+                        </span>
+
+                        <strong id="ticGamesPlayed">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="tic-stat-row">
+
+                        <span>
+                            🏆 You Won
+                        </span>
+
+                        <strong id="ticWins">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="tic-stat-row">
+
+                        <span>
+                            ❌ You Lost
+                        </span>
+
+                        <strong id="ticLosses">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="tic-stat-row">
+
+                        <span>
+                            🤝 Draws
+                        </span>
+
+                        <strong id="ticDraws">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -3603,6 +3688,12 @@ function openTicTacToe() {
 
 
     startTicTacToe();
+
+    // =====================================
+    // LOAD OPPONENT GAME STATS
+    // =====================================
+
+    loadTicTacToeStats();
 
 }
 // =========================================
@@ -4037,6 +4128,287 @@ async function loadGameContacts() {
 
 }
 // =========================================
+// TIC TAC TOE RESULT TRACKING
+// =========================================
+
+let ticResultRecordedGameId = null;
+
+
+// =========================================
+// RECORD TIC TAC TOE RESULT
+// =========================================
+
+async function recordTicTacToeResult(result) {
+
+    if (
+        !ticOpponentId ||
+        !ticGameId ||
+        !result
+    ) {
+
+        return;
+
+    }
+
+
+    // Prevent the same game from being counted twice.
+
+    if (
+        ticResultRecordedGameId ===
+        ticGameId
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        ![
+            "win",
+            "loss",
+            "draw"
+        ].includes(result)
+    ) {
+
+        return;
+
+    }
+
+
+    ticResultRecordedGameId =
+        ticGameId;
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL +
+                "/game-stats",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        Authorization:
+                            "Bearer " +
+                            token
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            opponentId:
+                                ticOpponentId,
+
+                            game:
+                                "tic-tac-toe",
+
+                            result
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            console.error(
+                "❌ Unable to save game result:",
+                data
+            );
+
+            // Allow retry if API failed.
+
+            ticResultRecordedGameId =
+                null;
+
+            return;
+
+        }
+
+
+        console.log(
+            "✅ Tic Tac Toe result saved:",
+            result
+        );
+
+
+        // Refresh side panel immediately.
+
+        loadTicTacToeStats();
+
+    }
+    catch (error) {
+
+        console.error(
+            "❌ Record Tic Tac Toe result error:",
+            error
+        );
+
+
+        // Allow retry if request failed.
+
+        ticResultRecordedGameId =
+            null;
+
+    }
+
+}
+
+
+// =========================================
+// LOAD TIC TAC TOE OPPONENT STATS
+// =========================================
+
+async function loadTicTacToeStats() {
+
+    const opponentName =
+        document.getElementById(
+            "ticStatsOpponent"
+        );
+
+    const gamesPlayed =
+        document.getElementById(
+            "ticGamesPlayed"
+        );
+
+    const wins =
+        document.getElementById(
+            "ticWins"
+        );
+
+    const losses =
+        document.getElementById(
+            "ticLosses"
+        );
+
+    const draws =
+        document.getElementById(
+            "ticDraws"
+        );
+
+
+    if (
+        !ticOpponentId ||
+        !gamesPlayed ||
+        !wins ||
+        !losses ||
+        !draws
+    ) {
+
+        return;
+
+    }
+
+
+    if (opponentName) {
+
+        opponentName.innerText =
+            ticOpponentName ||
+            "Opponent";
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL +
+                "/game-stats?opponentId=" +
+                encodeURIComponent(
+                    ticOpponentId
+                ) +
+                "&game=tic-tac-toe",
+                {
+
+                    headers: {
+
+                        Authorization:
+                            "Bearer " +
+                            token
+
+                    }
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            console.error(
+                "❌ Unable to load game stats:",
+                data
+            );
+
+            return;
+
+        }
+
+
+        const stats =
+            data.stats ||
+            {};
+
+
+        gamesPlayed.innerText =
+            Number(
+                stats.gamesPlayed
+            ) || 0;
+
+        wins.innerText =
+            Number(
+                stats.wins
+            ) || 0;
+
+        losses.innerText =
+            Number(
+                stats.losses
+            ) || 0;
+
+        draws.innerText =
+            Number(
+                stats.draws
+            ) || 0;
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "❌ Load Tic Tac Toe stats error:",
+            error
+        );
+
+    }
+
+}
+
+
+// =========================================
 // TIC TAC TOE - MULTIPLAYER GAME LOGIC
 // =========================================
 
@@ -4362,6 +4734,25 @@ function startCountdown(
                         gameActive =
                             true;
 
+                        // =====================================
+                        // SYNC GLOBAL GAME STATE
+                        // =====================================
+
+                        ticCountdownActive =
+                            false;
+
+                        ticGameActive =
+                            true;
+
+                        ticCurrentTurn =
+                            currentTurn;
+
+                        ticGameId =
+                            gameId;
+
+                        ticPlayerSymbol =
+                            playerSymbol;
+
 
                         updateTurnStatus();
 
@@ -4423,6 +4814,9 @@ function startCountdown(
             playerSymbol =
                 "X";
 
+            ticPlayerSymbol =
+                "X";
+
         }
         else if (
             data.playerO &&
@@ -4431,6 +4825,9 @@ function startCountdown(
         ) {
 
             playerSymbol =
+                "O";
+
+            ticPlayerSymbol =
                 "O";
 
         }
@@ -4705,6 +5102,17 @@ console.log(
         playerSymbol;
 
 
+    // =====================================
+    // SAVE WIN / LOSS
+    // =====================================
+
+    recordTicTacToeResult(
+        won
+            ? "win"
+            : "loss"
+    );
+
+
     resultOverlay.innerHTML = `
 
         <div class="tic-countdown-box">
@@ -4812,6 +5220,15 @@ console.log(
             if (
     data.draw
 ) {
+
+    // =====================================
+    // SAVE DRAW
+    // =====================================
+
+    recordTicTacToeResult(
+        "draw"
+    );
+
 
     gameActive =
         false;
@@ -4974,7 +5391,13 @@ socket.on(
 
 
         // =====================================
-        // OPEN TIC TAC TOE AUTOMATICALLY
+        // OPEN GAMES SECTION AUTOMATICALLY
+        // =====================================
+
+        showGames();
+
+        // =====================================
+        // OPEN TIC TAC TOE
         // =====================================
 
         openTicTacToe();
@@ -4982,6 +5405,23 @@ socket.on(
 
         gameId =
             data.gameId;
+
+        // =====================================
+        // SYNC GLOBAL GAME STATE
+        // =====================================
+
+        ticGameId =
+            data.gameId;
+
+        ticCurrentTurn =
+            data.currentTurn ||
+            "X";
+
+        ticGameActive =
+            false;
+
+        ticCountdownActive =
+            true;
 
 
         const myId =
@@ -5000,7 +5440,7 @@ socket.on(
 
 
         // =====================================
-        // IDENTIFY PLAYER
+        // IDENTIFY PLAYER + OPPONENT
         // =====================================
 
         if (
@@ -5012,6 +5452,15 @@ socket.on(
             playerSymbol =
                 "X";
 
+            ticPlayerSymbol =
+                "X";
+
+            // X is playing against O
+            ticOpponentId =
+                data.playerO
+                    ? data.playerO.toString()
+                    : null;
+
         }
         else if (
             data.playerO &&
@@ -5021,6 +5470,15 @@ socket.on(
 
             playerSymbol =
                 "O";
+
+            ticPlayerSymbol =
+                "O";
+
+            // O is playing against X
+            ticOpponentId =
+                data.playerX
+                    ? data.playerX.toString()
+                    : null;
 
         }
         else {
@@ -5096,6 +5554,27 @@ socket.on(
 
         countdownActive =
             false;
+
+
+        // =====================================
+        // FINAL GAME STATE SYNC
+        // =====================================
+
+        ticGameId =
+            gameId;
+
+        ticPlayerSymbol =
+            playerSymbol;
+
+        ticCurrentTurn =
+            currentTurn;
+
+        ticGameActive =
+            true;
+
+        ticCountdownActive =
+            false;
+
 
         updateTurnStatus();
 
@@ -5529,6 +6008,18 @@ function sendGameInvite(
     }
 
 
+    // =====================================
+    // STORE CURRENT OPPONENT
+    // =====================================
+
+    ticOpponentId =
+        userId.toString();
+
+    ticOpponentName =
+        userName ||
+        "Opponent";
+
+
     socket.emit(
         "game:invite",
         {
@@ -5701,6 +6192,18 @@ function showGameInviteReceived(
             "click",
             () => {
 
+                // =====================================
+                // STORE CURRENT OPPONENT
+                // =====================================
+
+                ticOpponentId =
+                    from.toString();
+
+                ticOpponentName =
+                    fromName ||
+                    "Opponent";
+
+
                 // Open game FIRST.
                 // This registers all game socket listeners
                 // before the server sends countdown.
@@ -5780,7 +6283,26 @@ function showGameInviteReceived(
 
 socket.on(
     "game:invite-accepted",
-    () => {
+    ({
+        from,
+        fromName
+    }) => {
+
+        // =====================================
+        // STORE CURRENT OPPONENT
+        // =====================================
+
+        if (from) {
+
+            ticOpponentId =
+                from.toString();
+
+        }
+
+        ticOpponentName =
+            fromName ||
+            "Opponent";
+
 
         showVibeToast(
             "Your friend accepted the game invite! 🎮",

@@ -16,6 +16,7 @@ const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const statusRoutes = require("./routes/statusRoutes");
 const postRoutes = require("./routes/postRoutes");
+const gameStatsRoutes = require("./routes/gameStatsRoutes");
 
 // Socket
 const socketHandler = require("./socket/socket");
@@ -256,6 +257,15 @@ app.use(
 app.use(
     "/api/posts",
     postRoutes
+);
+
+// =========================================
+// GAME STATS ROUTES
+// =========================================
+
+app.use(
+    "/api/game-stats",
+    gameStatsRoutes
 );
 
 

@@ -273,6 +273,10 @@ console.log(
                 from:
                     accepterId,
 
+                fromName:
+                    socket.user?.name ||
+                    "Opponent",
+
                 game:
                     "tic-tac-toe"
 
