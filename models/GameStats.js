@@ -41,6 +41,12 @@ const gameStatsSchema = new mongoose.Schema(
             default: 0,
         },
 
+        // Completed game IDs already counted for this user/opponent
+        completedGames: {
+            type: [String],
+            default: [],
+        },
+
     },
     {
         timestamps: true,

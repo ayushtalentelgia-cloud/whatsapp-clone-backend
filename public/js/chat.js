@@ -4211,7 +4211,10 @@ async function recordTicTacToeResult(result) {
                             game:
                                 "tic-tac-toe",
 
-                            result
+                            result,
+
+                            gameId:
+                                ticGameId
 
                         })
 

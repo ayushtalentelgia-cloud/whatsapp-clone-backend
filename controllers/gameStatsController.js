@@ -138,7 +138,8 @@ const updateGameStats = async (
         const {
             opponentId,
             game,
-            result
+            result,
+            gameId
         } = req.body;
 
 
@@ -182,6 +183,54 @@ const updateGameStats = async (
         const gameName =
             game ||
             "tic-tac-toe";
+
+
+        // =====================================
+        // PREVENT DUPLICATE GAME RESULT
+        // =====================================
+
+        if (gameId) {
+
+            const alreadyRecorded =
+                await GameStats.findOne({
+                    user: req.user._id,
+                    opponent: opponentId,
+                    game: gameName,
+                    completedGames: gameId
+                });
+
+            if (alreadyRecorded) {
+
+                return res.status(200).json({
+
+                    success: true,
+
+                    duplicate: true,
+
+                    message:
+                        "Game result already recorded.",
+
+                    stats: {
+
+                        gamesPlayed:
+                            alreadyRecorded.gamesPlayed,
+
+                        wins:
+                            alreadyRecorded.wins,
+
+                        losses:
+                            alreadyRecorded.losses,
+
+                        draws:
+                            alreadyRecorded.draws
+
+                    }
+
+                });
+
+            }
+
+        }
 
 
         const increment = {
@@ -244,7 +293,16 @@ const updateGameStats = async (
                 {
 
                     $inc:
-                        increment
+                        increment,
+
+                    ...(gameId
+                        ? {
+                            $addToSet: {
+                                completedGames:
+                                    gameId
+                            }
+                        }
+                        : {})
 
                 },
 
