@@ -9156,7 +9156,36 @@ function renderChats(chats) {
 
 
             // =====================================
-            // ADD CHAT TO LIST
+              // =====================================
+              // CHAT LIST IMAGE CLICK
+              // =====================================
+
+              const chatAvatar =
+                  div.querySelector(
+                      ".chat-avatar"
+                  );
+
+              if (chatAvatar) {
+
+                  chatAvatar.addEventListener(
+                      "click",
+                      (event) => {
+
+                          event.stopPropagation();
+
+                          openProfileImage(
+                              getUserProfileImage(
+                                  otherUser
+                              )
+                          );
+
+                      }
+                  );
+
+              }
+
+
+// ADD CHAT TO LIST
             // =====================================
 
             chatList.appendChild(
@@ -9167,37 +9196,6 @@ function renderChats(chats) {
     );
 
 
-    // =================================
-    // CHAT LIST IMAGE CLICK
-    // =================================
-
-    const chatAvatar =
-        div.querySelector(
-            ".chat-avatar"
-        );
-
-    if (chatAvatar) {
-
-        chatAvatar.addEventListener(
-            "click",
-            (event) => {
-
-                event.stopPropagation();
-
-                openProfileImage(
-                    getUserProfileImage(
-                        otherUser
-                    )
-                );
-
-            }
-        );
-
-    }
-
-    chatList.appendChild(
-        div
-    );
 }
 
 // =========================================
