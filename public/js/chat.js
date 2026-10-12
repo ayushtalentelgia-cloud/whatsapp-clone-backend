@@ -9248,9 +9248,48 @@ if (searchUser) {
 // REFRESH CHAT LIST
 // =========================================
 
-function refreshChats() {
+async function refreshChats() {
 
-    loadChats();
+    const activeSection =
+        localStorage.getItem(
+            "vibechatActiveSection"
+        ) || "chats";
+
+    await loadChats();
+
+    // =====================================
+    // RESTORE CURRENT SECTION
+    // =====================================
+
+    if (
+        activeSection ===
+        "games"
+    ) {
+
+        showGames();
+
+    }
+    else if (
+        activeSection ===
+        "status"
+    ) {
+
+        showStatus();
+
+    }
+    else if (
+        activeSection ===
+        "posts"
+    ) {
+
+        showPosts();
+
+    }
+    else {
+
+        showChats();
+
+    }
 
 }
 
@@ -9644,6 +9683,17 @@ function renderMessage(message) {
         document.createElement(
             "div"
         );
+
+    // =====================================
+    // STORE MESSAGE FOR FORWARD / ACTIONS
+    // =====================================
+
+    window.vibeChatMessages =
+        window.vibeChatMessages || {};
+
+    window.vibeChatMessages[
+        message._id
+    ] = message;
 
 
     div.id =
@@ -17168,3 +17218,833 @@ messageInputModal.addEventListener(
 
 })();
 
+
+
+// =========================================
+// FORWARD MESSAGE
+// =========================================
+
+let selectedForwardContact = null;
+let forwardContacts = [];
+
+const forwardMessageModal =
+    document.getElementById(
+        "forwardMessageModal"
+    );
+
+const forwardContactSearch =
+    document.getElementById(
+        "forwardContactSearch"
+    );
+
+const forwardContactList =
+    document.getElementById(
+        "forwardContactList"
+    );
+
+const closeForwardMessageBtn =
+    document.getElementById(
+        "closeForwardMessageBtn"
+    );
+
+const cancelForwardMessageBtn =
+    document.getElementById(
+        "cancelForwardMessageBtn"
+    );
+
+const confirmForwardMessageBtn =
+    document.getElementById(
+        "confirmForwardMessageBtn"
+    );
+
+
+// =========================================
+// OPEN FORWARD MODAL
+// =========================================
+
+function openForwardMessageModal() {
+
+    if (!forwardMessageModal) {
+        return;
+    }
+
+    selectedForwardContact = null;
+
+    if (forwardContactSearch) {
+        forwardContactSearch.value = "";
+    }
+
+    if (confirmForwardMessageBtn) {
+        confirmForwardMessageBtn.disabled = true;
+    }
+
+    forwardMessageModal.classList.add(
+        "active"
+    );
+
+    loadForwardContacts();
+
+}
+
+
+// =========================================
+// CLOSE FORWARD MODAL
+// =========================================
+
+function closeForwardMessageModal() {
+
+    if (!forwardMessageModal) {
+        return;
+    }
+
+    forwardMessageModal.classList.remove(
+        "active"
+    );
+
+    selectedForwardContact = null;
+
+}
+
+
+// =========================================
+// LOAD FORWARD CONTACTS
+// =========================================
+
+async function loadForwardContacts() {
+
+    if (!forwardContactList) {
+        return;
+    }
+
+    forwardContactList.innerHTML = `
+        <div class="share-contact-empty">
+            <i class="fas fa-spinner fa-spin"></i>
+            Loading contacts...
+        </div>
+    `;
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL + "/chat",
+                {
+                    headers: {
+                        Authorization:
+                            "Bearer " + token
+                    }
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+            throw new Error(
+                data.message ||
+                "Unable to load contacts."
+            );
+        }
+
+        forwardContacts = [];
+
+        (data.chats || []).forEach(
+            chat => {
+
+                const otherUser =
+                    (chat.users || []).find(
+                        user =>
+                            user._id.toString() !==
+                            currentUser._id.toString()
+                    );
+
+                if (
+                    otherUser &&
+                    !forwardContacts.some(
+                        user =>
+                            user._id.toString() ===
+                            otherUser._id.toString()
+                    )
+                ) {
+
+                    forwardContacts.push(
+                        otherUser
+                    );
+
+                }
+
+            }
+        );
+
+        renderForwardContacts(
+            forwardContacts
+        );
+
+    } catch (error) {
+
+        console.error(
+            "❌ Forward contacts error:",
+            error
+        );
+
+        forwardContactList.innerHTML = `
+            <div class="share-contact-empty">
+                Unable to load contacts.
+            </div>
+        `;
+
+    }
+
+}
+
+
+// =========================================
+// RENDER FORWARD CONTACTS
+// =========================================
+
+function renderForwardContacts(
+    contacts
+) {
+
+    if (!forwardContactList) {
+        return;
+    }
+
+    if (!contacts.length) {
+
+        forwardContactList.innerHTML = `
+            <div class="share-contact-empty">
+                No contacts found.
+            </div>
+        `;
+
+        return;
+    }
+
+    forwardContactList.innerHTML = "";
+
+    contacts.forEach(
+        user => {
+
+            const item =
+                document.createElement(
+                    "button"
+                );
+
+            item.type = "button";
+
+            item.className =
+                "forward-contact-item";
+
+            const profilePic =
+                user.profilePic ||
+                "images/default-avatar.png";
+
+            item.innerHTML = `
+
+                <img
+                    src="${profilePic}"
+                    class="forward-contact-avatar"
+                    alt=""
+                >
+
+                <span
+                    class="forward-contact-info"
+                >
+
+                    <span
+                        class="forward-contact-name"
+                    >
+                        ${user.name || "Unknown User"}
+                    </span>
+
+                    <span
+                        class="forward-contact-email"
+                    >
+                        ${user.email || ""}
+                    </span>
+
+                </span>
+
+                <span
+                    class="forward-contact-check"
+                >
+                    <i class="fas fa-check"></i>
+                </span>
+
+            `;
+
+            item.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(
+                            ".forward-contact-item.selected"
+                        )
+                        .forEach(
+                            selected => {
+                                selected.classList.remove(
+                                    "selected"
+                                );
+                            }
+                        );
+
+                    item.classList.add(
+                        "selected"
+                    );
+
+                    selectedForwardContact =
+                        user;
+
+                    if (
+                        confirmForwardMessageBtn
+                    ) {
+                        confirmForwardMessageBtn.disabled =
+                            false;
+                    }
+
+                }
+            );
+
+            forwardContactList.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// SEARCH FORWARD CONTACTS
+// =========================================
+
+if (forwardContactSearch) {
+
+    forwardContactSearch.addEventListener(
+        "input",
+        () => {
+
+            const search =
+                forwardContactSearch.value
+                    .trim()
+                    .toLowerCase();
+
+            const filtered =
+                forwardContacts.filter(
+                    user => {
+
+                        const name =
+                            (
+                                user.name || ""
+                            ).toLowerCase();
+
+                        const email =
+                            (
+                                user.email || ""
+                            ).toLowerCase();
+
+                        return (
+                            name.includes(search) ||
+                            email.includes(search)
+                        );
+
+                    }
+                );
+
+            renderForwardContacts(
+                filtered
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================
+// CLOSE BUTTONS
+// =========================================
+
+if (closeForwardMessageBtn) {
+
+    closeForwardMessageBtn.addEventListener(
+        "click",
+        closeForwardMessageModal
+    );
+
+}
+
+if (cancelForwardMessageBtn) {
+
+    cancelForwardMessageBtn.addEventListener(
+        "click",
+        closeForwardMessageModal
+    );
+
+}
+
+
+
+// =========================================
+// FORWARD BUTTON
+// =========================================
+
+const forwardMessageBtn =
+    document.getElementById(
+        "forwardMessageBtn"
+    );
+
+
+if (forwardMessageBtn) {
+
+    forwardMessageBtn.addEventListener(
+        "click",
+        () => {
+
+            if (!selectedMessageId) {
+
+                console.warn(
+                    "⚠️ No message selected for forwarding."
+                );
+
+                return;
+
+            }
+
+            const message =
+                window.vibeChatMessages &&
+                window.vibeChatMessages[
+                    selectedMessageId
+                ];
+
+            if (!message) {
+
+                console.warn(
+                    "⚠️ Selected message data not found:",
+                    selectedMessageId
+                );
+
+                return;
+
+            }
+
+            console.log(
+                "📤 Forwarding message:",
+                message
+            );
+
+            const messageContextMenu =
+                document.getElementById(
+                    "messageContextMenu"
+                );
+
+            if (messageContextMenu) {
+
+                messageContextMenu.style.display =
+                    "none";
+
+            }
+
+            openForwardMessageModal();
+
+        }
+    );
+
+}
+
+
+
+// =========================================
+// CONFIRM FORWARD MESSAGE
+// =========================================
+
+if (confirmForwardMessageBtn) {
+
+    confirmForwardMessageBtn.addEventListener(
+        "click",
+        async () => {
+
+            if (!selectedMessageId) {
+                return;
+            }
+
+            if (!selectedForwardContact) {
+                return;
+            }
+
+            const message =
+                window.vibeChatMessages &&
+                window.vibeChatMessages[
+                    selectedMessageId
+                ];
+
+            if (!message) {
+
+                showVibeToast(
+                    "Message not found.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+            if (!message.content) {
+
+                showVibeToast(
+                    "Media forwarding will be added next.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+            try {
+
+                confirmForwardMessageBtn.disabled =
+                    true;
+
+                confirmForwardMessageBtn.innerHTML = `
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Sending...
+                `;
+
+
+                // =====================================
+                // FIND TARGET CHAT
+                // =====================================
+
+                const targetUserId =
+                    selectedForwardContact._id.toString();
+
+                const chatResponse =
+                    await fetch(
+                        API_URL + "/chat",
+                        {
+                            headers: {
+                                Authorization:
+                                    "Bearer " + token
+                            }
+                        }
+                    );
+
+
+                const chatData =
+                    await chatResponse.json();
+
+
+                if (
+                    !chatResponse.ok ||
+                    !chatData.success
+                ) {
+
+                    throw new Error(
+                        chatData.message ||
+                        "Unable to load chats."
+                    );
+
+                }
+
+
+                const targetChat =
+                    (chatData.chats || []).find(
+                        chat =>
+                            (chat.users || []).some(
+                                user =>
+                                    user._id.toString() ===
+                                    targetUserId
+                            )
+                    );
+
+
+                if (!targetChat) {
+
+                    throw new Error(
+                        "Chat with this contact was not found."
+                    );
+
+                }
+
+
+                // =====================================
+                // SEND FORWARDED MESSAGE
+                // =====================================
+
+                const response =
+                    await fetch(
+                        API_URL + "/message",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                Authorization:
+                                    "Bearer " + token
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    content:
+                                        message.content,
+
+                                    chatId:
+                                        targetChat._id,
+
+                                    replyTo:
+                                        null
+                                })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to forward message."
+                    );
+
+                }
+
+
+                // =====================================
+                // SUCCESS
+                // =====================================
+
+                closeForwardMessageModal();
+
+                showVibeToast(
+                    "Message forwarded successfully!",
+                    "success"
+                );
+
+                refreshChats();
+
+
+            }
+            catch (error) {
+
+                console.error(
+                    "❌ Forward message error:",
+                    error
+                );
+
+                showVibeToast(
+                    error.message ||
+                    "Unable to forward message.",
+                    "error"
+                );
+
+            }
+            finally {
+
+                confirmForwardMessageBtn.disabled =
+                    !selectedForwardContact;
+
+                confirmForwardMessageBtn.innerHTML =
+                    "Forward";
+
+            }
+
+        }
+    );
+
+}
+
+
+// =========================================
+// VOICE MESSAGE RECORDING
+// =========================================
+
+(() => {
+    const voiceRecordBtn = document.getElementById("voiceRecordBtn");
+
+    if (!voiceRecordBtn) {
+        console.warn("Voice record button not found.");
+        return;
+    }
+
+    let voiceRecorder = null;
+    let voiceStream = null;
+    let voiceChunks = [];
+    let voiceIsUploading = false;
+    let voiceChatId = null;
+
+    function resetVoiceButton() {
+        voiceRecordBtn.classList.remove("voice-recording");
+        voiceRecordBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        voiceRecordBtn.title = "Record voice message";
+        voiceRecordBtn.setAttribute("aria-label", "Record voice message");
+        voiceRecordBtn.disabled = false;
+    }
+
+    function stopVoiceStream() {
+        if (voiceStream) {
+            voiceStream.getTracks().forEach(track => track.stop());
+            voiceStream = null;
+        }
+    }
+
+    async function uploadVoiceMessage(blob, chatId) {
+        if (!blob.size) {
+            showVibeToast("No audio was recorded.", "error");
+            return;
+        }
+
+        if (blob.size > 20 * 1024 * 1024) {
+            showVibeToast("Voice message exceeds the 20 MB limit.", "error");
+            return;
+        }
+
+        const mimeType = blob.type || "audio/webm";
+        let extension = "webm";
+
+        if (mimeType.includes("mp4")) extension = "m4a";
+        else if (mimeType.includes("ogg")) extension = "ogg";
+        else if (mimeType.includes("mpeg")) extension = "mp3";
+        else if (mimeType.includes("wav")) extension = "wav";
+
+        const formData = new FormData();
+        formData.append("file", blob, `voice-message.${extension}`);
+        formData.append("chatId", chatId);
+        formData.append("content", "");
+
+        const response = await fetch(API_URL + "/message", {
+            method: "POST",
+            headers: {
+                Authorization: "Bearer " + token
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Unable to send voice message.");
+        }
+
+        if (selectedChat && String(selectedChat._id) === String(chatId)) {
+            renderMessage(data.message);
+            scrollBottom();
+        }
+
+        refreshChats();
+        showVibeToast("Voice message sent successfully!", "success");
+    }
+
+    voiceRecordBtn.addEventListener("click", async () => {
+        if (voiceIsUploading) return;
+
+        if (voiceRecorder && voiceRecorder.state === "recording") {
+            voiceRecordBtn.disabled = true;
+            voiceRecordBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            voiceRecordBtn.title = "Finishing recording...";
+            voiceRecorder.stop();
+            return;
+        }
+
+        if (!selectedChat) {
+            showVibeToast("Please open a chat first.", "error");
+            return;
+        }
+
+        if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+            showVibeToast("Voice recording is not supported in this browser.", "error");
+            return;
+        }
+
+        voiceChatId = selectedChat._id;
+        voiceChunks = [];
+
+        try {
+            voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            const options = {};
+            if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+                options.mimeType = "audio/webm;codecs=opus";
+            } else if (MediaRecorder.isTypeSupported("audio/webm")) {
+                options.mimeType = "audio/webm";
+            }
+
+            voiceRecorder = new MediaRecorder(voiceStream, options);
+
+            voiceRecorder.addEventListener("dataavailable", event => {
+                if (event.data && event.data.size > 0) {
+                    voiceChunks.push(event.data);
+                }
+            });
+
+            voiceRecorder.addEventListener("stop", async () => {
+                const recorder = voiceRecorder;
+                const blobType = recorder?.mimeType || "audio/webm";
+                const audioBlob = new Blob(voiceChunks, { type: blobType });
+                const targetChatId = voiceChatId;
+
+                stopVoiceStream();
+                voiceRecorder = null;
+                voiceChunks = [];
+                voiceChatId = null;
+                resetVoiceButton();
+
+                voiceIsUploading = true;
+                voiceRecordBtn.disabled = true;
+                voiceRecordBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                try {
+                    await uploadVoiceMessage(audioBlob, targetChatId);
+                } catch (error) {
+                    console.error("Voice message upload failed:", error);
+                    showVibeToast(error.message || "Failed to send voice message.", "error");
+                } finally {
+                    voiceIsUploading = false;
+                    resetVoiceButton();
+                }
+            });
+
+            voiceRecorder.addEventListener("error", event => {
+                console.error("Voice recorder error:", event.error);
+                stopVoiceStream();
+                voiceRecorder = null;
+                resetVoiceButton();
+                showVibeToast("Recording failed. Please try again.", "error");
+            });
+
+            voiceRecorder.start();
+
+            voiceRecordBtn.classList.add("voice-recording");
+            voiceRecordBtn.innerHTML = '<i class="fas fa-stop"></i>';
+            voiceRecordBtn.title = "Stop recording and send";
+            voiceRecordBtn.setAttribute("aria-label", "Stop recording and send");
+
+            showVibeToast("Recording started. Click the red button to send.", "success");
+        } catch (error) {
+            console.error("Could not start voice recording:", error);
+            stopVoiceStream();
+            voiceRecorder = null;
+            resetVoiceButton();
+
+            showVibeToast(
+                error.name === "NotAllowedError"
+                    ? "Microphone permission denied. Please allow microphone access."
+                    : "Could not start recording. Please try again.",
+                "error"
+            );
+        }
+    });
+})();

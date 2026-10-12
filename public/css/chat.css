@@ -13580,3 +13580,237 @@ body {
 
 }
 
+
+
+/* =========================================
+   FORWARD MESSAGE MODAL
+========================================= */
+
+.forward-message-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1000005;
+}
+
+.forward-message-modal.active {
+    display: flex;
+}
+
+.forward-message-modal-content {
+    width: min(420px, 100%);
+    max-height: min(620px, 90vh);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--card-bg, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.forward-message-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.18);
+}
+
+.forward-message-header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.forward-message-header p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    opacity: 0.65;
+}
+
+.forward-message-close {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.forward-message-close:hover {
+    background: rgba(128, 128, 128, 0.12);
+}
+
+.forward-message-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 16px;
+    padding: 10px 13px;
+    border-radius: 10px;
+    background: rgba(128, 128, 128, 0.10);
+}
+
+.forward-message-search i {
+    opacity: 0.55;
+}
+
+.forward-message-search input {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font-size: 14px;
+}
+
+.forward-contact-list {
+    flex: 1;
+    min-height: 180px;
+    overflow-y: auto;
+    padding: 4px 8px;
+}
+
+.forward-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.forward-contact-item:hover {
+    background: rgba(128, 128, 128, 0.10);
+}
+
+.forward-contact-item.selected {
+    background: rgba(37, 211, 102, 0.12);
+}
+
+.forward-contact-avatar {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: rgba(128, 128, 128, 0.15);
+}
+
+.forward-contact-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.forward-contact-name {
+    display: block;
+    overflow: hidden;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.forward-contact-email {
+    display: block;
+    margin-top: 3px;
+    overflow: hidden;
+    font-size: 12px;
+    opacity: 0.6;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.forward-contact-check {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(128, 128, 128, 0.4);
+    border-radius: 50%;
+    font-size: 11px;
+}
+
+.forward-contact-item.selected .forward-contact-check {
+    border-color: #25d366;
+    background: #25d366;
+    color: #ffffff;
+}
+
+.forward-message-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 16px;
+    border-top: 1px solid rgba(128, 128, 128, 0.18);
+}
+
+.forward-cancel-btn,
+.forward-confirm-btn {
+    min-width: 90px;
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.forward-cancel-btn {
+    background: rgba(128, 128, 128, 0.12);
+    color: inherit;
+}
+
+.forward-confirm-btn {
+    background: #25d366;
+    color: #ffffff;
+}
+
+.forward-confirm-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+
+    .forward-message-modal {
+        padding: 10px;
+    }
+
+    .forward-message-modal-content {
+        width: 100%;
+        max-height: 88vh;
+        border-radius: 14px;
+    }
+
+}
+
+/* Voice Message Recording */
+.message-input #voiceRecordBtn {
+    flex-shrink: 0;
+}
+
+.message-input #voiceRecordBtn.voice-recording {
+    background: #dc2626;
+    color: #ffffff;
+    animation: voiceRecordingPulse 1s infinite;
+}
+
+@keyframes voiceRecordingPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.35);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.12);
+    }
+}
+

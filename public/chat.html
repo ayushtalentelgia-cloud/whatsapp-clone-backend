@@ -1254,6 +1254,84 @@ title="Menu"
     </div>
 
 </div>
+
+<!-- =========================================
+     FORWARD MESSAGE MODAL
+========================================= -->
+
+<div
+    id="forwardMessageModal"
+    class="forward-message-modal"
+>
+
+    <div class="forward-message-modal-content">
+
+        <div class="forward-message-header">
+
+            <div>
+                <h2>Forward message</h2>
+
+                <p>
+                    Select a contact
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="closeForwardMessageBtn"
+                class="forward-message-close"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+
+        </div>
+
+
+        <div class="forward-message-search">
+
+            <i class="fas fa-search"></i>
+
+            <input
+                type="text"
+                id="forwardContactSearch"
+                placeholder="Search contacts..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div
+            id="forwardContactList"
+            class="forward-contact-list"
+        ></div>
+
+
+        <div class="forward-message-footer">
+
+            <button
+                type="button"
+                id="cancelForwardMessageBtn"
+                class="forward-cancel-btn"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                id="confirmForwardMessageBtn"
+                class="forward-confirm-btn"
+                disabled
+            >
+                Forward
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 <!-- =========================================
      SHARE CONTACT MODAL
 ========================================= -->
@@ -1765,9 +1843,15 @@ title="Menu"
 
     <!-- Message -->
 
+    <!-- Voice Message -->
+    <button id="voiceRecordBtn" type="button" title="Record voice message" aria-label="Record voice message">
+        <i class="fas fa-microphone"></i>
+    </button>
+
     <input
 
         type="text"
+
 
         id="messageInput"
 
@@ -2028,6 +2112,14 @@ title="Menu"
         <i class="far fa-face-smile"></i>
 
         React
+
+    </button>
+
+    <button id="forwardMessageBtn">
+
+        <i class="fas fa-share"></i>
+
+        Forward
 
     </button>
 
