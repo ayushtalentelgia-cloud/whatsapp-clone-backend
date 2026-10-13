@@ -1,97 +1,238 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080916">
+    <title>VibeChat — Your People. Your Vibe.</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>VibeChat - Login</title>
-
-    <link
-        rel="stylesheet"
-        href="/css/auth.css"
-    >
-<link rel="icon" 
-type="image/png" 
-href="/images/logo.png">
+    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="stylesheet" href="/css/landing.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
 <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
 
-    <div class="container">
+    <header class="topbar">
+        <a href="/" class="brand">
+            <img src="/images/logo.png" alt="VibeChat logo">
+            <span>VibeChat<span class="brand-dot">.</span></span>
+        </a>
+        <button class="nav-login" id="openAuthTop">Log In <i class="fa-solid fa-arrow-right"></i></button>
+    </header>
 
-        <div class="login-card">
+    <main>
+        <section class="hero">
+            <div class="hero-copy">
+                <div class="eyebrow"><span class="live-dot"></span> YOUR WORLD, YOUR PEOPLE</div>
+                <h1>Your People.<br>Your <span class="gradient-text">Vibe.</span></h1>
+                <p class="hero-description">
+                    More than messages. Share moments, send voice notes,
+                    and stay close to the people who make life better.
+                </p>
 
-            <div class="logo">
+                <div class="hero-actions">
+                    <button class="primary-btn" id="openAuthMain">
+                        Get Started <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <button class="secondary-btn" id="exploreFeatures">
+                        <i class="fa-regular fa-circle-play"></i> Explore VibeChat
+                    </button>
+                </div>
 
-    <img
+                <div class="social-proof">
+                    <div class="avatar-stack">
+                        <span>A</span><span>V</span><span>M</span><span><i class="fa-solid fa-heart"></i></span>
+                    </div>
+                    <div>
+                        <strong>Every moment feels closer</strong>
+                        <small>One chat at a time.</small>
+                    </div>
+                </div>
+            </div>
 
-        src="/images/logo.png"
+            <div class="hero-visual" aria-label="VibeChat messaging preview">
+                <div class="orbit orbit-one"></div>
+                <div class="orbit orbit-two"></div>
 
-        alt="VibeChat Logo"
+                <div class="float-icon float-icon-one"><i class="fa-solid fa-heart"></i></div>
+                <div class="float-icon float-icon-two"><i class="fa-solid fa-microphone"></i></div>
+                <div class="float-icon float-icon-three"><i class="fa-solid fa-image"></i></div>
 
-    >
+                <div class="chat-window">
+                    <div class="chat-top">
+                        <div class="chat-person">
+                            <div class="person-avatar">S<span></span></div>
+                            <div><strong>Sarah Miller</strong><small><span class="online-dot"></span> Online now</small></div>
+                        </div>
+                        <i class="fa-solid fa-ellipsis"></i>
+                    </div>
 
-</div>
+                    <div class="chat-body">
+                        <div class="day-label">TODAY</div>
+                        <div class="bubble bubble-in">Hey! How's your day going? <small>4:32 PM</small></div>
+                        <div class="bubble bubble-out">So much better now 😊 <small>4:33 PM</small></div>
+                        <div class="bubble bubble-in">We should catch up soon! <small>4:33 PM</small></div>
+                        <div class="voice-bubble">
+                            <button class="voice-play" aria-label="Voice message preview"><i class="fa-solid fa-play"></i></button>
+                            <div class="waveform"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                            <span>0:08</span>
+                        </div>
+                        <div class="typing"><i></i><i></i><i></i></div>
+                    </div>
 
-            <h1>VibeChat</h1>
+                    <div class="chat-compose">
+                        <i class="fa-regular fa-face-smile"></i>
+                        <span>Write a message...</span>
+                        <i class="fa-solid fa-paperclip"></i>
+                        <div class="send-icon"><i class="fa-solid fa-arrow-up"></i></div>
+                    </div>
+                </div>
 
-            <p class="subtitle">
+                <div class="visual-caption"><span class="caption-icon"><i class="fa-solid fa-bolt"></i></span><div><strong>Feel every moment</strong><small>Instantly connected</small></div></div>
+            </div>
+        </section>
 
-                Connect. Chat. Stay Together.
+        <section class="features" id="features">
+            <div class="section-heading">
+                <span class="eyebrow">MADE FOR YOUR MOMENTS</span>
+                <h2>Every way to <span class="gradient-text">connect.</span></h2>
+                <p>Everything you need to keep your favorite people close.</p>
+            </div>
 
-            </p>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="feature-icon purple"><i class="fa-solid fa-comments"></i></div>
+                    <h3>Chats that flow</h3>
+                    <p>Keep conversations going with simple, instant messaging.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon pink"><i class="fa-solid fa-microphone-lines"></i></div>
+                    <h3>Your voice, your vibe</h3>
+                    <p>Send voice messages and let your personality come through.</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon blue"><i class="fa-solid fa-images"></i></div>
+                    <h3>Moments worth sharing</h3>
+                    <p>Share photos and memories with the people who matter.</p>
+                </article>
+            </div>
+        </section>
 
-            <form id="loginForm">
+        <section class="join-section" id="join">
+            <div class="join-copy">
+                <span class="eyebrow">YOUR NEXT CONVERSATION STARTS HERE</span>
+                <h2>Come for a chat.<br><span class="gradient-text">Stay for the vibe.</span></h2>
+                <p>Join VibeChat and bring your conversations closer.</p>
+                <button class="primary-btn" id="openAuthBottom">Let's get started <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
 
-                <input
-                    type="text"
-                    id="loginPhone"
-                    placeholder="Phone Number or Email"
-                    required
-                >
+            <div class="auth-card" id="authCard">
+                <div class="auth-card-heading">
+                    <div class="auth-logo"><img src="/images/logo.png" alt=""></div>
+                    <h2>Welcome to VibeChat</h2>
+                    <p>Your people are just a message away.</p>
+                </div>
 
-                <input
-                    type="password"
-                    id="loginPassword"
-                    placeholder="Password"
-                    required
-                >
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="signInTab" type="button">Sign In</button>
+                    <button class="auth-tab" id="signUpTab" type="button">Sign Up</button>
+                </div>
 
-                <button
-                    type="submit"
-                    id="loginBtn"
-                >
+                <form id="loginForm" class="auth-form">
+                    <label for="loginPhone">Email or phone number</label>
+                    <div class="input-wrap"><i class="fa-regular fa-user"></i><input type="text" id="loginPhone" placeholder="Enter email or phone" autocomplete="username" required></div>
 
-                    Login
+                    <label for="loginPassword">Password</label>
+                    <div class="input-wrap"><i class="fa-solid fa-lock"></i><input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" required></div>
 
-                </button>
+                    <button type="submit" id="loginBtn" class="primary-btn auth-submit">Sign In <i class="fa-solid fa-arrow-right"></i></button>
+                    <p class="auth-switch">New to VibeChat? <button type="button" class="text-button" data-open-signup> Create an account</button></p>
+                </form>
 
-            </form>
+                <form id="signupForm" class="auth-form hidden">
+                    <label for="signupName">Full name</label>
+                    <div class="input-wrap"><i class="fa-regular fa-user"></i><input type="text" id="signupName" placeholder="Your name" autocomplete="name" required></div>
 
-            <p class="bottom-text">
+                    <label for="signupEmail">Email address</label>
+                    <div class="input-wrap"><i class="fa-regular fa-envelope"></i><input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email" required></div>
 
-                Don't have an account?
+                    <label for="signupPhone">Phone number</label>
+                    <div class="input-wrap"><i class="fa-solid fa-phone"></i><input type="text" id="signupPhone" placeholder="Your phone number" autocomplete="tel" required></div>
 
-                <a href="/signup.html">
+                    <label for="signupPassword">Password</label>
+                    <div class="input-wrap"><i class="fa-solid fa-lock"></i><input type="password" id="signupPassword" placeholder="Create a password" autocomplete="new-password" required></div>
 
-                    Sign Up
+                    <button type="submit" id="signupBtn" class="primary-btn auth-submit">Create Account <i class="fa-solid fa-arrow-right"></i></button>
+                    <p class="auth-switch">Already have an account? <button type="button" class="text-button" data-open-signin> Sign in</button></p>
+                </form>
 
-                </a>
+                <p class="secure-note"><i class="fa-solid fa-shield-halved"></i> Your conversations belong to you.</p>
+            </div>
+        </section>
+    </main>
 
-            </p>
-
-        </div>
-
-    </div>
+    <footer class="footer">
+        <a href="/" class="brand"><img src="/images/logo.png" alt=""><span>VibeChat<span class="brand-dot">.</span></span></a>
+        <p>Made for meaningful connections. <span>© <span id="currentYear"></span> VibeChat</span></p>
+        <button class="footer-login" id="openAuthFooter">Log in to your account <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+    </footer>
 
     <script src="/js/auth.js"></script>
+    <script>
+    (() => {
+        const authCard = document.getElementById("authCard");
+        const loginForm = document.getElementById("loginForm");
+        const signupForm = document.getElementById("signupForm");
+        const signInTab = document.getElementById("signInTab");
+        const signUpTab = document.getElementById("signUpTab");
 
+        function openAuth(mode = "login") {
+            authCard.classList.add("auth-highlight");
+            authCard.scrollIntoView({ behavior: "smooth", block: "center" });
+            setTimeout(() => authCard.classList.remove("auth-highlight"), 1200);
+            if (mode === "signup") showSignup();
+            else showLogin();
+        }
+
+        function showLogin() {
+            loginForm.classList.remove("hidden");
+            signupForm.classList.add("hidden");
+            signInTab.classList.add("active");
+            signUpTab.classList.remove("active");
+        }
+
+        function showSignup() {
+            signupForm.classList.remove("hidden");
+            loginForm.classList.add("hidden");
+            signUpTab.classList.add("active");
+            signInTab.classList.remove("active");
+        }
+
+        ["openAuthTop", "openAuthMain", "openAuthBottom", "openAuthFooter"].forEach(id => {
+            document.getElementById(id).addEventListener("click", () => openAuth("login"));
+        });
+
+        signInTab.addEventListener("click", showLogin);
+        signUpTab.addEventListener("click", showSignup);
+        document.querySelector("[data-open-signup]").addEventListener("click", () => openAuth("signup"));
+        document.querySelector("[data-open-signin]").addEventListener("click", () => openAuth("login"));
+
+        document.getElementById("exploreFeatures").addEventListener("click", () => {
+            document.getElementById("features").scrollIntoView({ behavior: "smooth" });
+        });
+
+        document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+        // Keep authentication UI available when a visitor opens the page with an auth hash.
+        if (window.location.hash === "#login") openAuth("login");
+        if (window.location.hash === "#signup") openAuth("signup");
+
+    })();
+</script>
 </body>
-
 </html>
