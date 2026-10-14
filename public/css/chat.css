@@ -14686,3 +14686,63 @@ body {
         min-height: 82px !important;
     }
 }
+
+/* =========================================
+   FIX: POSTS AND GAMES TEXT CONTRAST
+   Keep text readable on light content panels
+========================================= */
+
+#postsSection {
+    color: #292344;
+}
+
+#postsSection .posts-header,
+#postsSection .posts-group,
+#postsSection .posts-group-title,
+#postsSection .posts-title-wrapper,
+#postsSection .posts-type-btn,
+#postsSection .posts-type-option {
+    color: #292344;
+}
+
+#postsSection .post-card,
+#postsSection .post-item,
+#postsSection .post-content {
+    color: #292344;
+}
+
+#postsSection .post-card h1,
+#postsSection .post-card h2,
+#postsSection .post-card h3,
+#postsSection .post-card h4,
+#postsSection .post-card p,
+#postsSection .post-card span,
+#postsSection .post-item h1,
+#postsSection .post-item h2,
+#postsSection .post-item h3,
+#postsSection .post-item h4,
+#postsSection .post-item p,
+#postsSection .post-item span {
+    color: #292344;
+}
+
+.games-section {
+    color: #292344;
+}
+
+.games-section .games-title h2,
+.games-section .games-title p,
+.games-section .game-card-info h3,
+.games-section .game-card-info p {
+    color: #292344;
+}
+
+.games-section .game-card {
+    color: #292344;
+    background: #ffffff;
+}
+
+.games-section .game-card-info h3,
+.games-section .game-card-info p {
+    opacity: 1;
+}
