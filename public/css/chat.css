@@ -14746,3 +14746,50 @@ body {
 .games-section .game-card-info p {
     opacity: 1;
 }
+
+/* =========================================
+   SHARE VIBECHAT MODAL - TEXT CONTRAST FIX
+========================================= */
+
+.share-link-modal-content {
+    color: #292344 !important;
+    background: #ffffff !important;
+}
+
+.share-link-modal-content .share-link-title h2,
+.share-link-modal-content .share-link-preview-info strong,
+.share-link-modal-content .share-link-action-text strong {
+    color: #292344 !important;
+}
+
+.share-link-modal-content .share-link-title p,
+.share-link-modal-content .share-link-preview-info span,
+.share-link-modal-content .share-link-preview-info small,
+.share-link-modal-content .share-link-action-text span {
+    color: #5f5b70 !important;
+    opacity: 1 !important;
+}
+
+.share-link-modal-content .share-link-close,
+.share-link-modal-content .share-link-cancel {
+    color: #292344 !important;
+}
+
+.share-link-modal-content .share-link-action {
+    color: #292344 !important;
+    background: #ffffff !important;
+}
+
+.share-link-modal-content .share-link-action-icon {
+    color: #6c3bd1 !important;
+}
+
+.share-link-modal-content .share-link-preview-icon,
+.share-link-modal-content .share-link-title-icon {
+    color: #6c3bd1 !important;
+}
+
+.share-link-modal-content .share-link-action > .fa-chevron-right {
+    color: #6b6578 !important;
+    opacity: 1 !important;
+}
