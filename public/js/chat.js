@@ -6762,10 +6762,43 @@ const emojiPicker =
 // ATTACHMENT
 // =========================================
 
-const attachmentBtn =
-    document.getElementById(
-        "attachmentBtn"
-    );
+const attachmentMenuBtn =
+    document.getElementById("attachmentMenuBtn");
+
+const attachmentCameraOption =
+    document.getElementById("attachmentCameraOption");
+
+if (attachmentMenuBtn) {
+    attachmentMenuBtn.addEventListener("click", () => {
+        if (!selectedChat) {
+            showVibeToast("Please open a chat first.", "error");
+            return;
+        }
+
+        openShareFileModal();
+    });
+}
+
+if (attachmentCameraOption) {
+    attachmentCameraOption.addEventListener("click", () => {
+        closeShareFileModal();
+
+        if (typeof openQuickCamera === "function") {
+            openQuickCamera();
+        } else {
+            showVibeToast("Camera is unavailable.", "error");
+        }
+    });
+}
+
+document.querySelectorAll("[data-coming-soon]").forEach((option) => {
+    option.addEventListener("click", () => {
+        showVibeToast(
+            option.dataset.comingSoon + " sharing is coming soon.",
+            "info"
+        );
+    });
+});
 
 const composerCameraBtn =
     document.getElementById(
@@ -12537,35 +12570,7 @@ if (
 // ATTACHMENT
 // =========================================
 
-if (
-    attachmentBtn &&
-    fileInput
-) {
-
-    // =====================================
-    // OPEN FILE PICKER
-    // =====================================
-
-    attachmentBtn.addEventListener(
-        "click",
-        () => {
-
-            if (!selectedChat) {
-
-                showVibeToast(
-                    "Please open a chat first.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-            fileInput.click();
-
-        }
-    );
-
+if (fileInput) {
 
     // =====================================
     // FILE SELECTED
@@ -12635,15 +12640,9 @@ if (
 
             try {
 
-                attachmentBtn.disabled =
-                    true;
-
-
-                attachmentBtn.innerHTML = `
-
-                    <i class="fas fa-spinner fa-spin"></i>
-
-                `;
+                if (attachmentMenuBtn) {
+                    attachmentMenuBtn.disabled = true;
+                }
 
 
                 const formData =
@@ -12748,15 +12747,9 @@ if (
 
             finally {
 
-                attachmentBtn.disabled =
-                    false;
-
-
-                attachmentBtn.innerHTML = `
-
-                    <i class="fas fa-paperclip"></i>
-
-                `;
+                if (attachmentMenuBtn) {
+                    attachmentMenuBtn.disabled = false;
+                }
 
 
                 // IMPORTANT:

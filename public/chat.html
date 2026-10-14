@@ -1034,7 +1034,7 @@ title="Menu"
                 <div class="share-file-option-text">
 
                     <strong>
-                        Photos & Videos
+                        Photos
                     </strong>
 
                     <span>
@@ -1047,6 +1047,24 @@ title="Menu"
 
             </button>
 
+
+            <!-- CAMERA -->
+            <button type="button" class="share-file-option attachment-grid-option" id="attachmentCameraOption">
+                <div class="share-file-option-icon media"><i class="fas fa-camera"></i></div>
+                <div class="share-file-option-text"><strong>Camera</strong><span>Take a photo</span></div>
+            </button>
+
+            <!-- LOCATION -->
+            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Location">
+                <div class="share-file-option-icon other"><i class="fas fa-location-dot"></i></div>
+                <div class="share-file-option-text"><strong>Location</strong><span>Coming soon</span></div>
+            </button>
+
+            <!-- CONTACT -->
+            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Contact">
+                <div class="share-file-option-icon document"><i class="fas fa-address-book"></i></div>
+                <div class="share-file-option-text"><strong>Contact</strong><span>Coming soon</span></div>
+            </button>
 
             <!-- DOCUMENT -->
 
@@ -1078,6 +1096,24 @@ title="Menu"
 
             </button>
 
+
+            <!-- POLL -->
+            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Poll">
+                <div class="share-file-option-icon audio"><i class="fas fa-chart-column"></i></div>
+                <div class="share-file-option-text"><strong>Poll</strong><span>Coming soon</span></div>
+            </button>
+
+            <!-- EVENT -->
+            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Event">
+                <div class="share-file-option-icon other"><i class="fas fa-calendar-days"></i></div>
+                <div class="share-file-option-text"><strong>Event</strong><span>Coming soon</span></div>
+            </button>
+
+            <!-- AI IMAGES -->
+            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="AI Images">
+                <div class="share-file-option-icon media"><i class="fas fa-wand-magic-sparkles"></i></div>
+                <div class="share-file-option-text"><strong>AI Images</strong><span>Coming soon</span></div>
+            </button>
 
             <!-- AUDIO -->
 
@@ -1805,25 +1841,18 @@ title="Menu"
 
     </button>
 
-    <!-- Camera -->
+    <!-- Attachment Menu -->
 
     <button
-        id="composerCameraBtn"
+        id="attachmentMenuBtn"
         type="button"
-        title="Camera"
-        aria-label="Open Camera"
+        title="More options"
+        aria-label="Open attachment options"
+        aria-haspopup="dialog"
+        aria-controls="shareFileModal"
     >
 
-        <i class="fas fa-camera"></i>
-
-    </button>
-
-
-    <!-- Attachment -->
-
-    <button id="attachmentBtn" type="button">
-
-        <i class="fas fa-paperclip"></i>
+        <i class="fas fa-plus"></i>
 
     </button>
 
