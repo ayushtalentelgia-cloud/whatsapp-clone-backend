@@ -14836,3 +14836,477 @@ body {
     color: #f0e7ff !important;
     text-decoration-thickness: 2px;
 }
+
+/* =========================================
+   VIBECHAT AI PANEL
+========================================= */
+
+.vibe-ai-panel {
+    position: absolute;
+    z-index: 1000;
+    top: 70px;
+    right: 16px;
+    width: min(420px, calc(100% - 32px));
+    height: min(560px, calc(100% - 100px));
+    display: flex;
+    flex-direction: column;
+    background: var(--chat-bg, #ffffff);
+    color: var(--text-color, #202124);
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+}
+
+.vibe-ai-panel[hidden] {
+    display: none !important;
+}
+
+.vibe-ai-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+.vibe-ai-header p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.vibe-ai-header button,
+#vibeAiToggle,
+#vibeAiSend {
+    cursor: pointer;
+}
+
+.vibe-ai-messages {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+}
+
+.vibe-ai-message {
+    max-width: 90%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.vibe-ai-assistant {
+    align-self: flex-start;
+    background: rgba(128, 128, 128, 0.13);
+}
+
+.vibe-ai-user {
+    align-self: flex-end;
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.vibe-ai-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+.vibe-ai-form textarea {
+    flex: 1;
+    min-width: 0;
+    resize: vertical;
+    max-height: 120px;
+    padding: 10px;
+    border: 1px solid rgba(128, 128, 128, 0.4);
+    border-radius: 8px;
+    font: inherit;
+}
+
+#vibeAiSend {
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #ffffff;
+}
+
+#vibeAiSend:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.vibe-ai-status {
+    margin: 0;
+    padding: 0 12px 8px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+    .vibe-ai-panel {
+        top: 60px;
+        right: 8px;
+        width: calc(100% - 16px);
+        height: min(70vh, 560px);
+    }
+}
+
+/* VibeChat AI: main application overlay */
+.vibe-ai-panel {
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(420px, calc(100vw - 32px));
+    height: min(560px, calc(100vh - 120px));
+    z-index: 10000;
+}
+
+@media (max-width: 600px) {
+    .vibe-ai-panel {
+        top: 72px;
+        width: calc(100vw - 16px);
+        height: min(70vh, 560px);
+    }
+}
+
+/* =========================================
+   VIBECHAT AI — PREMIUM THEME
+========================================= */
+
+.vibe-ai-panel {
+    position: fixed;
+    top: 88px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+
+    width: min(440px, calc(100vw - 32px));
+    height: min(620px, calc(100vh - 112px));
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    color: #f5f3ff;
+    background: #151421;
+    border: 1px solid rgba(139, 125, 255, 0.28);
+    border-radius: 20px;
+
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.42),
+        0 0 35px rgba(99, 80, 255, 0.10);
+
+    z-index: 10000;
+}
+
+.vibe-ai-panel[hidden] {
+    display: none !important;
+}
+
+/* Premium header */
+
+.vibe-ai-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 17px 18px;
+
+    background: linear-gradient(
+        135deg,
+        #211c3c 0%,
+        #171526 65%,
+        #19182b 100%
+    );
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.vibe-ai-header strong {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.vibe-ai-header strong::before {
+    content: "✦";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+
+    color: white;
+    background: linear-gradient(135deg, #8171ff, #4f46e5);
+    box-shadow: 0 4px 18px rgba(99, 80, 255, 0.35);
+}
+
+.vibe-ai-header p {
+    margin: 5px 0 0 39px;
+    color: #aaa6c3;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.vibe-ai-header button {
+    width: 34px;
+    height: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #c9c5e0;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.vibe-ai-header button:hover {
+    color: white;
+    background: rgba(129, 113, 255, 0.25);
+}
+
+/* Chat area */
+
+.vibe-ai-messages {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    padding: 20px 16px;
+
+    background:
+        radial-gradient(
+            ellipse at top left,
+            rgba(101, 82, 200, 0.09),
+            transparent 60%
+        ),
+        #151421;
+
+    scrollbar-width: thin;
+    scrollbar-color: #48415f transparent;
+}
+
+.vibe-ai-message {
+    max-width: 88%;
+    width: fit-content;
+
+    padding: 12px 15px;
+    border-radius: 15px;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+
+    font-size: 14px;
+    line-height: 1.65;
+    letter-spacing: 0.05px;
+}
+
+.vibe-ai-assistant {
+    align-self: flex-start;
+
+    color: #e9e6f6;
+    background: #252336;
+
+    border: 1px solid rgba(255, 255, 255, 0.055);
+    border-bottom-left-radius: 5px;
+}
+
+.vibe-ai-user {
+    align-self: flex-end;
+
+    color: #ffffff;
+    background: linear-gradient(135deg, #6960ff, #4f46e5);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom-right-radius: 5px;
+
+    box-shadow: 0 5px 16px rgba(79, 70, 229, 0.18);
+}
+
+/* Input area */
+
+.vibe-ai-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+
+    padding: 14px 14px 12px;
+
+    background: #191827;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.vibe-ai-form textarea {
+    flex: 1;
+    min-width: 0;
+    min-height: 46px;
+    max-height: 120px;
+    resize: vertical;
+
+    padding: 12px 13px;
+
+    color: #f5f3ff;
+    background: #211f31;
+
+    border: 1px solid #39354e;
+    border-radius: 12px;
+    outline: none;
+
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vibe-ai-form textarea::placeholder {
+    color: #89849f;
+}
+
+.vibe-ai-form textarea:focus {
+    border-color: #8171ff;
+    box-shadow: 0 0 0 3px rgba(129, 113, 255, 0.12);
+}
+
+#vibeAiSend {
+    min-height: 44px;
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 0 15px;
+
+    color: white;
+    background: linear-gradient(135deg, #8171ff, #5046e5);
+
+    border: 0;
+    border-radius: 11px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.22);
+
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+#vibeAiSend:hover:not(:disabled) {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+}
+
+#vibeAiSend:disabled {
+    opacity: 0.55;
+    cursor: wait;
+    transform: none;
+}
+
+.vibe-ai-status {
+    margin: 0;
+    padding: 0 15px 10px;
+
+    color: #aaa6c3;
+    background: #191827;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Sidebar AI button */
+
+#vibeAiToggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    color: #ffffff;
+    background: linear-gradient(135deg, #8171ff, #5046e5);
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.23);
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+#vibeAiToggle:hover {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+}
+
+/* Mobile layout */
+
+@media (max-width: 600px) {
+    .vibe-ai-panel {
+        top: 78px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+
+        width: calc(100vw - 24px);
+        height: min(620px, calc(100dvh - 96px));
+
+        border-radius: 17px;
+    }
+
+    .vibe-ai-header {
+        padding: 14px;
+    }
+
+    .vibe-ai-messages {
+        padding: 16px 12px;
+    }
+
+    .vibe-ai-message {
+        max-width: 92%;
+        font-size: 13px;
+    }
+
+    .vibe-ai-form {
+        gap: 8px;
+        padding: 11px 10px;
+    }
+
+    .vibe-ai-form textarea {
+        font-size: 14px;
+    }
+
+    #vibeAiSend {
+        padding: 0 12px;
+    }
+}

@@ -18096,3 +18096,109 @@ if (confirmForwardMessageBtn) {
         }
     });
 })();
+/* =========================================
+   VIBECHAT AI - SEPARATE CHAT PANEL
+========================================= */
+(() => {
+    const toggle = document.getElementById("vibeAiToggle");
+    const panel = document.getElementById("vibeAiPanel");
+    const close = document.getElementById("vibeAiClose");
+    const form = document.getElementById("vibeAiForm");
+    const input = document.getElementById("vibeAiInput");
+    const messages = document.getElementById("vibeAiMessages");
+    const send = document.getElementById("vibeAiSend");
+    const status = document.getElementById("vibeAiStatus");
+
+    if (!toggle || !panel || !close || !form || !input ||
+        !messages || !send || !status) {
+        console.warn("VibeChat AI: required HTML elements are missing.");
+        return;
+    }
+
+    const setPanelOpen = (isOpen) => {
+        panel.hidden = !isOpen;
+        toggle.setAttribute("aria-expanded", String(isOpen));
+
+        if (isOpen) {
+            input.focus();
+        }
+    };
+
+    toggle.addEventListener("click", () => {
+        setPanelOpen(panel.hidden);
+    });
+
+    close.addEventListener("click", () => {
+        setPanelOpen(false);
+    });
+
+    function addAiMessage(text, type) {
+        const bubble = document.createElement("div");
+        bubble.className = `vibe-ai-message vibe-ai-${type}`;
+        bubble.textContent = text;
+        messages.appendChild(bubble);
+        messages.scrollTop = messages.scrollHeight;
+        return bubble;
+    }
+
+    input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+            event.preventDefault();
+
+            if (typeof form.requestSubmit === "function") {
+                form.requestSubmit();
+            }
+        }
+    });
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const message = input.value.trim();
+
+        if (!message || send.disabled) {
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            status.textContent = "Please log in again to use VibeChat AI.";
+            return;
+        }
+
+        addAiMessage(message, "user");
+        input.value = "";
+        send.disabled = true;
+        status.textContent = "VibeChat AI is thinking...";
+
+        try {
+            const response = await fetch("/api/ai/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ message })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "AI request failed.");
+            }
+
+            addAiMessage(data.answer, "assistant");
+            status.textContent = "";
+        } catch (error) {
+            console.error("VibeChat AI request failed:", error);
+            status.textContent =
+                error.message || "Unable to get an AI response. Please try again.";
+        } finally {
+            send.disabled = false;
+            input.focus();
+        }
+    });
+
+    console.log("VibeChat AI panel initialized.");
+})();
