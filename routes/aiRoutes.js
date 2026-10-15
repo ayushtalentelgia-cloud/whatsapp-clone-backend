@@ -3,7 +3,7 @@ const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-const AI_SERVER_URL = "http://127.0.0.1:8080/v1/chat/completions";
+const AI_SERVER_URL = (process.env.AI_SERVER_URL || "http://127.0.0.1:8080/v1/chat/completions").replace(/\/+$/, "");
 
 // POST /api/ai/chat
 router.post("/chat", protect, async (req, res) => {
@@ -24,7 +24,10 @@ router.post("/chat", protect, async (req, res) => {
         const response = await fetch(AI_SERVER_URL, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                ...(process.env.AI_GATEWAY_TOKEN
+                    ? { "Authorization": `Bearer ${process.env.AI_GATEWAY_TOKEN}` }
+                    : {})
             },
             body: JSON.stringify({
                 messages: [
