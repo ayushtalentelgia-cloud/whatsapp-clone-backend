@@ -14793,3 +14793,46 @@ body {
     color: #6b6578 !important;
     opacity: 1 !important;
 }
+
+/* FIX: Ensure VibeChat attachment modal is visible when active */
+#shareFileModal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 1000000 !important;
+}
+
+#shareFileModal.active {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+#shareFileModal.active .share-file-modal-content {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+/* =========================================
+   CHAT MESSAGE LINKS
+========================================= */
+
+.message-text a {
+    color: #ffffff !important;
+    text-decoration: underline !important;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+}
+
+.message-text a:visited {
+    color: #ffffff !important;
+}
+
+.message-text a:hover {
+    color: #f0e7ff !important;
+    text-decoration-thickness: 2px;
+}

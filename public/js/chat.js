@@ -6769,13 +6769,26 @@ const attachmentCameraOption =
     document.getElementById("attachmentCameraOption");
 
 if (attachmentMenuBtn) {
-    attachmentMenuBtn.addEventListener("click", () => {
+    attachmentMenuBtn.addEventListener("click", (event) => {
+        console.log("[VibeChat] Plus button clicked.", {
+            selectedChat: selectedChat ? selectedChat._id : null,
+            modalFound: Boolean(shareFileModal)
+        });
+
         if (!selectedChat) {
             showVibeToast("Please open a chat first.", "error");
             return;
         }
 
+        if (!shareFileModal) {
+            console.error("[VibeChat] shareFileModal element not found.");
+            return;
+        }
+
         openShareFileModal();
+
+        console.log("[VibeChat] Modal active:",
+            shareFileModal.classList.contains("active"));
     });
 }
 
@@ -9678,6 +9691,48 @@ function getMessageStatus(message) {
 // RENDER MESSAGE
 // =========================================
 
+function linkifyMessageText(value) {
+    const escapedText = String(value ?? "").replace(
+        /[&<>"']/g,
+        (char) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]
+    );
+
+    const urlPattern = /(?:https?:\/\/|www\.)[^\s<]+/gi;
+
+    const linkedText = escapedText.replace(
+        urlPattern,
+        (match) => {
+            const punctuationMatch =
+                match.match(/[.,!?;:)]+$/);
+
+            const trailing = punctuationMatch
+                ? punctuationMatch[0]
+                : "";
+
+            const url = trailing
+                ? match.slice(0, -trailing.length)
+                : match;
+
+            if (!url) return match;
+
+            const href = /^www\./i.test(url)
+                ? `https://${url}`
+                : url;
+
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>${trailing}`;
+        }
+    );
+
+    return linkedText.replace(/\r?\n/g, "<br>");
+}
+
+
 function renderMessage(message) {
 
     if (
@@ -10028,7 +10083,7 @@ function renderMessage(message) {
 
             <div class="message-text">
 
-                ${message.content}
+                ${linkifyMessageText(message.content)}
 
             </div>
 
@@ -12079,7 +12134,7 @@ socket.on(
         if (messageText) {
 
             messageText.innerHTML =
-                message.content +
+                linkifyMessageText(message.content) +
                 ' <small style="opacity:.6">(edited)</small>';
 
         }

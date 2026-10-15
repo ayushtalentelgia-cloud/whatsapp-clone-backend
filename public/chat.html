@@ -958,340 +958,6 @@ title="Menu"
 
     </div>
 <!-- =========================================
-     SHARE FILE MODAL
-========================================= -->
-
-<div
-    id="shareFileModal"
-    class="share-file-modal"
->
-
-    <div class="share-file-modal-content">
-
-        <!-- HEADER -->
-
-        <div class="share-file-header">
-
-            <div>
-
-                <div class="share-file-title">
-
-                    <div class="share-file-title-icon">
-
-                        <i class="fas fa-paperclip"></i>
-
-                    </div>
-
-                    <div>
-
-                        <h2>
-                            Share a File
-                        </h2>
-
-                        <p>
-                            Choose something to share
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <button
-                type="button"
-                id="closeShareFileBtn"
-                class="share-file-close"
-            >
-
-                <i class="fas fa-times"></i>
-
-            </button>
-
-        </div>
-
-
-        <!-- FILE OPTIONS -->
-
-        <div class="share-file-options">
-
-
-            <!-- PHOTO / VIDEO -->
-
-            <button
-                type="button"
-                class="share-file-option"
-                id="sharePhotoVideoBtn"
-            >
-
-                <div class="share-file-option-icon media">
-
-                    <i class="fas fa-images"></i>
-
-                </div>
-
-                <div class="share-file-option-text">
-
-                    <strong>
-                        Photos
-                    </strong>
-
-                    <span>
-                        Share images and videos
-                    </span>
-
-                </div>
-
-                <i class="fas fa-chevron-right"></i>
-
-            </button>
-
-
-            <!-- CAMERA -->
-            <button type="button" class="share-file-option attachment-grid-option" id="attachmentCameraOption">
-                <div class="share-file-option-icon media"><i class="fas fa-camera"></i></div>
-                <div class="share-file-option-text"><strong>Camera</strong><span>Take a photo</span></div>
-            </button>
-
-            <!-- LOCATION -->
-            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Location">
-                <div class="share-file-option-icon other"><i class="fas fa-location-dot"></i></div>
-                <div class="share-file-option-text"><strong>Location</strong><span>Coming soon</span></div>
-            </button>
-
-            <!-- CONTACT -->
-            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Contact">
-                <div class="share-file-option-icon document"><i class="fas fa-address-book"></i></div>
-                <div class="share-file-option-text"><strong>Contact</strong><span>Coming soon</span></div>
-            </button>
-
-            <!-- DOCUMENT -->
-
-            <button
-                type="button"
-                class="share-file-option"
-                id="shareDocumentBtn"
-            >
-
-                <div class="share-file-option-icon document">
-
-                    <i class="fas fa-file-lines"></i>
-
-                </div>
-
-                <div class="share-file-option-text">
-
-                    <strong>
-                        Documents
-                    </strong>
-
-                    <span>
-                        PDF, Word, Excel and more
-                    </span>
-
-                </div>
-
-                <i class="fas fa-chevron-right"></i>
-
-            </button>
-
-
-            <!-- POLL -->
-            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Poll">
-                <div class="share-file-option-icon audio"><i class="fas fa-chart-column"></i></div>
-                <div class="share-file-option-text"><strong>Poll</strong><span>Coming soon</span></div>
-            </button>
-
-            <!-- EVENT -->
-            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Event">
-                <div class="share-file-option-icon other"><i class="fas fa-calendar-days"></i></div>
-                <div class="share-file-option-text"><strong>Event</strong><span>Coming soon</span></div>
-            </button>
-
-            <!-- AI IMAGES -->
-            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="AI Images">
-                <div class="share-file-option-icon media"><i class="fas fa-wand-magic-sparkles"></i></div>
-                <div class="share-file-option-text"><strong>AI Images</strong><span>Coming soon</span></div>
-            </button>
-
-            <!-- AUDIO -->
-
-            <button
-                type="button"
-                class="share-file-option"
-                id="shareAudioBtn"
-            >
-
-                <div class="share-file-option-icon audio">
-
-                    <i class="fas fa-music"></i>
-
-                </div>
-
-                <div class="share-file-option-text">
-
-                    <strong>
-                        Audio
-                    </strong>
-
-                    <span>
-                        Share audio files
-                    </span>
-
-                </div>
-
-                <i class="fas fa-chevron-right"></i>
-
-            </button>
-
-
-            <!-- OTHER -->
-
-            <button
-                type="button"
-                class="share-file-option"
-                id="shareOtherFileBtn"
-            >
-
-                <div class="share-file-option-icon other">
-
-                    <i class="fas fa-folder-open"></i>
-
-                </div>
-
-                <div class="share-file-option-text">
-
-                    <strong>
-                        Other Files
-                    </strong>
-
-                    <span>
-                        ZIP and other file types
-                    </span>
-
-                </div>
-
-                <i class="fas fa-chevron-right"></i>
-
-            </button>
-
-        </div>
-
-
-        <!-- SELECTED FILE PREVIEW -->
-
-        <div
-            id="shareFilePreview"
-            class="share-file-preview"
-            style="display:none"
-        >
-
-            <div
-                id="shareFilePreviewIcon"
-                class="share-file-preview-icon"
-            >
-
-                <i class="fas fa-file"></i>
-
-            </div>
-
-
-            <div class="share-file-preview-info">
-
-                <strong
-                    id="shareFileName"
-                >
-                    File name
-                </strong>
-
-                <span
-                    id="shareFileSize"
-                >
-                    0 KB
-                </span>
-
-            </div>
-
-
-            <button
-                type="button"
-                id="removeShareFileBtn"
-                class="remove-share-file-btn"
-                title="Remove file"
-            >
-
-                <i class="fas fa-times"></i>
-
-            </button>
-
-        </div>
-
-
-        <!-- HIDDEN INPUTS -->
-
-        <input
-            type="file"
-            id="sharePhotoVideoInput"
-            hidden
-            accept="image/*,video/*"
-        >
-
-        <input
-            type="file"
-            id="shareDocumentInput"
-            hidden
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.txt"
-        >
-
-        <input
-            type="file"
-            id="shareAudioInput"
-            hidden
-            accept="audio/*"
-        >
-
-        <input
-            type="file"
-            id="shareOtherFileInput"
-            hidden
-            accept="*/*"
-        >
-
-
-        <!-- FOOTER -->
-
-        <div class="share-file-footer">
-
-            <button
-                type="button"
-                id="cancelShareFileBtn"
-                class="share-file-cancel"
-            >
-                Cancel
-            </button>
-
-
-            <button
-                type="button"
-                id="continueShareFileBtn"
-                class="share-file-continue"
-                disabled
-            >
-
-                Continue
-
-                <i class="fas fa-arrow-right"></i>
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- =========================================
      FORWARD MESSAGE MODAL
 ========================================= -->
 
@@ -2320,6 +1986,341 @@ title="Menu"
 <!-- =========================================
      SOCKET
 ========================================= -->
+
+<!-- =========================================
+     SHARE FILE MODAL
+========================================= -->
+
+<div
+    id="shareFileModal"
+    class="share-file-modal"
+>
+
+    <div class="share-file-modal-content">
+
+        <!-- HEADER -->
+
+        <div class="share-file-header">
+
+            <div>
+
+                <div class="share-file-title">
+
+                    <div class="share-file-title-icon">
+
+                        <i class="fas fa-paperclip"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Share a File
+                        </h2>
+
+                        <p>
+                            Choose something to share
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="closeShareFileBtn"
+                class="share-file-close"
+            >
+
+                <i class="fas fa-times"></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- FILE OPTIONS -->
+
+        <div class="share-file-options">
+
+
+            <!-- PHOTO / VIDEO -->
+
+            <button
+                type="button"
+                class="share-file-option"
+                id="sharePhotoVideoBtn"
+            >
+
+                <div class="share-file-option-icon media">
+
+                    <i class="fas fa-images"></i>
+
+                </div>
+
+                <div class="share-file-option-text">
+
+                    <strong>
+                        Photos
+                    </strong>
+
+                    <span>
+                        Share images and videos
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </button>
+
+
+            <!-- CAMERA -->
+            <button type="button" class="share-file-option attachment-grid-option" id="attachmentCameraOption">
+                <div class="share-file-option-icon media"><i class="fas fa-camera"></i></div>
+                <div class="share-file-option-text"><strong>Camera</strong><span>Take a photo</span></div>
+            </button>
+
+            <!-- LOCATION -->
+            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Location">
+                <div class="share-file-option-icon other"><i class="fas fa-location-dot"></i></div>
+                <div class="share-file-option-text"><strong>Location</strong><span>Coming soon</span></div>
+            </button>
+
+            <!-- CONTACT -->
+            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Contact">
+                <div class="share-file-option-icon document"><i class="fas fa-address-book"></i></div>
+                <div class="share-file-option-text"><strong>Contact</strong><span>Coming soon</span></div>
+            </button>
+
+            <!-- DOCUMENT -->
+
+            <button
+                type="button"
+                class="share-file-option"
+                id="shareDocumentBtn"
+            >
+
+                <div class="share-file-option-icon document">
+
+                    <i class="fas fa-file-lines"></i>
+
+                </div>
+
+                <div class="share-file-option-text">
+
+                    <strong>
+                        Documents
+                    </strong>
+
+                    <span>
+                        PDF, Word, Excel and more
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </button>
+
+
+            <!-- POLL -->
+            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Poll">
+                <div class="share-file-option-icon audio"><i class="fas fa-chart-column"></i></div>
+                <div class="share-file-option-text"><strong>Poll</strong><span>Coming soon</span></div>
+            </button>
+
+            <!-- EVENT -->
+            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="Event">
+                <div class="share-file-option-icon other"><i class="fas fa-calendar-days"></i></div>
+                <div class="share-file-option-text"><strong>Event</strong><span>Coming soon</span></div>
+            </button>
+
+            <!-- AI IMAGES -->
+            <button type="button" class="share-file-option attachment-grid-option" data-coming-soon="AI Images">
+                <div class="share-file-option-icon media"><i class="fas fa-wand-magic-sparkles"></i></div>
+                <div class="share-file-option-text"><strong>AI Images</strong><span>Coming soon</span></div>
+            </button>
+
+            <!-- AUDIO -->
+
+            <button
+                type="button"
+                class="share-file-option"
+                id="shareAudioBtn"
+            >
+
+                <div class="share-file-option-icon audio">
+
+                    <i class="fas fa-music"></i>
+
+                </div>
+
+                <div class="share-file-option-text">
+
+                    <strong>
+                        Audio
+                    </strong>
+
+                    <span>
+                        Share audio files
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </button>
+
+
+            <!-- OTHER -->
+
+            <button
+                type="button"
+                class="share-file-option"
+                id="shareOtherFileBtn"
+            >
+
+                <div class="share-file-option-icon other">
+
+                    <i class="fas fa-folder-open"></i>
+
+                </div>
+
+                <div class="share-file-option-text">
+
+                    <strong>
+                        Other Files
+                    </strong>
+
+                    <span>
+                        ZIP and other file types
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right"></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- SELECTED FILE PREVIEW -->
+
+        <div
+            id="shareFilePreview"
+            class="share-file-preview"
+            style="display:none"
+        >
+
+            <div
+                id="shareFilePreviewIcon"
+                class="share-file-preview-icon"
+            >
+
+                <i class="fas fa-file"></i>
+
+            </div>
+
+
+            <div class="share-file-preview-info">
+
+                <strong
+                    id="shareFileName"
+                >
+                    File name
+                </strong>
+
+                <span
+                    id="shareFileSize"
+                >
+                    0 KB
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="removeShareFileBtn"
+                class="remove-share-file-btn"
+                title="Remove file"
+            >
+
+                <i class="fas fa-times"></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- HIDDEN INPUTS -->
+
+        <input
+            type="file"
+            id="sharePhotoVideoInput"
+            hidden
+            accept="image/*,video/*"
+        >
+
+        <input
+            type="file"
+            id="shareDocumentInput"
+            hidden
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.txt"
+        >
+
+        <input
+            type="file"
+            id="shareAudioInput"
+            hidden
+            accept="audio/*"
+        >
+
+        <input
+            type="file"
+            id="shareOtherFileInput"
+            hidden
+            accept="*/*"
+        >
+
+
+        <!-- FOOTER -->
+
+        <div class="share-file-footer">
+
+            <button
+                type="button"
+                id="cancelShareFileBtn"
+                class="share-file-cancel"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                type="button"
+                id="continueShareFileBtn"
+                class="share-file-continue"
+                disabled
+            >
+
+                Continue
+
+                <i class="fas fa-arrow-right"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 <script src="/socket.io/socket.io.js"></script>
 
