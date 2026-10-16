@@ -18163,14 +18163,14 @@ if (confirmForwardMessageBtn) {
         const token = localStorage.getItem("token");
 
         if (!token) {
-            status.textContent = "Please log in again to use VibeChat AI.";
+            status.textContent = "Please log in again to use the AI assistant.";
             return;
         }
 
         addAiMessage(message, "user");
         input.value = "";
         send.disabled = true;
-        status.textContent = "VibeChat AI is thinking...";
+        status.textContent = "Thinking...";
 
         try {
             const response = await fetch("/api/ai/chat", {
@@ -18191,7 +18191,7 @@ if (confirmForwardMessageBtn) {
             addAiMessage(data.answer, "assistant");
             status.textContent = "";
         } catch (error) {
-            console.error("VibeChat AI request failed:", error);
+            console.error("AI request failed:", error);
             status.textContent =
                 error.message || "Unable to get an AI response. Please try again.";
         } finally {
@@ -18200,5 +18200,5 @@ if (confirmForwardMessageBtn) {
         }
     });
 
-    console.log("VibeChat AI panel initialized.");
+    console.log("AI chat panel initialized.");
 })();

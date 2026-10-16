@@ -3,7 +3,32 @@ const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-const AI_SERVER_URL = (process.env.AI_SERVER_URL || "http://127.0.0.1:8080/v1/chat/completions").replace(/\/+$/, "");
+const GEMINI_MODEL = "gemini-3.8-flash";
+const GEMINI_URL =
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+
+async function fetchGeminiWithRetry(url, options, maxAttempts = 3) {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        const response = await fetch(url, options);
+
+        if (
+            response.ok ||
+            ![429, 500, 502, 503, 504].includes(response.status) ||
+            attempt === maxAttempts
+        ) {
+            return response;
+        }
+
+        const delayMs = 1000 * (2 ** (attempt - 1));
+        console.warn(
+            `Gemini returned ${response.status}. Retrying in ${delayMs}ms (attempt ${attempt + 1}/${maxAttempts}).`
+        );
+
+        await response.arrayBuffer();
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+}
 
 // POST /api/ai/chat
 router.post("/chat", protect, async (req, res) => {
@@ -21,58 +46,90 @@ router.post("/chat", protect, async (req, res) => {
             });
         }
 
-        const response = await fetch(AI_SERVER_URL, {
+        const apiKey = process.env.GEMINI_API_KEY;
+
+        if (!apiKey) {
+            return res.status(503).json({
+                success: false,
+                message: "Gemini API is not configured on the server."
+            });
+        }
+
+        const response = await fetchGeminiWithRetry(GEMINI_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                ...(process.env.AI_GATEWAY_TOKEN
-                    ? { "Authorization": `Bearer ${process.env.AI_GATEWAY_TOKEN}` }
-                    : {})
+                "x-goog-api-key": apiKey
             },
             body: JSON.stringify({
-                messages: [
-                    {
-                        role: "system",
-                        content: "You are VibeChat AI, a helpful and accurate assistant. Understand the user's exact question and answer it directly. For travel and local recommendations, suggest only places reasonably near the requested starting location. Never invent locations, distances, travel times, opening hours, prices, or facts. If you are unsure, clearly say so instead of guessing. For a day trip, suggest 3 to 5 realistic destinations and briefly explain why each is worth visiting. Keep the response organized, practical, and concise. Use bullet points when listing options. Always respond in the same language as the user's latest message, including Hindi or Hinglish when appropriate. For simple factual questions, give the answer first. Never invent your creator, company, or identity."
-                    },
-                    {
-                        role: "user",
-                        content: message.trim()
-                    }
-                ],
-                temperature: 0.7,
-                max_tokens: 300,
-                stream: false
+                systemInstruction: {
+                    parts: [{
+                        text: `You are a helpful, accurate AI assistant inside VibeChat.
+
+LANGUAGE:
+- Reply in the same language and style as the user's message.
+- For Hinglish written in Roman script, reply in natural Roman Hinglish.
+- Use Hindi script only when the user writes in Hindi script or requests it.
+
+QUALITY:
+- Answer the exact question directly.
+- Use clear headings and bullet points when useful.
+- Do not repeat recommendations or sentences.
+- Never invent facts, addresses, prices, opening hours, or travel details.
+- Clearly state uncertainty when you cannot verify something.
+- Keep simple answers concise and detailed answers well organized.
+- Do not claim to be the official ChatGPT or an OpenAI model.`
+                    }]
+                },
+                contents: [{
+                    role: "user",
+                    parts: [{ text: message.trim() }]
+                }],
+                generationConfig: {
+                    temperature: 0.4,
+                    maxOutputTokens: 800
+                }
             }),
             signal: AbortSignal.timeout(60000)
         });
 
         if (!response.ok) {
-            console.error("Local AI server returned status:", response.status);
+            const errorDetails = await response.text();
+            console.error("Gemini API returned status:", response.status);
+            console.error("Gemini API error details:", errorDetails.slice(0, 2000));
+
+            if (response.status === 429) {
+                return res.status(429).json({
+                    success: false,
+                    message: "Gemini usage limit reached. Please try again later."
+                });
+            }
 
             return res.status(502).json({
                 success: false,
-                message: "The local AI service could not process the request."
+                message: "Gemini could not process the request. Please try again."
             });
         }
 
         const data = await response.json();
-        const answer = data.choices?.[0]?.message?.content;
+        const answer = data.candidates?.[0]?.content?.parts
+            ?.map(part => part.text || "")
+            .join("")
+            .trim();
 
         if (!answer) {
             return res.status(502).json({
                 success: false,
-                message: "The local AI returned an empty response."
+                message: "Gemini returned an empty response."
             });
         }
 
         return res.json({
             success: true,
-            answer: answer.trim()
+            answer
         });
-
     } catch (error) {
-        console.error("VibeChat AI error:", error.message);
+        console.error("Gemini request failed:", error.message);
 
         const timedOut = error.name === "TimeoutError";
 
@@ -80,7 +137,7 @@ router.post("/chat", protect, async (req, res) => {
             success: false,
             message: timedOut
                 ? "The AI response timed out. Please try again."
-                : "Unable to connect to the local AI service. Make sure the AI server is running."
+                : "Unable to connect to Gemini. Please try again later."
         });
     }
 });
