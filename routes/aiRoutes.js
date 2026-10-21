@@ -3,34 +3,8 @@ const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-const GEMINI_MODEL = "gemini-3.8-flash";
-const GEMINI_URL =
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+const AYU_AI_URL = process.env.AYU_AI_URL;
 
-
-async function fetchGeminiWithRetry(url, options, maxAttempts = 3) {
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        const response = await fetch(url, options);
-
-        if (
-            response.ok ||
-            ![429, 500, 502, 503, 504].includes(response.status) ||
-            attempt === maxAttempts
-        ) {
-            return response;
-        }
-
-        const delayMs = 1000 * (2 ** (attempt - 1));
-        console.warn(
-            `Gemini returned ${response.status}. Retrying in ${delayMs}ms (attempt ${attempt + 1}/${maxAttempts}).`
-        );
-
-        await response.arrayBuffer();
-        await new Promise(resolve => setTimeout(resolve, delayMs));
-    }
-}
-
-// POST /api/ai/chat
 router.post("/chat", protect, async (req, res) => {
     try {
         const { message } = req.body;
@@ -46,98 +20,117 @@ router.post("/chat", protect, async (req, res) => {
             });
         }
 
-        const apiKey = process.env.GEMINI_API_KEY;
-
-        if (!apiKey) {
+        if (!AYU_AI_URL) {
             return res.status(503).json({
                 success: false,
-                message: "Gemini API is not configured on the server."
+                message: "Ayu AI is not configured on the server."
             });
         }
 
-        const response = await fetchGeminiWithRetry(GEMINI_URL, {
+        const response = await fetch(AYU_AI_URL, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "x-goog-api-key": apiKey
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                systemInstruction: {
-                    parts: [{
-                        text: `You are a helpful, accurate AI assistant inside VibeChat.
-
-LANGUAGE:
-- Reply in the same language and style as the user's message.
-- For Hinglish written in Roman script, reply in natural Roman Hinglish.
-- Use Hindi script only when the user writes in Hindi script or requests it.
-
-QUALITY:
-- Answer the exact question directly.
-- Use clear headings and bullet points when useful.
-- Do not repeat recommendations or sentences.
-- Never invent facts, addresses, prices, opening hours, or travel details.
-- Clearly state uncertainty when you cannot verify something.
-- Keep simple answers concise and detailed answers well organized.
-- Do not claim to be the official ChatGPT or an OpenAI model.`
-                    }]
-                },
-                contents: [{
-                    role: "user",
-                    parts: [{ text: message.trim() }]
-                }],
-                generationConfig: {
-                    temperature: 0.4,
-                    maxOutputTokens: 800
-                }
+                message: message.trim()
             }),
-            signal: AbortSignal.timeout(60000)
+            signal: AbortSignal.timeout(120000)
         });
 
         if (!response.ok) {
-            const errorDetails = await response.text();
-            console.error("Gemini API returned status:", response.status);
-            console.error("Gemini API error details:", errorDetails.slice(0, 2000));
-
-            if (response.status === 429) {
-                return res.status(429).json({
-                    success: false,
-                    message: "Gemini usage limit reached. Please try again later."
-                });
-            }
+            console.error("Ayu AI returned status:", response.status);
 
             return res.status(502).json({
                 success: false,
-                message: "Gemini could not process the request. Please try again."
+                message: "Ayu AI could not process the request. Please try again."
             });
         }
 
-        const data = await response.json();
-        const answer = data.candidates?.[0]?.content?.parts
-            ?.map(part => part.text || "")
-            .join("")
-            .trim();
-
-        if (!answer) {
+        if (!response.body) {
             return res.status(502).json({
                 success: false,
-                message: "Gemini returned an empty response."
+                message: "Ayu AI returned an empty response."
+            });
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        let buffer = "";
+        let answer = "";
+
+        while (true) {
+            const { value, done } = await reader.read();
+
+            if (done) {
+                break;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || "";
+
+            for (const line of lines) {
+                if (!line.trim()) {
+                    continue;
+                }
+
+                try {
+                    const chunk = JSON.parse(line);
+
+                    if (typeof chunk.token === "string") {
+                        answer += chunk.token;
+                    }
+
+                    if (chunk.error) {
+                        throw new Error("Ayu AI stream returned an error.");
+                    }
+                } catch (error) {
+                    if (error instanceof SyntaxError) {
+                        console.error("Invalid JSON received from Ayu AI.");
+                        continue;
+                    }
+
+                    throw error;
+                }
+            }
+        }
+
+        if (buffer.trim()) {
+            try {
+                const chunk = JSON.parse(buffer);
+
+                if (typeof chunk.token === "string") {
+                    answer += chunk.token;
+                }
+            } catch {
+                console.warn("Ignored incomplete final Ayu AI stream chunk.");
+            }
+        }
+
+        if (!answer.trim()) {
+            return res.status(502).json({
+                success: false,
+                message: "Ayu AI returned an empty response."
             });
         }
 
         return res.json({
             success: true,
-            answer
+            answer: answer.trim()
         });
     } catch (error) {
-        console.error("Gemini request failed:", error.message);
+        console.error("Ayu AI request failed:", error.message);
 
-        const timedOut = error.name === "TimeoutError";
-
-        return res.status(timedOut ? 504 : 502).json({
+        return res.status(
+            error.name === "TimeoutError" ? 504 : 502
+        ).json({
             success: false,
-            message: timedOut
-                ? "The AI response timed out. Please try again."
-                : "Unable to connect to Gemini. Please try again later."
+            message: error.name === "TimeoutError"
+                ? "Ayu AI response timed out. Please try again."
+                : "Unable to connect to Ayu AI. Please try again later."
         });
     }
 });
