@@ -18111,7 +18111,7 @@ if (confirmForwardMessageBtn) {
 
     if (!toggle || !panel || !close || !form || !input ||
         !messages || !send || !status) {
-        console.warn("VibeChat AI: required HTML elements are missing.");
+        console.warn("Ayu AI: required HTML elements are missing.");
         return;
     }
 
@@ -18200,5 +18200,5 @@ if (confirmForwardMessageBtn) {
         }
     });
 
-    console.log("AI chat panel initialized.");
+    console.log("Ayu AI chat panel initialized.");
 })();
